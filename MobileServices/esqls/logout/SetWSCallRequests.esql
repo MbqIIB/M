@@ -1,0 +1,27 @@
+BROKER SCHEMA esqls.logout
+
+/**************************
+ * GetTokenAndSetKilToken *
+ **************************/
+CREATE COMPUTE MODULE GetTokenAndSetKillToken
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.security';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the token
+		DECLARE token CHARACTER InputRoot.HTTPInputHeader."Token";
+
+		--Set the parameter in the request to be done (the token)
+		SET OutputRoot.SOAP.Body.buc2:KillToken.buc2:token = token;
+
+		--Save the token in the local environment
+		SET OutputLocalEnvironment.Token = token;
+
+		RETURN TRUE;
+	END;
+END MODULE;

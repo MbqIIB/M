@@ -1,0 +1,151 @@
+BROKER SCHEMA esqls.bankDetails
+
+/*******************
+* SetValidateToken *
+********************/
+CREATE COMPUTE MODULE SetValidateToken
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare local vars
+		DECLARE aux CHARACTER;
+		DECLARE rutNumber CHARACTER;
+		DECLARE tokenNumber CHARACTER;
+		DECLARE broadLineOfBusinessID INTEGER;
+
+		--Extract RUT from URL
+		SET aux = SUBSTRING(InputRoot.HTTPInputHeader."X-Original-HTTP-Command" AFTER 'users/');
+		SET rutNumber = SUBSTRING(aux BEFORE '/bankDetail');
+		
+		--Get token from header
+		SET tokenNumber = InputRoot.HTTPInputHeader."Token";
+		
+		--Get Input data
+		DECLARE metadataChannel CHARACTER InputRoot.JSON.Data.metaData.channel;
+		DECLARE metadataOrigin CHARACTER InputRoot.JSON.Data.metaData.origin;
+		DECLARE securityCode CHARACTER InputRoot.JSON.Data.securityCode;
+		DECLARE policyNumber CHARACTER InputRoot.JSON.Data.policyNumber;
+		DECLARE bankName CHARACTER InputRoot.JSON.Data.bankName;
+		DECLARE accountType CHARACTER InputRoot.JSON.Data.accountType;
+		DECLARE accountNumber CHARACTER InputRoot.JSON.Data.accountNumber;
+		DECLARE bankCode CHARACTER InputRoot.JSON.Data.bankCode;				
+
+		--TODO: Se deben cambiar las líneas de negocio a algo configurable
+		--Declare Line of business ID, to set up from input if necessary on future
+		SET broadLineOfBusinessID = 4;
+		
+		--Save the received variables in the local environment, to be used by ValidateToken.subflow
+		SET OutputLocalEnvironment.RUT = rutNumber;
+		SET OutputLocalEnvironment.Token = tokenNumber;
+		SET OutputLocalEnvironment.BroadLineOfBusinessID = broadLineOfBusinessID;
+		SET OutputLocalEnvironment.MetadataChannel = metadataChannel;
+		SET OutputLocalEnvironment.MetadataOrigin = metadataOrigin;
+		SET OutputLocalEnvironment.SecurityCode = securityCode;
+		SET OutputLocalEnvironment.PolicyNumber = policyNumber;
+		SET OutputLocalEnvironment.BankName = bankName;
+		SET OutputLocalEnvironment.AccountType = accountType;
+		SET OutputLocalEnvironment.AccountNumber = accountNumber;
+		SET OutputLocalEnvironment.BankCode = bankCode;
+				
+	END;
+END MODULE;
+
+/******************
+* SetSegundaClave *
+*******************/
+CREATE COMPUTE MODULE SetSegundaClave
+	
+	--Declare namespaces
+	DECLARE secKey NAMESPACE 'http://segundaclave.ws.metlife.cl/';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get vars from local environment
+		DECLARE userIP CHARACTER '127.0.0.1';
+		DECLARE businessLine CHARACTER 'Colectivo';
+		DECLARE application CHARACTER 'MobileApp';
+		DECLARE funcion CHARACTER 'SecurityCode';
+		DECLARE operation CHARACTER 'ValidarClave';
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		DECLARE password CHARACTER InputLocalEnvironment.SecurityCode;
+		DECLARE salidaWS CHARACTER;
+		
+		--creation request
+		SET salidaWS = '<?xml version="1.0" encoding="UTF-8" ?><MLEnvelope><MLHeader><Caller><UserIP>' || userIP || '</UserIP><BusinessLine>' || businessLine || '</BusinessLine><Application>' || application || '</Application><Function>' || funcion || '</Function></Caller><Operation>' || operation || '</Operation></MLHeader><MLBody><RUT>' || rutNumber || '</RUT><Password>' || password || '</Password></MLBody></MLEnvelope>';
+		
+		--Set the parameter in the request of GetPartyContactInfo to be done
+		SET OutputRoot.SOAP.Body.secKey:execute.RequestEnvelope = salidaWS;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/********************
+* SetUpdateBankInfo *
+*********************/
+DECLARE AccountTypeList EXTERNAL CHARACTER '';  
+CREATE COMPUTE MODULE SetUpdateBankInfo
+	
+	--Declare namespaces
+	DECLARE mlf NAMESPACE 'metlife.cl';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get values to send
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		DECLARE policyNumber INTEGER InputLocalEnvironment.PolicyNumber;
+		--TODO: Hoy en día no se utiliza grupo para esta aplicación y debería hacerse. Se deja esta task para saber que se debe cambiar aquí.
+		DECLARE groupNumber INTEGER 0;
+		DECLARE productId INTEGER CAST('-1' AS INTEGER);
+		DECLARE paymentType INTEGER 2;
+		DECLARE accountTypeReceived CHARACTER InputLocalEnvironment.AccountType;
+		DECLARE accountType INTEGER;
+		DECLARE accountNumber CHARACTER InputLocalEnvironment.AccountNumber;
+		DECLARE bank CHARACTER InputLocalEnvironment.BankCode;
+		
+		--Iterate through the comma separated value holded in the AccountTypeList external variable and get the accountID corresponding to description received  
+        DECLARE acTypeList CHARACTER AccountTypeList;
+        DECLARE len INTEGER LENGTH (acTypeList);        
+        DECLARE i INTEGER 1;
+        DECLARE aux CHARACTER;
+        DECLARE auxID CHARACTER;
+        DECLARE auxDesc CHARACTER;
+        
+        WHILE len > 0 DO			
+			SET auxID = SUBSTRING(SUBSTRING(acTypeList AFTER '[') BEFORE ',');
+			SET auxDesc = SUBSTRING(SUBSTRING(acTypeList AFTER ',') BEFORE ']');
+		
+			IF (accountTypeReceived = auxDesc) THEN
+				SET accountType = CAST(auxID AS INTEGER);
+			END IF;
+			
+			SET aux = SUBSTRING(acTypeList AFTER ']');
+			SET acTypeList = aux;
+            SET len = LENGTH (acTypeList);
+            SET i = i + 1;
+		END WHILE;
+		
+		--Set the parameter in the request of GetPartyContactInfo to be done
+		SET OutputRoot.SOAP.Body.mlf:UpdateBankInformation.mlf:rutNumber = rutNumber;
+		SET OutputRoot.SOAP.Body.mlf:UpdateBankInformation.mlf:policyNumber = policyNumber;
+		SET OutputRoot.SOAP.Body.mlf:UpdateBankInformation.mlf:productId = productId;
+		SET OutputRoot.SOAP.Body.mlf:UpdateBankInformation.mlf:paymentType = paymentType;
+		SET OutputRoot.SOAP.Body.mlf:UpdateBankInformation.mlf:accountType = accountType;
+		SET OutputRoot.SOAP.Body.mlf:UpdateBankInformation.mlf:accountNumber = accountNumber;
+		SET OutputRoot.SOAP.Body.mlf:UpdateBankInformation.mlf:bank = bank;
+		
+		RETURN TRUE;
+	END;
+END MODULE;

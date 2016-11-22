@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:gen_flows_CreateClaimFileNet_PreIngreso.subflow="gen/flows/CreateClaimFileNet_PreIngreso.subflow" xmlns:gen_flows_putDocument_FileNetWS_1.subflow="gen/flows/putDocument_FileNetWS_1.subflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="flows/generics/SaveDocument.subflow"
+    nsPrefix="flows_generics_SaveDocument.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" useDefaults="true" udpSupport="true">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="SaveDocument" bundleName="flows/generics/SaveDocument" pluginId="MobileServices"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj16/SaveDocument.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj30/SaveDocument.gif"/>
+    <composition>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.Input" location="20,20">
+        <translation xmi:type="utility:TranslatableString" key="InTerminal.Input" bundleName="flows/generics/SaveDocument" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output" location="766,302">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.Output" bundleName="flows/generics/SaveDocument" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="58,65" computeExpression="esql://routine/esqls.documentsUpload#SetPutDocument.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set PutDocument"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="218,175" computeExpression="esql://routine/esqls.documentsUpload#CheckPutDocument.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Check PutDocuments"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="330,292" computeExpression="esql://routine/esqls.documentsUpload#SetCreateClaimFileNet.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set CreateClaimFileNet"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="597,301" computeExpression="esql://routine/esqls.documentsUpload#CheckCreateClaimFileNet.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Check CreateClaimFileNet"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output1" location="756,122">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.Error%20Saving" bundleName="flows/generics/SaveDocument" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output2" location="743,207">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.Error%20Association" bundleName="flows/generics/SaveDocument" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output3" location="742,37">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.Error%20Unexpected" bundleName="flows/generics/SaveDocument" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="gen_flows_putDocument_FileNetWS_1.subflow:FCMComposite_1" xmi:id="FCMComposite_1_5" location="162,117">
+        <translation xmi:type="utility:ConstantString" string="PutDocument"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Invokes WSDL operation and extracts the response from SOAP message."/>
+        <longDescription xmi:type="utility:ConstantString" string="This subflow invokes the WSDL operation and extracts message body from the response message."/>
+      </nodes>
+      <nodes xmi:type="gen_flows_CreateClaimFileNet_PreIngreso.subflow:FCMComposite_1" xmi:id="FCMComposite_1_6" location="472,293">
+        <translation xmi:type="utility:ConstantString" string="CreateClaimFileNet"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Invokes WSDL operation and extracts the response from SOAP message."/>
+        <longDescription xmi:type="utility:ConstantString" string="This subflow invokes the WSDL operation and extracts message body from the response message."/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="OutTerminal.Output1" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="OutTerminal.Output2" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_10" targetNode="OutTerminal.Output3" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_11" targetNode="OutTerminal.Output3" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_1" sourceNode="InTerminal.Input" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_9" targetNode="OutTerminal.Output" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_22" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.putDocumentResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_23" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="OutTerminal.Output3" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8" targetNode="OutTerminal.Output3" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_15" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_16" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.CreateClaimFileNetResponse" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

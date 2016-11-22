@@ -1,0 +1,259 @@
+BROKER SCHEMA esqls.searchclaims
+DECLARE ns13 NAMESPACE 'urn:metlife.services.acord.claim';
+
+CREATE COMPUTE MODULE SearchClaims_esql_ValidateMessage
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyEntireMessage();
+		DECLARE mensaje, delimitador, refe,validanombre CHARACTER;
+		DECLARE DIA, MES , ANIO CHARACTER;
+		DECLARE Contador, J ,I INTEGER;
+		DECLARE FLAG BOOLEAN;
+		SET delimitador = ';';
+		SET refe = '"';
+
+		SET mensaje = CAST(Environment.HTTP.Input.QueryString.q AS CHARACTER);
+
+		CALL Split(mensaje, Environment.Trailer, delimitador);
+		SET Environment.Trailer.Split[] = Environment.Split[];
+		SET Contador = CARDINALITY(Environment.Trailer.Split.Array[]);
+
+
+		DECLARE rutNumber, policyNumber, beneficiaryRutNumber, fromDate, toDate,status,orderBy,order,limit, offset CHARACTER;
+		DECLARE beneficiaryRutNumber1, fromDate1, toDate1,status1,orderBy1,order1,limit1, offset1 CHARACTER;
+
+		SET beneficiaryRutNumber = 'beneficiaryRutNumber';
+		SET fromDate = 'fromDate';
+		SET toDate = 'toDate';
+		SET status = 'status';
+		SET orderBy = 'orderBy';
+		SET order = 'order';
+		SET limit = 'limit';
+		SET offset = 'offset';
+
+		SET rutNumber = Environment.EntradaVariable.rut;
+		SET policyNumber = Environment.EntradaVariable.poliza;
+
+		SET I = 1;
+		SET J = Contador;
+
+		WHILE I <= J DO
+
+			SET validanombre = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) BEFORE '==');
+
+			IF (validanombre = beneficiaryRutNumber) THEN
+
+				SET beneficiaryRutNumber1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '=="');
+				SET beneficiaryRutNumber1 = SUBSTRING(beneficiaryRutNumber1 BEFORE refe);
+			END IF;
+
+			IF (validanombre = fromDate) THEN
+
+				SET fromDate1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '==');
+
+			END IF;
+
+			IF (validanombre = toDate) THEN
+
+				SET toDate1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '==');
+
+			END IF;
+
+			IF (validanombre = status) THEN
+
+				SET status1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '=="');
+				SET status1 = SUBSTRING(status1 BEFORE refe);
+			END IF;
+
+			IF (validanombre = orderBy) THEN
+
+				SET orderBy1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '=="');
+				SET orderBy1 = SUBSTRING(orderBy1 BEFORE refe);
+			END IF;
+
+
+			IF (validanombre = order) THEN
+
+				SET order1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '=="');
+				SET order1 = SUBSTRING(order1 BEFORE refe);
+			END IF;
+
+			IF (validanombre = limit) THEN
+
+				SET limit1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '==');
+
+			END IF;
+
+			IF (validanombre = offset) THEN
+
+				SET offset1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '==');
+
+			END IF;
+
+			SET I = I + 1;
+
+		END WHILE;
+
+		IF rutNumber <> '' AND beneficiaryRutNumber1 <> '' AND policyNumber <> '' THEN
+
+			CREATE FIELD OutputRoot.XMLNSC.ns13:SearchClaims TYPE Name;
+			DECLARE rOut REFERENCE TO OutputRoot.XMLNSC.ns13:SearchClaims;
+
+
+			SET rOut.ns13:partyRUT = CAST(beneficiaryRutNumber1 AS CHARACTER);
+			--SET rOut.ns13:partyRoleId = 18;
+			SET rOut.ns13:agreementNumber = policyNumber;
+			SET rOut.ns13:backendId = 2;
+			SET rOut.ns13:insuredRUT = rutNumber;
+
+			IF status1 = 'En Proceso' THEN
+				SET rOut.ns13:claimStatusId = 59;
+			END IF;
+
+			IF status1 = 'Pagado' THEN
+				SET rOut.ns13:claimStatusId = 54;
+			END IF;
+
+			IF status1 = 'Rechazado' THEN
+				SET rOut.ns13:claimStatusId = 14;
+			END IF;
+
+			IF fromDate1 <> '' THEN
+				SET DIA = SUBSTRING(fromDate1 FROM 1 FOR 2);
+				SET MES = SUBSTRING(fromDate1 FROM 4 FOR 2);
+				SET ANIO = SUBSTRING(fromDate1 FROM 7 FOR 4);
+				SET fromDate1 = ANIO||'-'||MES||'-'||DIA||'T'||'00:00:00';
+				SET rOut.ns13:startDate = fromDate1;
+			ELSE
+				SET fromDate1 = REPLACE(SUBSTRING(CAST(CURRENT_DATE AS CHARACTER) AFTER 'DATE '), '''', '');
+				SET DIA = SUBSTRING(fromDate1 FROM 9 FOR 2);
+				SET MES = SUBSTRING(fromDate1 FROM 6 FOR 2);
+				SET ANIO = SUBSTRING(fromDate1 FROM 1 FOR 4);
+				SET fromDate1 = ANIO||'-'||MES||'-'||DIA||'T'||'00:00:00';
+				SET rOut.ns13:startDate = fromDate1;
+			END IF;
+
+			IF toDate1 <> '' THEN
+				SET DIA = SUBSTRING(toDate1 FROM 1 FOR 2);
+				SET MES = SUBSTRING(toDate1 FROM 4 FOR 2);
+				SET ANIO = SUBSTRING(toDate1 FROM 7 FOR 4);
+				SET toDate1 = ANIO||'-'||MES||'-'||DIA||'T'||'00:00:00';
+				SET rOut.ns13:endDate = toDate1;
+			ELSE
+				SET toDate1 = REPLACE(SUBSTRING(CAST((CURRENT_DATE + INTERVAL '3' MONTH)AS CHARACTER) AFTER 'DATE '), '''', '');
+				SET DIA = SUBSTRING(toDate1 FROM 9 FOR 2);
+				SET MES = SUBSTRING(toDate1 FROM 6 FOR 2);
+				SET ANIO = SUBSTRING(toDate1 FROM 1 FOR 4);
+				SET toDate1 = ANIO||'-'||MES||'-'||DIA||'T'||'00:00:00';
+				SET rOut.ns13:endDate = toDate1;
+			END IF;
+
+			IF orderBy1 <> '' THEN
+				SET Environment.parameters.orderBy.Item[1] = orderBy1;
+				SET rOut.ns13:orderBy = '-';
+			ELSE
+				SET Environment.parameters.orderBy.Item[1] = submittedDate;
+				SET Environment.parameters.orderBy.Item[2] = status;
+				SET rOut.ns13:orderBy = '-';
+			END IF;
+
+			IF order1 <> 'desc' OR order1 = '' OR order1 IS NULL THEN
+				SET rOut.ns13:ascendingOrder = CAST(true AS BOOLEAN);
+				SET Environment.parameters.order = 'asc';
+			else
+				SET rOut.ns13:ascendingOrder = CAST(false AS BOOLEAN);
+				SET Environment.parameters.order = 'desc';
+			END IF;
+
+			IF offset1 <> '' AND offset1 <> 0 THEN
+				SET rOut.ns13:pageIndex = offset1;
+			ELSE
+				SET rOut.ns13:pageIndex = 1;
+				SET Environment.Val = 0;
+			END IF;
+
+
+			IF limit1 <> '' THEN
+
+				SET rOut.ns13:pageCount = limit1;
+			ELSE
+				SET rOut.ns13:pageCount = 10000;
+			END IF;
+
+			SET Environment.limit = rOut.ns13:pageCount;
+			SET Environment.offset = rOut.ns13:pageIndex;
+		ELSE
+
+			SET FLAG = FALSE;
+			SET OutputRoot.JSON.Data.error.code = 409;
+			SET OutputRoot.JSON.Data.error.message = 'MandatoryCheckFailed';
+
+			CREATE FIELD OutputRoot.JSON.Data.error.errors IDENTITY(JSON.Array)errors;
+			SET OutputRoot.JSON.Data.error.errors.Item[1].reason = 'MissingParameter';
+
+			IF beneficiaryRutNumber1 IS NULL AND rutNumber IS NULL THEN
+				SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList.Item[1] = 'beneficiaryRutNumber'||','||'rutNumber';
+				SET FLAG = TRUE;
+			END IF;
+
+			IF beneficiaryRutNumber1 IS NULL AND FLAG = FALSE THEN
+				SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList.Item[1] = 'beneficiaryRutNumber';
+			END IF;
+
+			IF rutNumber IS NULL AND FLAG = FALSE THEN
+				SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList.Item[1] = 'rutNumber';
+
+			END IF;
+
+			SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList TYPE = JSON.Array;
+			PROPAGATE TO TERMINAL 'out1';
+			RETURN FALSE;
+
+
+		END IF;
+
+
+
+
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+
+
+	CREATE PROCEDURE Split (IN S CHARACTER, IN Env REFERENCE, IN Delim CHARACTER)
+	BEGIN
+		DECLARE P INTEGER;
+		DECLARE Idx INTEGER 1;
+
+		SET Env.Split = NULL;
+
+		REPEAT
+			SET P = POSITION(Delim IN S);
+			IF P = 0 THEN
+				IF LENGTH(S) > 0 THEN
+					SET Env.Split.Array[Idx] = S;
+				END IF;
+			ELSE
+				SET Env.Split.Array[Idx] = LEFT(S, P - 1);
+				SET S = SUBSTRING(S FROM P + LENGTH(Delim));
+				SET Idx = Idx + 1;
+			END IF;
+			UNTIL P = 0
+
+		END REPEAT;
+
+	END;
+END MODULE;

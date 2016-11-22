@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmWSReply.msgnode="ComIbmWSReply.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:flows_generics_ReturnErrorResponse.subflow="flows/generics/ReturnErrorResponse.subflow" xmlns:flows_generics_ValidateCommonHeader.subflow="flows/generics/ValidateCommonHeader.subflow" xmlns:flows_generics_ValidateToken.subflow="flows/generics/ValidateToken.subflow"
+    xmlns:gen_flows_UpdatePartyContactInfo_PartyService.subflow="gen/flows/UpdatePartyContactInfo_PartyService.subflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="flows/generics/UpdateProfile.subflow"
+    nsPrefix="flows_generics_UpdateProfile.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="UpdateProfile" bundleName="flows/generics/UpdateProfile" pluginId="MobileServices"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj16/UpdateProfile.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj30/UpdateProfile.gif"/>
+    <composition>
+      <nodes xmi:type="flows_generics_ValidateToken.subflow:FCMComposite_1" xmi:id="FCMComposite_1_4" location="296,138">
+        <translation xmi:type="utility:ConstantString" string="ValidateToken"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_6" location="209,72" computeExpression="esql://routine/esqls.updateProfile#GetInputData.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Get Input Data"/>
+      </nodes>
+      <nodes xmi:type="flows_generics_ReturnErrorResponse.subflow:FCMComposite_1" xmi:id="FCMComposite_1_7" location="1224,108">
+        <translation xmi:type="utility:ConstantString" string="ReturnErrorResponse"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="1248,291">
+        <translation xmi:type="utility:ConstantString" string="HTTP Reply"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_10" location="1006,290" computeExpression="esql://routine/esqls.updateProfile#CreateOutputSuccess.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set Success Response"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_23" location="395,138" computeExpression="esql://routine/esqls.updateProfile#ValidateParameters.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="ValidateParameters"/>
+      </nodes>
+      <nodes xmi:type="gen_flows_UpdatePartyContactInfo_PartyService.subflow:FCMComposite_1" xmi:id="FCMComposite_1_24" location="674,281">
+        <translation xmi:type="utility:ConstantString" string="UpdatePartyContactInfo"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Invokes WSDL operation and extracts the response from SOAP message."/>
+        <longDescription xmi:type="utility:ConstantString" string="This subflow invokes the WSDL operation and extracts message body from the response message."/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_25" location="824,289" computeExpression="esql://routine/esqls.updateProfile#CheckUpdatePartyContactInfo.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Check UpdateProfile"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_26" location="1027,217" computeExpression="esql://routine/esqls.updateProfile#CreateOutputErrorUpdating.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Error Update"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_27" location="497,280" computeExpression="esql://routine/esqls.updateProfile#SetUpdatePartyContactInfo.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set UpdatePartyContactInfo"/>
+      </nodes>
+      <nodes xmi:type="flows_generics_ValidateCommonHeader.subflow:FCMComposite_1" xmi:id="FCMComposite_1_2" location="57,72">
+        <translation xmi:type="utility:ConstantString" string="ValidateCommonHeader"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_11" location="1020,145" computeExpression="esql://routine/esqls.updateProfile#CreateOutputErrorEmpty.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Error Validation"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_12" location="1017,73" computeExpression="esql://routine/esqls.updateProfile#CreateOutputErrorMandatory.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Error Mandatory"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.Input" location="5,72">
+        <translation xmi:type="utility:TranslatableString" key="InTerminal.Input" bundleName="flows/generics/UpdateProfile" pluginId="MobileServices"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_7" sourceNode="FCMComposite_1_26" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_26" sourceNode="FCMComposite_1_25" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_12" sourceNode="FCMComposite_1_23" sourceTerminalName="OutTerminal.out1" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_7" sourceNode="FCMComposite_1_12" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_11" sourceNode="FCMComposite_1_23" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8" targetNode="FCMComposite_1_7" sourceNode="FCMComposite_1_11" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_10" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_11" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_18" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_25" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_19" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_2" sourceNode="InTerminal.Input" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_12" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.out1" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_25" targetNode="FCMComposite_1_26" sourceNode="FCMComposite_1_24" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_26" targetNode="FCMComposite_1_26" sourceNode="FCMComposite_1_24" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_28" targetNode="FCMComposite_1_25" sourceNode="FCMComposite_1_24" sourceTerminalName="OutTerminal.UpdatePartyContactInfoResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_9" targetNode="FCMComposite_1_23" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_12" targetNode="FCMComposite_1_27" sourceNode="FCMComposite_1_23" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_13" targetNode="FCMComposite_1_24" sourceNode="FCMComposite_1_27" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

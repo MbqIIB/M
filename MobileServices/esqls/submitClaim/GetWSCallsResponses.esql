@@ -1,0 +1,37 @@
+BROKER SCHEMA esqls.submitClaim
+PATH esqls.generics;
+
+/*******************************
+ * CheckUpdatePartyContactInfo *
+ *******************************/
+CREATE COMPUTE MODULE CheckUpdatePartyContactInfo
+	
+	--Declare namespaces
+	DECLARE claims NAMESPACE 'metlife.cl';
+	DECLARE responseClaim NAMESPACE 'http://schemas.datacontract.org/2004/07/WcfClaims';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get response into local vars
+		DECLARE claimNumber DECIMAL InputRoot.SOAP.Body.claims:CreateClaimResponse.claims:CreateClaimResult.responseClaim:ClaimNumber;
+		DECLARE code INTEGER InputRoot.SOAP.Body.claims:CreateClaimResponse.claims:CreateClaimResult.responseClaim:Code;
+		DECLARE message CHARACTER InputRoot.SOAP.Body.claims:CreateClaimResponse.claims:CreateClaimResult.responseClaim:Message;
+		
+		IF  (claimNumber = 0 AND code <> 0) THEN
+			SET OutputLocalEnvironment.OtherError = 'CreateClaimResponse Error Code:' || CAST(code AS CHARACTER) || '. CreateClaimResponse Error Message:' || message;
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		SET OutputLocalEnvironment.claimNumber = claimNumber;
+		
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+

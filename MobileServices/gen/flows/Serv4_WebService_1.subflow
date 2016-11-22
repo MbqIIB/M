@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmSOAPRequest.msgnode="ComIbmSOAPRequest.msgnode" xmlns:ComIbmTrace.msgnode="ComIbmTrace.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="gen/flows/Serv4_WebService_1.subflow"
+    nsPrefix="gen_flows_Serv4_WebService_1.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" useDefaults="true" udpSupport="true">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.WebServiceURL_WS_IVR_Clave" name="WebServiceURL_WS_IVR_Clave" defaultValueLiteral="http://mustbeoverwritten">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <translation xmi:type="utility:TranslatableString" key="Serv4_WebService_1" bundleName="gen/flows/Serv4_WebService_1" pluginId="MobileServices"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj16/Serv4_WebService_1.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj30/Serv4_WebService_1.gif"/>
+    <composition>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.in" location="20,20">
+        <translation xmi:type="utility:TranslatableString" key="InTerminal.in" bundleName="gen/flows/Serv4_WebService_1" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="ComIbmSOAPRequest.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="306,21" wsdlFileName="WebService_1.wsdl" selectedPortType="WebServiceSoap" selectedBinding="WebServiceSoap" selectedOperation="Serv4" selectedPort="WebServiceSoap" targetNamespace="http://tempuri.org/" useHTTPTransport="true" webServiceURL="http://mustbeoverwritten" sslProtocol="TLS">
+        <translation xmi:type="utility:ConstantString" string="Request"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.failure" location="559,13">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.failure" bundleName="gen/flows/Serv4_WebService_1" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.fault" location="564,183">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.fault" bundleName="gen/flows/Serv4_WebService_1" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Serv4Response" location="544,95">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.Serv4Response" bundleName="gen/flows/Serv4_WebService_1" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="141,20" computeExpression="esql://routine/esqls.generics#ChangeWebServiceURL_WS_IVR_Clave.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Change WS URL"/>
+      </nodes>
+      <nodes xmi:type="ComIbmTrace.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="1275,373" destination="file" filePath="C:\Trace\1.log" pattern="Root:&#xD;&#xA;${Root}&#xD;&#xA;LocalEnvironment:&#xD;&#xA;${LocalEnvironment}&#xD;&#xA;ExceptionList:&#xD;&#xA;${ExceptionList}">
+        <translation xmi:type="utility:ConstantString" string="Trace"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="OutTerminal.failure" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="OutTerminal.fault" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="OutTerminal.Serv4Response" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_2" sourceNode="InTerminal.in" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.WebServiceURL_WS_IVR_Clave">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.WebServiceURL_WS_IVR_Clave" bundleName="gen/flows/Serv4_WebService_1" pluginId="MobileServices"/>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

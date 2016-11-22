@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="SecurityService" targetNamespace="urn:metlife.services.acord.security" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:metlife.services.acord.security" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:documentation>
+    <wsdl:appinfo source="WMQI_APPINFO">
+      <MRWSDLAppInfo imported="true">
+        <binding hasEncoding="false" imported="true" name="basicHttpBinding_SecurityService" originalBindingStyle="document"/>
+        <binding hasEncoding="false" imported="true" name="customBinding_SecurityService" originalBindingStyle="document"/>
+      </MRWSDLAppInfo>
+    </wsdl:appinfo>
+  </wsdl:documentation>
+  <wsp:Policy wsu:Id="customBinding_SecurityService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wsaw:UsingAddressing/>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="urn:metlife.services.acord.security/Imports">
+      <xsd:import namespace="urn:metlife.services.acord.security" schemaLocation="xsd_xsd0.xsd"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ISecurityService_CreateToken_InputMessage">
+    <wsdl:part element="tns:CreateToken" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ISecurityService_CreateToken_OutputMessage">
+    <wsdl:part element="tns:CreateTokenResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ISecurityService_ValidateToken_InputMessage">
+    <wsdl:part element="tns:ValidateToken" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ISecurityService_ValidateToken_OutputMessage">
+    <wsdl:part element="tns:ValidateTokenResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ISecurityService_KillToken_InputMessage">
+    <wsdl:part element="tns:KillToken" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ISecurityService_KillToken_OutputMessage">
+    <wsdl:part element="tns:KillTokenResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="ISecurityService">
+    <wsdl:operation name="CreateToken">
+      <wsdl:input message="tns:ISecurityService_CreateToken_InputMessage" wsaw:Action="urn:metlife.services.acord.security/ISecurityService/CreateToken"/>
+      <wsdl:output message="tns:ISecurityService_CreateToken_OutputMessage" wsaw:Action="urn:metlife.services.acord.security/ISecurityService/CreateTokenResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateToken">
+      <wsdl:input message="tns:ISecurityService_ValidateToken_InputMessage" wsaw:Action="urn:metlife.services.acord.security/ISecurityService/ValidateToken"/>
+      <wsdl:output message="tns:ISecurityService_ValidateToken_OutputMessage" wsaw:Action="urn:metlife.services.acord.security/ISecurityService/ValidateTokenResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="KillToken">
+      <wsdl:input message="tns:ISecurityService_KillToken_InputMessage" wsaw:Action="urn:metlife.services.acord.security/ISecurityService/KillToken"/>
+      <wsdl:output message="tns:ISecurityService_KillToken_OutputMessage" wsaw:Action="urn:metlife.services.acord.security/ISecurityService/KillTokenResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="basicHttpBinding_SecurityService" type="tns:ISecurityService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="CreateToken">
+      <soap:operation soapAction="urn:metlife.services.acord.security/ISecurityService/CreateToken" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateToken">
+      <soap:operation soapAction="urn:metlife.services.acord.security/ISecurityService/ValidateToken" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="KillToken">
+      <soap:operation soapAction="urn:metlife.services.acord.security/ISecurityService/KillToken" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="customBinding_SecurityService" type="tns:ISecurityService">
+    <wsp:PolicyReference URI="#customBinding_SecurityService_policy"/>
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="CreateToken">
+      <soap12:operation soapAction="urn:metlife.services.acord.security/ISecurityService/CreateToken" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateToken">
+      <soap12:operation soapAction="urn:metlife.services.acord.security/ISecurityService/ValidateToken" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="KillToken">
+      <soap12:operation soapAction="urn:metlife.services.acord.security/ISecurityService/KillToken" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SecurityService">
+    <wsdl:port binding="tns:basicHttpBinding_SecurityService" name="basicHttpBinding_SecurityService">
+      <soap:address location="http://mlfpcdesbo:22/Click_admin/SecurityService.svc/http"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:customBinding_SecurityService" name="customBinding_SecurityService">
+      <soap12:address location="http://mlfpcdesbo:22/Click_admin/SecurityService.svc/soap"/>
+      <wsa10:EndpointReference>
+        <wsa10:Address>http://mlfpcdesbo:22/Click_admin/SecurityService.svc/soap</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

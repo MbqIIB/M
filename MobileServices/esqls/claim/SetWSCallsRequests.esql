@@ -1,0 +1,171 @@
+BROKER SCHEMA esqls.claim
+
+/******************************************************
+ * GetRUTAndTOKENFromHeaderAndSetSubFlowValidateToken *
+ ******************************************************/
+CREATE COMPUTE MODULE GetRUTAndTOKENFromHeaderAndSetSubFlowValidateToken
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare local vars
+		DECLARE aux CHARACTER;
+		DECLARE rutNumber CHARACTER;
+		DECLARE policyNumber CHARACTER;
+		DECLARE claimNumber CHARACTER;
+		DECLARE tokenNumber CHARACTER;	
+
+		--Extract RUT from URL
+		SET aux = SUBSTRING(InputRoot.HTTPInputHeader."X-Original-HTTP-Command" AFTER 'users/');
+		SET rutNumber = SUBSTRING(aux BEFORE '/');
+		SET claimNumber = SUBSTRING(aux AFTER 'claims/');
+		SET claimNumber = SUBSTRING(claimNumber BEFORE ' ');
+		SET policyNumber = SUBSTRING(SUBSTRING(aux AFTER rutNumber || '/') BEFORE '/claims');
+		
+		--Get token from header
+		SET tokenNumber = InputRoot.HTTPInputHeader."Token";
+		
+		--Save the received variables in the local environment, to be used by ValidateToken.subflow
+		SET OutputLocalEnvironment.RUT = rutNumber;
+		SET OutputLocalEnvironment.Token = tokenNumber;
+		SET OutputLocalEnvironment.ClaimNumber = claimNumber;
+		SET OutputLocalEnvironment.PolicyNumber = policyNumber;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************
+ * SetSearchClaims *
+ *******************/
+CREATE COMPUTE MODULE SetSearchClaims
+	
+	--Declare namespaces
+	DECLARE claim NAMESPACE 'urn:metlife.services.acord.claim';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get parameters from local environment
+		DECLARE policyNumber INTEGER InputLocalEnvironment.PolicyNumber;
+		DECLARE claimNumber INTEGER InputLocalEnvironment.ClaimNumber;		
+		
+		--Set the parameter in the request of SearchClaims to be done
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:agreementNumber = policyNumber;
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:backendId = 2;
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:claimNumber = claimNumber;
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:orderBy = 'A';
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:ascendingOrder = CAST('false' AS BOOLEAN);
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:pageIndex = 1;
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:pageCount = 1;		
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************
+ * SetGetClaim *
+ ***************/
+CREATE COMPUTE MODULE SetGetClaim
+	
+	--Declare namespaces
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.claim';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the rut from the environment
+		DECLARE claimId CHARACTER InputLocalEnvironment.ClaimId;
+		
+		--Set the parameter in the request of GetClaim to be done
+		SET OutputRoot.SOAP.Body.buc2:GetClaim.buc2:claimId = claimId;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+/***************
+ * SetGetClaimSettlement *
+ ***************/
+CREATE COMPUTE MODULE SetGetClaimSettlement
+	
+	--Declare namespaces
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.claim';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the rut from the environment
+		DECLARE claimId CHARACTER InputLocalEnvironment.ClaimId;
+		
+		--Set the parameter in the request of GetClaim to be done
+		SET OutputRoot.SOAP.Body.buc2:GetClaimSettlement.buc2:claimId = claimId;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+/***************
+ * SetGetClaimDocuments *
+ ***************/
+CREATE COMPUTE MODULE SetGetClaimDocuments
+	
+	--Declare namespaces
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.claim';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the rut from the environment
+		DECLARE claimId CHARACTER InputLocalEnvironment.ClaimId;
+		
+		--Set the parameter in the request of GetClaim to be done
+		SET OutputRoot.SOAP.Body.buc2:GetClaimDocuments.buc2:claimId = claimId;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+
+
+
+/*************************
+ * SetGetClaimPDF *
+ *************************/
+CREATE COMPUTE MODULE SetGetClaimPDF
+ 
+ --Declare namespaces
+ DECLARE prIng NAMESPACE 'metlife.cl';
+ 
+ CREATE FUNCTION Main() RETURNS BOOLEAN
+ BEGIN
+  --Copy properties and environment so it doesn't get lost
+  SET OutputLocalEnvironment = InputLocalEnvironment;
+  SET OutputRoot.Properties = InputRoot.Properties;
+  
+  --Get the rut from the environment
+  DECLARE claimNumber CHARACTER InputLocalEnvironment.ClaimNumber;
+
+  --Set the parameter in the request of GetClaimSummaryDocument to be done
+  SET OutputRoot.SOAP.Body.prIng:GetClaimSummaryDocument.prIng:claimNumber = claimNumber;
+
+  RETURN TRUE;
+ END;
+END MODULE;

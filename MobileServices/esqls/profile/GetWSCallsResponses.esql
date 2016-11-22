@@ -1,0 +1,170 @@
+BROKER SCHEMA esqls.profile
+
+/*********************************
+ * CheckGetPartyContactInfo      *
+ *********************************/
+CREATE COMPUTE MODULE CheckGetPartyContactInfo
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get response into local vars
+		DECLARE email_0 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:PrimaryEmail;
+		DECLARE phone_0 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:PhoneNumber;
+		DECLARE phone_1 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:MobileNumber;
+		DECLARE address_0 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:Address;
+		DECLARE region_0 DECIMAL InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:Region.acord:Id;
+		DECLARE comune_0 DECIMAL InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:Comune.acord:Id;
+		
+		--If there is not contact info, throws "No data found" error
+		IF (((email_0 IS NULL) OR (email_0 = '')) AND 
+			((phone_0 IS NULL) OR (phone_0 = '')) AND 
+			((phone_1 IS NULL) OR (phone_1 = '')) AND 
+			((address_0 IS NULL) OR (address_0 = '')) AND
+			((region_0 IS NULL) OR (region_0 = '')) AND
+			((comune_0 IS NULL) OR (comune_0 = ''))) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Save the response in the local environment
+		SET OutputLocalEnvironment.Email_0 = email_0;
+		SET OutputLocalEnvironment.Phone_0 = phone_0;
+		SET OutputLocalEnvironment.Phone_1 = phone_1;
+		SET OutputLocalEnvironment.Address_0 = address_0;
+		SET OutputLocalEnvironment.Region_0 = region_0;
+		SET OutputLocalEnvironment.Comune_0 = comune_0;		
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************************
+ * CheckSearchAgreements      *
+ ******************************/
+CREATE COMPUTE MODULE CheckSearchAgreements
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get response into local vars
+		DECLARE agreementID DECIMAL InputRoot.SOAP.Body.agreement:SearchAgreementsResponse.agreement:SearchAgreementsResult.acord:Agreement[1].acord:Id;
+		
+		--If there is no agreement, throw "No data found" error.
+		IF (agreementID IS NULL) THEN 
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Save the agreement ID into local environment
+		SET OutputLocalEnvironment.AgreementId = agreementID;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*********************************
+ * CheckGetAgreementContactInfo      *
+ *********************************/
+CREATE COMPUTE MODULE CheckGetAgreementContactInfo
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get response into local vars
+		DECLARE email_1 CHARACTER InputRoot.SOAP.Body.agreement:GetAgreementContactInfoResponse.agreement:GetAgreementContactInfoResult.acord:AgreementContactInfo.acord:Email;
+		DECLARE phone_2 CHARACTER InputRoot.SOAP.Body.agreement:GetAgreementContactInfoResponse.agreement:GetAgreementContactInfoResult.acord:AgreementContactInfo.acord:PhoneNumber;
+		DECLARE address_1 CHARACTER InputRoot.SOAP.Body.agreement:GetAgreementContactInfoResponse.agreement:GetAgreementContactInfoResult.acord:AgreementContactInfo.acord:Address;
+		DECLARE region_1 DECIMAL InputRoot.SOAP.Body.agreement:GetAgreementContactInfoResponse.agreement:GetAgreementContactInfoResult.acord:AgreementContactInfo.acord:Region.acord:Id;
+		DECLARE comune_1 DECIMAL InputRoot.SOAP.Body.agreement:GetAgreementContactInfoResponse.agreement:GetAgreementContactInfoResult.acord:AgreementContactInfo.acord:Comune.acord:Id;
+		
+		--If there ir no agreement contact info, throws "No data found" error
+		IF (((email_1 IS NULL) OR (email_1 = '')) AND 
+			((phone_2 IS NULL) OR (phone_2 = '')) AND 
+			((address_1 IS NULL) OR (address_1 = '')) AND 
+			((region_1 IS NULL) OR (region_1 = '')) AND
+			((comune_1 IS NULL) OR (comune_1 = ''))) THEN
+			
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Save the response in the local environment
+		SET OutputLocalEnvironment.Email_1 = email_1;
+		SET OutputLocalEnvironment.Phone_2 = phone_2;
+		SET OutputLocalEnvironment.Address_1 = address_1;
+		SET OutputLocalEnvironment.Region_1 = region_1;
+		SET OutputLocalEnvironment.Comune_1 = comune_1;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/************************
+ * GetGetPersonResponse *
+ ************************/
+CREATE COMPUTE MODULE GetGetPersonResponse
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the result from the previous call
+		DECLARE firstName CHARACTER InputRoot.SOAP.Body.buc2:GetPersonResponse.buc2:GetPersonResult.acord:Name.acord:FirstName;
+		DECLARE lastName CHARACTER InputRoot.SOAP.Body.buc2:GetPersonResponse.buc2:GetPersonResult.acord:Name.acord:LastName;
+		DECLARE gender CHARACTER InputRoot.SOAP.Body.buc2:GetPersonResponse.buc2:GetPersonResult.acord:Gender.acord:Name;
+		DECLARE isapre CHARACTER InputRoot.SOAP.Body.buc2:GetPersonResponse.buc2:GetPersonResult.acord:HealthDetail.acord:HealthProvider.acord:Name;
+		DECLARE birthdate CHARACTER InputRoot.SOAP.Body.buc2:GetPersonResponse.buc2:GetPersonResult.acord:BirthDate;
+
+		IF ((firstName IS NULL) OR (firstName = '')) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		IF ((lastName IS NULL) OR (lastName = '')) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		IF ((birthdate IS NULL) OR (birthdate = '')) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		--Save the response in the local environment
+		SET OutputLocalEnvironment.FirstName = firstName;
+		SET OutputLocalEnvironment.LastName = lastName;
+		SET OutputLocalEnvironment.Gender = gender;
+		SET OutputLocalEnvironment.Isapre = isapre;
+		SET OutputLocalEnvironment.Birthdate = birthdate;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+

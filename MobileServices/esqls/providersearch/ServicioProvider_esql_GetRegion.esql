@@ -1,0 +1,54 @@
+BROKER SCHEMA esqls.providersearch
+
+DECLARE ns49 NAMESPACE 'urn:metlife.services.acord.referencedata';
+
+
+CREATE COMPUTE MODULE ServicioProvider_esql_GetRegion
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		
+		IF (InputRoot.XMLNSC.ns:SearchProvidersPerFilterResponse.ns:SearchProvidersPerFilterResult.ns1:OutputResponseDto.ns1:Code = 4) AND (InputRoot.XMLNSC.ns:SearchProvidersPerFilterResponse.ns:SearchProvidersPerFilterResult.ns1:Providers.ns1:ProviderDTO.ns1:ProviderID = '') AND (InputRoot.XMLNSC.ns:SearchProvidersPerFilterResponse.ns:SearchProvidersPerFilterResult.ns1:Providers.ns1:ProviderDTO.ns1:ProviderID = NULL )THEN
+		      
+		      SET OutputRoot.JSON.Data.error.code = 202;
+	          
+	          SET OutputRoot.JSON.Data.error.message = 'No Data Found';
+			  
+			  CREATE FIELD OutputRoot.JSON.Data.error.errors IDENTITY(JSON.Array)errors;
+	          
+	          SET OutputRoot.JSON.Data.error.errors.Item[1].reason = 'NoMatchFound';
+	          
+	          SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList = '';  
+		      
+		      SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList TYPE = JSON.Array; 
+	    	
+	    	
+	    	PROPAGATE TO TERMINAL 'out1'; 
+	     	RETURN FALSE;	
+		
+		ELSE 
+			
+			 DECLARE rIn REFERENCE TO InputRoot.XMLNSC.ns:SearchProvidersPerFilterResponse.ns:SearchProvidersPerFilterResult.ns1:Providers;  
+			 CREATE FIELD OutputRoot.XMLNSC.ns49:RegionRead TYPE Name;
+			 DECLARE rOut REFERENCE TO OutputRoot.XMLNSC.ns49:RegionRead; 
+			 
+			-- SET rOut.ns49:id = rIn.ns1:ProviderDTO.
+		END IF; 
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

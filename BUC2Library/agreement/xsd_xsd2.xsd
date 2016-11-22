@@ -1,0 +1,1233 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD" xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" xmlns:tns="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD">
+  <xsd:complexType name="ArrayOfEndorsement">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Endorsement" nillable="true" type="tns:Endorsement"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfEndorsement" nillable="true" type="tns:ArrayOfEndorsement"/>
+  <xsd:complexType name="Endorsement">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="IssueDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="LatestUpdate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="RequestChannel" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Subject" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Endorsement" nillable="true" type="tns:Endorsement"/>
+  <xsd:complexType name="ArrayOfCoverage">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Coverage" nillable="true" type="tns:Coverage"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfCoverage" nillable="true" type="tns:ArrayOfCoverage"/>
+  <xsd:complexType name="Coverage">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Capital" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Deductible" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="DeductibleLastRenewal" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="DeductibleRenewalPeriod" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="FECUCode" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="IsInEffect" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Premium" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Priority" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="SVSCode" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ValidSince" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="ValidUntil" nillable="true" type="xsd:dateTime"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Coverage" nillable="true" type="tns:Coverage"/>
+  <xsd:complexType name="Amount">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Currency" type="tns:Currency"/>
+      <xsd:element minOccurs="0" name="Value" nillable="true" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Amount" nillable="true" type="tns:Amount"/>
+  <xsd:simpleType name="Currency">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Unknown"/>
+      <xsd:enumeration value="CLP"/>
+      <xsd:enumeration value="UF"/>
+      <xsd:enumeration value="USD"/>
+      <xsd:enumeration value="Quotas"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:element name="Currency" nillable="true" type="tns:Currency"/>
+  <xsd:complexType name="ArrayOfDocument">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" maxOccurs="unbounded" name="Document" nillable="true" type="tns:Document"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfDocument" nillable="true" type="tns:ArrayOfDocument"/>
+  <xsd:complexType name="Document">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="CreationDate" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Location" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Size" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Type" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Document" nillable="true" type="tns:Document"/>
+  <xsd:complexType name="ArrayOfAgreementContactInfo">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="AgreementContactInfo" nillable="true" type="tns:AgreementContactInfo"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfAgreementContactInfo" nillable="true" type="tns:ArrayOfAgreementContactInfo"/>
+  <xsd:complexType name="AgreementContactInfo">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Address" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Comments" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Comune" nillable="true" type="tns:Comune"/>
+      <xsd:element minOccurs="0" name="Country" nillable="true" type="tns:Country"/>
+      <xsd:element minOccurs="0" name="Email" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="EmailBounceCount" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="EmailReadCount" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Kind" nillable="true" type="tns:AgreementContactInfoKind"/>
+      <xsd:element minOccurs="0" name="LatestUpdate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="PhoneNumber" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ReceiveEmails" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="Region" nillable="true" type="tns:Region"/>
+      <xsd:element minOccurs="0" name="Status" nillable="true" type="tns:Status"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="AgreementContactInfo" nillable="true" type="tns:AgreementContactInfo"/>
+  <xsd:complexType name="Comune">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Region" nillable="true" type="tns:Region"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Comune" nillable="true" type="tns:Comune"/>
+  <xsd:complexType name="Region">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Region" nillable="true" type="tns:Region"/>
+  <xsd:complexType name="Country">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Country" nillable="true" type="tns:Country"/>
+  <xsd:complexType name="AgreementContactInfoKind">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="AgreementContactInfoKind" nillable="true" type="tns:AgreementContactInfoKind"/>
+  <xsd:complexType name="Status">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Status" nillable="true" type="tns:Status"/>
+  <xsd:complexType name="ArrayOfInvestmentAlternative">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="InvestmentAlternative" nillable="true" type="tns:InvestmentAlternative"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfInvestmentAlternative" nillable="true" type="tns:ArrayOfInvestmentAlternative"/>
+  <xsd:complexType name="InvestmentAlternative">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="AccountCode" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Balance" nillable="true" type="tns:ArrayOfAmount"/>
+      <xsd:element minOccurs="0" name="CurrentTaxRegime" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Date" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="InvestmentFund" nillable="true" type="tns:InvestmentFund"/>
+      <xsd:element minOccurs="0" name="InvestmentQuota" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="TaxRegime" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="InvestmentAlternative" nillable="true" type="tns:InvestmentAlternative"/>
+  <xsd:complexType name="ArrayOfAmount">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Amount" nillable="true" type="tns:Amount"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfAmount" nillable="true" type="tns:ArrayOfAmount"/>
+  <xsd:complexType name="InvestmentFund">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Currency" type="tns:Currency"/>
+      <xsd:element minOccurs="0" name="CurrentQuotaValue" nillable="true" type="tns:QuotaValue"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="IsActive" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="QuotaCode" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="QuotaValuesHistory" nillable="true" type="tns:ArrayOfQuotaValue"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="InvestmentFund" nillable="true" type="tns:InvestmentFund"/>
+  <xsd:complexType name="QuotaValue">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Date" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="ValueAmount" nillable="true" type="tns:ArrayOfAmount"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="QuotaValue" nillable="true" type="tns:QuotaValue"/>
+  <xsd:complexType name="ArrayOfQuotaValue">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="QuotaValue" nillable="true" type="tns:QuotaValue"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfQuotaValue" nillable="true" type="tns:ArrayOfQuotaValue"/>
+  <xsd:complexType name="ArrayOfAgreementParty">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="AgreementParty" nillable="true" type="tns:AgreementParty"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfAgreementParty" nillable="true" type="tns:ArrayOfAgreementParty"/>
+  <xsd:complexType name="AgreementParty">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="DependentNumber" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Party" nillable="true" type="tns:Party"/>
+      <xsd:element minOccurs="0" name="RelationshipWithInsured" nillable="true" type="tns:Relationship"/>
+      <xsd:element minOccurs="0" name="Roles" nillable="true" type="tns:ArrayOfPartyRole"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="AgreementParty" nillable="true" type="tns:AgreementParty"/>
+  <xsd:complexType name="Party">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="FullName" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Kind" type="tns:PartyKind"/>
+      <xsd:element minOccurs="0" name="RUT" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Party" nillable="true" type="tns:Party"/>
+  <xsd:simpleType name="PartyKind">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Unknown"/>
+      <xsd:enumeration value="Person"/>
+      <xsd:enumeration value="Organization"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:element name="PartyKind" nillable="true" type="tns:PartyKind"/>
+  <xsd:complexType name="Relationship">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Relationship" nillable="true" type="tns:Relationship"/>
+  <xsd:complexType name="ArrayOfPartyRole">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="PartyRole" nillable="true" type="tns:PartyRole"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfPartyRole" nillable="true" type="tns:ArrayOfPartyRole"/>
+  <xsd:complexType name="PartyRole">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="CertificateNumber" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="DisencumbranceOperationCode" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="EndDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="InsuredNumber" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Percentage" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Role" nillable="true" type="tns:Role"/>
+      <xsd:element minOccurs="0" name="StartDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Subrole" nillable="true" type="tns:Subrole"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="PartyRole" nillable="true" type="tns:PartyRole"/>
+  <xsd:complexType name="Role">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="RoleKind" nillable="true" type="tns:RoleKind"/>
+      <xsd:element minOccurs="0" name="Subroles" nillable="true" type="tns:ArrayOfSubrole"/>
+      <xsd:element minOccurs="0" name="ValidSince" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="ValidUntil" nillable="true" type="xsd:dateTime"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Role" nillable="true" type="tns:Role"/>
+  <xsd:complexType name="RoleKind">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="RoleKind" nillable="true" type="tns:RoleKind"/>
+  <xsd:complexType name="ArrayOfSubrole">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Subrole" nillable="true" type="tns:Subrole"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfSubrole" nillable="true" type="tns:ArrayOfSubrole"/>
+  <xsd:complexType name="Subrole">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Subrole" nillable="true" type="tns:Subrole"/>
+  <xsd:complexType name="ArrayOfAgreement">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Agreement" nillable="true" type="tns:Agreement"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfAgreement" nillable="true" type="tns:ArrayOfAgreement"/>
+  <xsd:complexType name="Agreement">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Annuity" nillable="true" type="tns:Annuity"/>
+      <xsd:element minOccurs="0" name="BUC1Data" nillable="true" type="tns:AgreementBUC1Data"/>
+      <xsd:element minOccurs="0" name="BankAccounts" nillable="true" type="tns:ArrayOfBankAccount"/>
+      <xsd:element minOccurs="0" name="CertificateNumber" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="CompensationFund" nillable="true" type="tns:CompensationFund"/>
+      <xsd:element minOccurs="0" name="ContactInfo" nillable="true" type="tns:ArrayOfAgreementContactInfo"/>
+      <xsd:element minOccurs="0" name="Currency" type="tns:Currency"/>
+      <xsd:element minOccurs="0" name="Delivery" nillable="true" type="tns:AgreementDelivery"/>
+      <xsd:element minOccurs="0" name="DeliveryDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="HealthPlan" nillable="true" type="tns:HealthPlan"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="InceptionDate" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="InsuranceInstitution" nillable="true" type="tns:InsuranceInstitution"/>
+      <xsd:element minOccurs="0" name="InsuredCapital" nillable="true" type="tns:ArrayOfAmount"/>
+      <xsd:element minOccurs="0" name="InvestmentAlternatives" nillable="true" type="tns:ArrayOfInvestmentAlternative"/>
+      <xsd:element minOccurs="0" name="IssueDate" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="LastStatusChange" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Number" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Parties" nillable="true" type="tns:ArrayOfAgreementParty"/>
+      <xsd:element minOccurs="0" name="PaymentInformation" nillable="true" type="tns:PaymentInformation"/>
+      <xsd:element minOccurs="0" name="Plan" nillable="true" type="tns:Plan"/>
+      <xsd:element minOccurs="0" name="Premium" nillable="true" type="tns:Premium"/>
+      <xsd:element minOccurs="0" name="PrivateIncome" nillable="true" type="tns:PrivateIncome"/>
+      <xsd:element minOccurs="0" name="Product" nillable="true" type="tns:Product"/>
+      <xsd:element minOccurs="0" name="ReinstatementDeadline" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Risk" nillable="true" type="tns:Risk"/>
+      <xsd:element minOccurs="0" name="SalesChannel" nillable="true" type="tns:SalesChannel"/>
+      <xsd:element minOccurs="0" name="Savings" nillable="true" type="tns:Savings"/>
+      <xsd:element minOccurs="0" name="Status" nillable="true" type="tns:Status"/>
+      <xsd:element minOccurs="0" name="Subrisk" nillable="true" type="tns:Subrisk"/>
+      <xsd:element minOccurs="0" name="ValidSince" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="ValidUntil" nillable="true" type="xsd:dateTime"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Agreement" nillable="true" type="tns:Agreement"/>
+  <xsd:complexType name="Annuity">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="CommittedModality" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="DeferredMonths" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="GuaranteedMonths" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="IncomeType" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ReferencePercentage" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="SourceAFP" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="TemporaryMonths" nillable="true" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Annuity" nillable="true" type="tns:Annuity"/>
+  <xsd:complexType name="AgreementBUC1Data">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="BankRejectionCount" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="BankRejectionLastDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="BasePolicyNumber" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="BasePolicyStatus" type="tns:BasePolicyStatus"/>
+      <xsd:element minOccurs="0" name="HasAutomaticLoan" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="HasBankRejection" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="HealthRecordType" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="AgreementBUC1Data" nillable="true" type="tns:AgreementBUC1Data"/>
+  <xsd:simpleType name="BasePolicyStatus">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Unknown"/>
+      <xsd:enumeration value="Parent"/>
+      <xsd:enumeration value="Child"/>
+      <xsd:enumeration value="PossibleParent"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:element name="BasePolicyStatus" nillable="true" type="tns:BasePolicyStatus"/>
+  <xsd:complexType name="ArrayOfBankAccount">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="BankAccount" nillable="true" type="tns:BankAccount"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfBankAccount" nillable="true" type="tns:ArrayOfBankAccount"/>
+  <xsd:complexType name="BankAccount">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Bank" nillable="true" type="tns:BankingInstitute"/>
+      <xsd:element minOccurs="0" name="CreditCardNumber" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="HasDefaulted" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="HasProtestedCheque" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="IsRefundAccount" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="Number" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Type" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="BankAccount" nillable="true" type="tns:BankAccount"/>
+  <xsd:complexType name="BankingInstitute">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="BankingInstitute" nillable="true" type="tns:BankingInstitute"/>
+  <xsd:complexType name="CompensationFund">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="AffiliationDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Loans" nillable="true" type="tns:ArrayOfLoan"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="CompensationFund" nillable="true" type="tns:CompensationFund"/>
+  <xsd:complexType name="ArrayOfLoan">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Loan" nillable="true" type="tns:Loan"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfLoan" nillable="true" type="tns:ArrayOfLoan"/>
+  <xsd:complexType name="Loan">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="AgreedInstallmentCount" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="AmountGranted" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="AmountPaid" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="AmountPending" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="CurrentInstallmentDueDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Deadline" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="GrantingDate" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="InstallmentAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="InterestRate" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="NextInstallmentDueDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="PaidInstallmentCount" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="PendingInstallmentCount" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="SourceBranchOffice" nillable="true" type="tns:BranchOffice"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Loan" nillable="true" type="tns:Loan"/>
+  <xsd:complexType name="BranchOffice">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Address" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Comune" nillable="true" type="tns:Comune"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Latitude" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Longitude" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Manager" nillable="true" type="tns:Employee"/>
+      <xsd:element minOccurs="0" name="Region" nillable="true" type="tns:Region"/>
+      <xsd:element minOccurs="0" name="ZoneDescription" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="BranchOffice" nillable="true" type="tns:BranchOffice"/>
+  <xsd:complexType name="Employee">
+    <xsd:complexContent mixed="false">
+      <xsd:extension base="tns:Person">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="AdvisorCode" nillable="true" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="AdvisorKind" nillable="true" type="tns:AdvisorKind"/>
+          <xsd:element minOccurs="0" name="AdvisorPrecedence" type="tns:AdvisorPrecedence"/>
+          <xsd:element minOccurs="0" name="AgencyId" nillable="true" type="xsd:decimal"/>
+          <xsd:element minOccurs="0" name="AgencyManager" nillable="true" type="tns:Employee"/>
+          <xsd:element minOccurs="0" name="AgentCode" nillable="true" type="xsd:decimal"/>
+          <xsd:element minOccurs="0" name="BranchOffice" nillable="true" type="tns:BranchOffice"/>
+          <xsd:element minOccurs="0" name="ContractExpiration" nillable="true" type="xsd:dateTime"/>
+          <xsd:element minOccurs="0" name="HireDate" nillable="true" type="xsd:dateTime"/>
+          <xsd:element minOccurs="0" name="IsEmployedByCompetition" nillable="true" type="xsd:boolean"/>
+          <xsd:element minOccurs="0" name="UnitCode" nillable="true" type="xsd:decimal"/>
+          <xsd:element minOccurs="0" name="UnitManager" nillable="true" type="tns:Employee"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="Employee" nillable="true" type="tns:Employee"/>
+  <xsd:complexType name="Person">
+    <xsd:complexContent mixed="false">
+      <xsd:extension base="tns:Party">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="Age" nillable="true" type="xsd:int"/>
+          <xsd:element minOccurs="0" name="BirthDate" type="xsd:dateTime"/>
+          <xsd:element minOccurs="0" name="BusinessDetail" nillable="true" type="tns:PersonBusinessDetail"/>
+          <xsd:element minOccurs="0" name="CustomerSegment" nillable="true" type="tns:PartyCustomerSegment"/>
+          <xsd:element minOccurs="0" name="DeathDate" nillable="true" type="xsd:dateTime"/>
+          <xsd:element minOccurs="0" name="Gender" nillable="true" type="tns:Gender"/>
+          <xsd:element minOccurs="0" name="HealthDetail" nillable="true" type="tns:PersonHealthDetail"/>
+          <xsd:element minOccurs="0" name="IsActive" nillable="true" type="xsd:boolean"/>
+          <xsd:element minOccurs="0" name="IsDead" type="xsd:boolean"/>
+          <xsd:element minOccurs="0" name="Kindreds" nillable="true" type="tns:ArrayOfPartyKindred"/>
+          <xsd:element minOccurs="0" name="LocationDetail" nillable="true" type="tns:PersonLocationDetail"/>
+          <xsd:element minOccurs="0" name="MaritalStatus" nillable="true" type="tns:MaritalStatus"/>
+          <xsd:element minOccurs="0" name="MatrimonialRegime" nillable="true" type="tns:MatrimonialRegime"/>
+          <xsd:element minOccurs="0" name="Name" nillable="true" type="tns:PersonName"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="Person" nillable="true" type="tns:Person"/>
+  <xsd:complexType name="PersonBusinessDetail">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="EmployeeDependance" type="tns:EmployeeDependanceKind"/>
+      <xsd:element minOccurs="0" name="Employment" nillable="true" type="tns:Employment"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="PersonBusinessDetail" nillable="true" type="tns:PersonBusinessDetail"/>
+  <xsd:simpleType name="EmployeeDependanceKind">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Unknown"/>
+      <xsd:enumeration value="Independent"/>
+      <xsd:enumeration value="Dependent"/>
+      <xsd:enumeration value="Both"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:element name="EmployeeDependanceKind" nillable="true" type="tns:EmployeeDependanceKind"/>
+  <xsd:complexType name="Employment">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Employment" nillable="true" type="tns:Employment"/>
+  <xsd:complexType name="PartyCustomerSegment">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="CompanyRelationshipStartDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="CurrentValue" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="CustomerType" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="HasAPVProductsOnly" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="HasBroadband" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="HasCollectiveMedicalExpenses" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="HasExcessPremium" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="HasMedicalExclusion" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="HasMedicalRequirements" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="HasPreferentialCustomerExecutiveAssigned" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="HasSevereIllness" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="Hobbies" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="IsOrphan" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="IsTraveler" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="LastCallDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="LastComplaintDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="LastVisitDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="OrphanedCount" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="OrphanedDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="PotentialValue" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="ReassignedCount" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="RiskValue" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="TelephoneBaseStoredDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="UnorphanDate" nillable="true" type="xsd:dateTime"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="PartyCustomerSegment" nillable="true" type="tns:PartyCustomerSegment"/>
+  <xsd:complexType name="Gender">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Gender" nillable="true" type="tns:Gender"/>
+  <xsd:complexType name="PersonHealthDetail">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="BodyMassIndex" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="HealthInstitute" nillable="true" type="tns:HealthInstitute"/>
+      <xsd:element minOccurs="0" name="HealthProvider" nillable="true" type="tns:HealthProvider"/>
+      <xsd:element minOccurs="0" name="Smoker" nillable="true" type="xsd:boolean"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="PersonHealthDetail" nillable="true" type="tns:PersonHealthDetail"/>
+  <xsd:complexType name="HealthInstitute">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="RUT" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="HealthInstitute" nillable="true" type="tns:HealthInstitute"/>
+  <xsd:complexType name="HealthProvider">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="HealthProvider" nillable="true" type="tns:HealthProvider"/>
+  <xsd:complexType name="ArrayOfPartyKindred">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="PartyKindred" nillable="true" type="tns:PartyKindred"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfPartyKindred" nillable="true" type="tns:ArrayOfPartyKindred"/>
+  <xsd:complexType name="PartyKindred">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="PartyIdentifier" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="RUT" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Relation" nillable="true" type="tns:Relationship"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="PartyKindred" nillable="true" type="tns:PartyKindred"/>
+  <xsd:complexType name="PersonLocationDetail">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Address" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Comune" nillable="true" type="tns:Comune"/>
+      <xsd:element minOccurs="0" name="Country" nillable="true" type="tns:Country"/>
+      <xsd:element minOccurs="0" name="EmergencyContactEmail" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="EmergencyContactName" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="EmergencyContactPhone" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="LatestUpdate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="MobileNumber" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="PhoneNumber" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="PrimaryEmail" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Region" nillable="true" type="tns:Region"/>
+      <xsd:element minOccurs="0" name="SecondaryEmail" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="TertiaryEmail" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="PersonLocationDetail" nillable="true" type="tns:PersonLocationDetail"/>
+  <xsd:complexType name="MaritalStatus">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="MaritalStatus" nillable="true" type="tns:MaritalStatus"/>
+  <xsd:complexType name="MatrimonialRegime">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="MatrimonialRegime" nillable="true" type="tns:MatrimonialRegime"/>
+  <xsd:complexType name="PersonName">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="FirstName" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="LastName" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="MiddleName" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="MotherMaidenName" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="PersonName" nillable="true" type="tns:PersonName"/>
+  <xsd:complexType name="AdvisorKind">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="AdvisorKind" nillable="true" type="tns:AdvisorKind"/>
+  <xsd:simpleType name="AdvisorPrecedence">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="None"/>
+      <xsd:enumeration value="OriginalAdvisor"/>
+      <xsd:enumeration value="SecondAdvisor"/>
+      <xsd:enumeration value="CurrentAdvisor"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:element name="AdvisorPrecedence" nillable="true" type="tns:AdvisorPrecedence"/>
+  <xsd:complexType name="AgreementDelivery">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="AgreementDelivery" nillable="true" type="tns:AgreementDelivery"/>
+  <xsd:complexType name="HealthPlan">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Discount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="HealthInstitute" nillable="true" type="tns:HealthInstitute"/>
+      <xsd:element minOccurs="0" name="MortuaryFee" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Percentage" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="ValidityDate" nillable="true" type="xsd:dateTime"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="HealthPlan" nillable="true" type="tns:HealthPlan"/>
+  <xsd:complexType name="InsuranceInstitution">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="InsuranceInstitution" nillable="true" type="tns:InsuranceInstitution"/>
+  <xsd:complexType name="PaymentInformation">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="LastPaymentDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="PaidUntilDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="PaymentFrequency" nillable="true" type="tns:PaymentFrequency"/>
+      <xsd:element minOccurs="0" name="PaymentMethod" nillable="true" type="tns:PaymentMethod"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="PaymentInformation" nillable="true" type="tns:PaymentInformation"/>
+  <xsd:complexType name="PaymentFrequency">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="PaymentFrequency" nillable="true" type="tns:PaymentFrequency"/>
+  <xsd:complexType name="PaymentMethod">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="PaymentMethod" nillable="true" type="tns:PaymentMethod"/>
+  <xsd:complexType name="Plan">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="InternalName" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Plan" nillable="true" type="tns:Plan"/>
+  <xsd:complexType name="Premium">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="HasExcessPremium" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="TotalAmount" nillable="true" type="tns:ArrayOfAmount"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Premium" nillable="true" type="tns:Premium"/>
+  <xsd:complexType name="PrivateIncome">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="HasCoupon" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="HasGuaranteedCoupon" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="HasInheritableCoupon" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="IsModality3500" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="PremiumRefundAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="PremiumRefundPeriod" nillable="true" type="xsd:dateTime"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="PrivateIncome" nillable="true" type="tns:PrivateIncome"/>
+  <xsd:complexType name="Product">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="BroadLineOfBusiness" nillable="true" type="tns:BroadLineOfBusiness"/>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="InternalName" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="LineOfBusiness" nillable="true" type="tns:LineOfBusiness"/>
+      <xsd:element minOccurs="0" name="MarketingName" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Type" nillable="true" type="tns:ProductType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Product" nillable="true" type="tns:Product"/>
+  <xsd:complexType name="BroadLineOfBusiness">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="BroadLineOfBusiness" nillable="true" type="tns:BroadLineOfBusiness"/>
+  <xsd:complexType name="LineOfBusiness">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="LineOfBusiness" nillable="true" type="tns:LineOfBusiness"/>
+  <xsd:complexType name="ProductType">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ProductType" nillable="true" type="tns:ProductType"/>
+  <xsd:complexType name="Risk">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Risk" nillable="true" type="tns:Risk"/>
+  <xsd:complexType name="SalesChannel">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="SalesChannel" nillable="true" type="tns:SalesChannel"/>
+  <xsd:complexType name="Savings">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="CCJ" nillable="true" type="tns:CuentaCapitalizacionJubilacion"/>
+      <xsd:element minOccurs="0" name="Fees" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="IndividualAccountBalance" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="IsInteramericana" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="IsPartialSurrenderAllowed" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="IsSporadicPaymentAllowed" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="LatestSavedAmountUpdate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="LatestSurrenderValueUpdate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Loans" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="PolicyValue" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="ProtectionAccountBalance" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="SavedAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Surpluses" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="SurrenderValue" nillable="true" type="tns:Amount"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Savings" nillable="true" type="tns:Savings"/>
+  <xsd:complexType name="CuentaCapitalizacionJubilacion">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="AgreedDeposit" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="ExcessPremium" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="SavingsBalance" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="SporadicContribution" nillable="true" type="tns:Amount"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="CuentaCapitalizacionJubilacion" nillable="true" type="tns:CuentaCapitalizacionJubilacion"/>
+  <xsd:complexType name="Subrisk">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Subrisk" nillable="true" type="tns:Subrisk"/>
+
+  <xsd:complexType name="ArrayOfClaim">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Claim" nillable="true" type="tns:Claim"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfClaim" nillable="true" type="tns:ArrayOfClaim"/>
+  <xsd:complexType name="Claim">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="AgreementId" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="AgreementNumber" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Coverage" nillable="true" type="tns:Coverage"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Documents" nillable="true" type="tns:ArrayOfClaimDocument"/>
+      <xsd:element minOccurs="0" name="Group" nillable="true" type="tns:AgreementGroup"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="LossOccurrence" nillable="true" type="tns:LossOccurrence"/>
+      <xsd:element minOccurs="0" name="Notes" nillable="true" type="tns:ArrayOfClaimNote"/>
+      <xsd:element minOccurs="0" name="Number" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Parties" nillable="true" type="tns:ArrayOfClaimParty"/>
+      <xsd:element minOccurs="0" name="Provision" nillable="true" type="tns:ArrayOfClaimProvision"/>
+  	  <xsd:element minOccurs="0" name="ReportChannel" nillable="true" type="xsd:string" />
+  	  <xsd:element minOccurs="0" name="ReportDate" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Settlement" nillable="true" type="tns:ClaimSettlement"/>
+      <xsd:element minOccurs="0" name="SettlementAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Status" nillable="true" type="tns:Status"/>
+      <xsd:element minOccurs="0" name="StatusModificationDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="TotalClaimedAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="TotalDeductibleAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="TotalISAPREAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="TotalPaidAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="TotalProvisionAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Type" type="tns:ClaimType"/>
+      <xsd:element minOccurs="0" name="UFValues" nillable="true" type="tns:ArrayOfUFValue"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="Claim" nillable="true" type="tns:Claim"/>
+
+  <xsd:complexType name="LossOccurrence">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="LossOccurrenceDate" type="xsd:dateTime"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="LossOccurrence" nillable="true" type="tns:LossOccurrence"/>
+
+  <xsd:complexType name="ArrayOfClaimNote">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ClaimNote" nillable="true" type="tns:ClaimNote"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfClaimNote" nillable="true" type="tns:ArrayOfClaimNote"/>
+  <xsd:complexType name="ClaimNote">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="IsConfidential" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="ValidityCode" nillable="true" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ClaimNote" nillable="true" type="tns:ClaimNote"/>
+
+  <xsd:complexType name="ArrayOfParty">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Party" nillable="true" type="tns:Party"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfParty" nillable="true" type="tns:ArrayOfParty"/>
+  <xsd:complexType name="ArrayOfFinancialProvisionDetail">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="FinancialProvisionDetail" nillable="true" type="tns:FinancialProvisionDetail"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfFinancialProvisionDetail" nillable="true" type="tns:ArrayOfFinancialProvisionDetail"/>
+  <xsd:complexType name="FinancialProvisionDetail">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="BenefitCode" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ClaimedAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="DeductibleAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="HealthPlanCoveredAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Imed" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="PaidAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="PaymentPercentage" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="ProviderCode" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="FinancialProvisionDetail" nillable="true" type="tns:FinancialProvisionDetail"/>
+  <xsd:simpleType name="ClaimType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Indemnifiable">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">1</EnumerationValue>
+          </xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="Reimbursable">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">2</EnumerationValue>
+          </xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="Annuity">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">3</EnumerationValue>
+          </xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="Catastrophic">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">4</EnumerationValue>
+          </xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:element name="ClaimType" nillable="true" type="tns:ClaimType"/>
+  <xsd:complexType name="UpdateProductContactInfo">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Address" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="AgreementId" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="AgreementNumber" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="BackendId" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Comments" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ComuneId" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="CountryId" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Email" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="EmailBounceCount" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="EmailReadCount" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="KindId" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="PhoneNumber" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ReceiveEmails" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="RegionId" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Rut" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="StatusId" nillable="true" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="UpdateProductContactInfo" nillable="true" type="tns:UpdateProductContactInfo"/>
+  <xsd:complexType name="TransactionResult">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Status" type="tns:TransactionStatus"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="TransactionResult" nillable="true" type="tns:TransactionResult"/>
+  <xsd:simpleType name="TransactionStatus">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Success">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">1</EnumerationValue>
+          </xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="Error">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">2</EnumerationValue>
+          </xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:element name="TransactionStatus" nillable="true" type="tns:TransactionStatus"/>
+  <xsd:complexType name="FaultExceptionDetail">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="FieldsErrors" nillable="true" type="tns:ArrayOfFieldValidation"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element ibmSchExtn:docRoot="true" name="FaultExceptionDetail" nillable="true" type="tns:FaultExceptionDetail"/>
+  <xsd:complexType name="ArrayOfFieldValidation">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="FieldValidation" nillable="true" type="tns:FieldValidation"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfFieldValidation" nillable="true" type="tns:ArrayOfFieldValidation"/>
+  <xsd:complexType name="FieldValidation">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="ErrorMessage" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="FieldName" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="FieldValidation" nillable="true" type="tns:FieldValidation"/>
+  <xsd:complexType name="ArrayOfEmployee">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Employee" nillable="true" type="tns:Employee"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfEmployee" nillable="true" type="tns:ArrayOfEmployee"/>
+    <xsd:complexType name="ArrayOfCustomerContact">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="CustomerContact" nillable="true" type="tns:CustomerContact"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfCustomerContact" nillable="true" type="tns:ArrayOfCustomerContact"/>
+  <xsd:complexType name="CustomerContact">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="BroadLineOfBusiness" nillable="true" type="tns:BroadLineOfBusiness"/>
+      <xsd:element minOccurs="0" name="Category" nillable="true" type="tns:CustomerContactCategory"/>
+      <xsd:element minOccurs="0" name="Channel" nillable="true" type="tns:CustomerContactChannel"/>
+      <xsd:element minOccurs="0" name="Date" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="LineOfBusiness" nillable="true" type="tns:LineOfBusiness"/>
+      <xsd:element minOccurs="0" name="Operation" nillable="true" type="tns:CustomerContactOperation"/>
+      <xsd:element minOccurs="0" name="Status" nillable="true" type="xsd:boolean"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="CustomerContactCategory">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="CustomerContactCategory" nillable="true" type="tns:CustomerContactCategory"/>
+  <xsd:complexType name="CustomerContactChannel">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="CustomerContactChannel" nillable="true" type="tns:CustomerContactChannel"/>
+  <xsd:complexType name="CustomerContactOperation">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="CustomerContactOperation" nillable="true" type="tns:CustomerContactOperation"/>
+  <xsd:complexType name="Organization">
+    <xsd:complexContent mixed="false">
+      <xsd:extension base="tns:Party">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="LegalName" nillable="true" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="MarketingName" nillable="true" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="OrganizationKind" nillable="true" type="tns:OrganizationKind"/>
+          <xsd:element minOccurs="0" name="Status" nillable="true" type="tns:Status"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="OrganizationKind">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="OrganizationKind" nillable="true" type="tns:OrganizationKind"/>
+  <xsd:complexType name="UpdatePartyContactInfo">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Address" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ComuneId" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="CountryId" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="EmergencyContactEmail" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="EmergencyContactName" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="EmergencyContactPhone" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="MobileNumber" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="PartyId" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="PartyRUT" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="PhoneNumber" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="PrimaryEmail" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="RegionId" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="SecondaryEmail" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="TertiaryEmail" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="UserRUT" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+    <xsd:complexType name="ArrayOfBenefitInsurance">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" maxOccurs="unbounded" name="BenefitInsurance" nillable="true" type="tns:BenefitInsurance"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfBenefitInsurance" nillable="true" type="tns:ArrayOfBenefitInsurance"/>
+  <xsd:complexType name="BenefitInsurance">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="AgreementId" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Amount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Cost" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="EndDate" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="PartyId" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Percentage" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Plan" nillable="true" type="tns:BenefitInsurancePlan"/>
+      <xsd:element minOccurs="0" name="StartDate" type="xsd:dateTime"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="BenefitInsurance" nillable="true" type="tns:BenefitInsurance"/>
+  <xsd:complexType name="BenefitInsurancePlan">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="EndDate" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="StartDate" type="xsd:dateTime"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="BenefitInsurancePlan" nillable="true" type="tns:BenefitInsurancePlan"/>
+
+  <xsd:complexType name="ArrayOfClaimDocument">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ClaimDocument" nillable="true" type="tns:ClaimDocument"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfClaimDocument" nillable="true" type="tns:ArrayOfClaimDocument"/>
+
+  <xsd:complexType name="ClaimDocument">
+    <xsd:complexContent mixed="false">
+      <xsd:extension base="tns:Document">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="AgreementId" nillable="true" type="xsd:decimal"/>
+          <xsd:element minOccurs="0" name="AgreementNumber" nillable="true" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="ClaimId" nillable="true" type="xsd:decimal"/>
+          <xsd:element minOccurs="0" name="ClaimNumber" nillable="true" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="ClaimDocument" nillable="true" type="tns:ClaimDocument"/>
+
+  <xsd:complexType name="AgreementGroup">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Id" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="AgreementGroup" nillable="true" type="tns:AgreementGroup"/>
+
+  <xsd:complexType name="ArrayOfClaimParty">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ClaimParty" nillable="true" type="tns:ClaimParty"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfClaimParty" nillable="true" type="tns:ArrayOfClaimParty"/>
+  <xsd:complexType name="ClaimParty">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Party" nillable="true" type="tns:Party"/>
+      <xsd:element minOccurs="0" name="Roles" nillable="true" type="tns:ArrayOfPartyRole"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ClaimParty" nillable="true" type="tns:ClaimParty"/>
+
+  <xsd:complexType name="ArrayOfClaimProvision">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ClaimProvision" nillable="true" type="tns:ClaimProvision"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfClaimProvision" nillable="true" type="tns:ArrayOfClaimProvision"/>
+  <xsd:complexType name="ClaimProvision">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ISAPREAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Number" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ProviderCode" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ProvisionAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="ProvisionDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Quantity" type="xsd:int"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ClaimProvision" nillable="true" type="tns:ClaimProvision"/>
+
+  <xsd:complexType name="ArrayOfUFValue">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="UFValue" nillable="true" type="tns:UFValue"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfUFValue" nillable="true" type="tns:ArrayOfUFValue"/>
+  <xsd:complexType name="UFValue">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Date" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Value" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="UFValue" nillable="true" type="tns:UFValue"/>
+
+  <xsd:complexType name="ClaimSettlement">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="DeductibleAfter" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="DeductibleBefore" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Id" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="IndemnifiableDetail" nillable="true" type="tns:ArrayOfIndemnifiableClaimSettlementDetail"/>
+      <xsd:element minOccurs="0" name="Number" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="PaidDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="ReimbursableDetail" nillable="true" type="tns:ArrayOfReimbursableClaimSettlementDetail"/>
+      <xsd:element minOccurs="0" name="SettlementDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="TotalClaimedAmount" nillable="true" type="tns:Amount"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ClaimSettlement" nillable="true" type="tns:ClaimSettlement"/>
+  <xsd:complexType name="ArrayOfIndemnifiableClaimSettlementDetail">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="IndemnifiableClaimSettlementDetail" nillable="true" type="tns:IndemnifiableClaimSettlementDetail"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfIndemnifiableClaimSettlementDetail" nillable="true" type="tns:ArrayOfIndemnifiableClaimSettlementDetail"/>
+  <xsd:complexType name="IndemnifiableClaimSettlementDetail">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Benefitiary" nillable="true" type="tns:Party"/>
+      <xsd:element minOccurs="0" name="PayedAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Percentage" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="IndemnifiableClaimSettlementDetail" nillable="true" type="tns:IndemnifiableClaimSettlementDetail"/>
+  <xsd:complexType name="ArrayOfReimbursableClaimSettlementDetail">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ReimbursableClaimSettlementDetail" nillable="true" type="tns:ReimbursableClaimSettlementDetail"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfReimbursableClaimSettlementDetail" nillable="true" type="tns:ArrayOfReimbursableClaimSettlementDetail"/>
+  <xsd:complexType name="ReimbursableClaimSettlementDetail">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="ClaimedAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="DeductibleAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="IMed" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="ISAPREAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="Number" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="PayedAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="PlanPercentage" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="ProviderCode" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ProvisionAmount" nillable="true" type="tns:Amount"/>
+      <xsd:element minOccurs="0" name="ProvisionDate" nillable="true" type="xsd:dateTime"/>
+      <xsd:element minOccurs="0" name="Quantity" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="SettlementAmount" nillable="true" type="tns:Amount"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ReimbursableClaimSettlementDetail" nillable="true" type="tns:ReimbursableClaimSettlementDetail"/>
+
+</xsd:schema>

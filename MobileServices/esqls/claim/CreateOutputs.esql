@@ -1,0 +1,245 @@
+BROKER SCHEMA esqls.claim
+PATH esqls.generics;
+
+/***************************
+ * CreateOutputErrorNoData *
+ ***************************/
+CREATE COMPUTE MODULE CreateOutputErrorNoData
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 202;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'No Data Found';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'NoClaimFound';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************************
+ * CreateOutputErrorValidation *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputErrorValidation
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 409;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'MandatoryCheckFailed';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'MissingParameter';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = InputLocalEnvironment.MissingFields;
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************************
+ * CreateOutputErrorUnexpected *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputErrorUnexpected
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 402;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'UnexpectedIssue';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'ParsingError';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+
+/*******************************
+ * CreateOutputSuccess *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputSuccess
+
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.claim';
+	DECLARE prIng NAMESPACE 'metlife.cl';
+	DECLARE WSClm NAMESPACE 'http://schemas.datacontract.org/2004/07/WcfClaims';
+	DECLARE xsdins NAMESPACE 'http://www.w3.org/2001/XMLSchema-instance';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the responses basic parameters
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line" = 'HTTP/1.1 200 OK'; 
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200; 
+		SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json; charset=utf-8'; 
+		
+		
+		--set dummy metadata
+		SET OutputRoot.JSON.Data.metaData.totalCount = 1;
+		SET OutputRoot.JSON.Data.metaData.limit = 1;
+		SET OutputRoot.JSON.Data.metaData.offset = 1;
+		
+		-- Policies array
+		SET OutputRoot.JSON.Data.claims TYPE = JSON.Array;
+		
+		--Declare vars for Date format
+		DECLARE dateAux DATE;
+		DECLARE charAux CHARACTER;
+		
+		DECLARE claimStatus CHARACTER InputLocalEnvironment.Claim.acord:Status.acord:Name;
+		
+		SET OutputRoot.JSON.Data.claims.Item[1].claimId= CAST(InputLocalEnvironment.ClaimNumber as CHARACTER) ;
+		
+	    DECLARE i INTEGER 1;
+	    DECLARE totalParties INTEGER CARDINALITY( InputLocalEnvironment.Claim.acord:Parties.acord:ClaimParty[]);
+	    DECLARE j INTEGER 1;
+	    DECLARE totalRoles INTEGER 0;
+
+	    WHILE(i<= totalParties) DO
+	       SET j = 1;
+	       SET totalRoles = CARDINALITY( InputLocalEnvironment.Claim.acord:Parties.acord:ClaimParty[i].acord:Roles.acord:PartyRole[]);
+	       
+	       WHILE(j<= totalRoles) DO
+	       
+	       		IF( InputLocalEnvironment.Claim.acord:Parties.acord:ClaimParty[i].acord:Roles.acord:PartyRole[j].acord:Role.acord:Id = 1)THEN 			
+	       			SET OutputRoot.JSON.Data.claims.Item[1].beneficiaryName = InputLocalEnvironment.Claim.acord:Parties.acord:ClaimParty[i].acord:Party.acord:FullName;
+				END IF;
+				
+				IF( InputLocalEnvironment.Claim.acord:Parties.acord:ClaimParty[i].acord:Roles.acord:PartyRole[j].acord:Role.acord:Id = 18)THEN
+	       			SET OutputRoot.JSON.Data.claims.Item[1].principalBeneficiaryName = InputLocalEnvironment.Claim.acord:Parties.acord:ClaimParty[i].acord:Party.acord:FullName;
+				END IF;
+	       
+	       		SET j = j+1;
+	       END WHILE;
+	    
+	       SET i = i+1;
+		END WHILE;
+		
+		IF(InputLocalEnvironment.Claim.acord:ReportDate IS NULL OR InputLocalEnvironment.Claim.acord:ReportDate = '' OR InputLocalEnvironment.Claim.acord:ReportDate.xsdins:nill) THEN
+			SET OutputRoot.JSON.Data.claims.Item[1].submittedDate = '';
+			SET OutputRoot.JSON.Data.claims.Item[1].receivedDate = '';
+		ELSE
+			SET charAux = ClearSpecialChars(InputLocalEnvironment.Claim.acord:ReportDate);
+			SET charAux = SUBSTRING(charAux BEFORE 'T');
+			CALL CharacterToDate(charAux, 'yyyyMMdd') INTO dateAux;
+			CALL DateToCharacter(dateAux,'dd/MM/yyyy') INTO charAux;
+	
+			SET OutputRoot.JSON.Data.claims.Item[1].submittedDate = charAux;
+			SET OutputRoot.JSON.Data.claims.Item[1].receivedDate = charAux;
+		END IF;
+		
+		IF(InputLocalEnvironment.Claim.acord:Status.acord:Name = 'RECHAZADO' )THEN
+		    DECLARE rejDate TIMESTAMP InputLocalEnvironment.Claim.acord:StatusModificationDate;					
+			SET OutputRoot.JSON.Data.claims.Item[1].deniedDate= CAST(rejDate AS CHARACTER FORMAT 'dd/MM/yyyy');
+			SET OutputRoot.JSON.Data.claims.Item[1].reason= InputLocalEnvironment.Claim.acord:Description;
+			SET OutputRoot.JSON.Data.claims.Item[1].reasonDate= CAST(rejDate AS CHARACTER FORMAT 'dd/MM/yyyy');
+		END IF;
+		
+		SET OutputRoot.JSON.Data.claims.Item[1].status = InputLocalEnvironment.Claim.acord:Status.acord:Name;
+		
+		IF(InputLocalEnvironment.Claim.acord:ReportChannel IS NULL OR InputLocalEnvironment.Claim.acord:ReportChannel.xsdins:nil) THEN
+			SET OutputRoot.JSON.Data.claims.Item[1].submissionChannel = '';
+		ELSE
+			SET OutputRoot.JSON.Data.claims.Item[1].submissionChannel = InputLocalEnvironment.Claim.acord:ReportChannel;
+		END IF;
+
+		IF(claimStatus = 'LIQUIDADA' OR claimStatus = 'RECHAZADO' OR claimStatus = 'PAGADO')THEN
+		
+			IF(InputLocalEnvironment.ClaimSettlement.acord:TotalDeductibleAmount.acord:Value IS NULL)THEN
+				SET OutputRoot.JSON.Data.claims.Item[1].deductible = '';
+			ELSE
+				SET OutputRoot.JSON.Data.claims.Item[1].deductible = CAST(InputLocalEnvironment.ClaimSettlement.acord:TotalDeductibleAmount.acord:Value as CHARACTER);
+			END IF;
+		
+		END IF;
+		SET OutputRoot.JSON.Data.claims.Item[1].totalAmount = CAST (InputLocalEnvironment.ClaimSettlement.acord:TotalClaimedAmount.acord:Value AS CHARACTER);
+		
+		
+		IF(claimStatus = 'LIQUIDADA'  OR claimStatus = 'PAGADO')THEN
+			SET OutputRoot.JSON.Data.claims.Item[1].paymentType = '';
+			
+			SET i = 1;
+			DECLARE totalRDetails INTEGER  CARDINALITY( InputLocalEnvironment.ClaimSettlement.acord:Settlement.acord:ReimbursableDetail[] );
+			WHILE(i<=totalRDetails) DO
+			
+			    IF(InputLocalEnvironment.ClaimSettlement.acord:Settlement.acord:ReimbursableDetail[i].acord:IMed)THEN
+			    	SET OutputRoot.JSON.Data.claims.Item[1].paymentType = 'IMED';
+			    END IF;
+				SET i = i+1;
+			END WHILE;
+		
+			SET charAux = InputLocalEnvironment.ClaimSettlement.acord:Settlement.acord:PaidDate;
+			IF(charAux IS NULL OR charAux = '') THEN
+				SET OutputRoot.JSON.Data.claims.Item[1].paidDate = '';
+			  ELSE
+				
+				SET charAux = SUBSTRING(charAux AFTER 'TIMESTAMP');
+				SET charAux = ClearSpecialChars(charAux);
+				CALL CharacterToDate(charAux, 'yyyyMMddHHmmss') INTO dateAux;
+				CALL DateToCharacter(dateAux,'dd/MM/yyyy') INTO charAux;
+				
+				SET OutputRoot.JSON.Data.claims.Item[1].paidDate = charAux;
+			END IF;
+		
+		--SET OutputRoot.JSON.Data.claims.Item[1].paidDate = InputLocalEnvironment.ClaimSettlement.acord:Settlement.acord:PaidDate;
+		--SET OutputRoot.JSON.Data.debugssss.asadas = ClearSpecialChars(InputLocalEnvironment.ClaimSettlement.acord:Settlement.acord:PaidDate);
+		  
+		  
+		  	IF(InputLocalEnvironment.ClaimSettlement.acord:TotalPaidAmount.acord:Value IS NULL)THEN
+		  		SET OutputRoot.JSON.Data.claims.Item[1].payableAmount = '';
+		  	ELSE
+				SET OutputRoot.JSON.Data.claims.Item[1].payableAmount = InputLocalEnvironment.ClaimSettlement.acord:TotalPaidAmount.acord:Value;
+			END IF;
+			
+		END IF;
+		
+		
+		IF(claimStatus = 'LIQUIDADA' OR claimStatus = 'RECHAZADO' OR claimStatus = 'PAGADO') THEN
+			IF(InputLocalEnvironment.ClaimPDF.WSClm:FileNetStream IS NULL or InputLocalEnvironment.ClaimPDF.WSClm:FileNetStream.xsdins:nil)THEN
+				SET OutputRoot.JSON.Data.claims.Item[1].pdf =  '';
+			ELSE
+				SET OutputRoot.JSON.Data.claims.Item[1].pdf =  InputLocalEnvironment.ClaimPDF.WSClm:FileNetStream;
+			END IF;
+		END IF;
+
+	    
+	    SET OutputRoot.JSON.Data.claims.Item[1].documents TYPE = JSON.Array;
+	    
+	    SET i = 1;
+		DECLARE totalDocuments INTEGER  CARDINALITY( InputLocalEnvironment.ClaimDocuments.acord:ClaimDocument[] );
+		WHILE(i<=totalDocuments) DO
+		    SET OutputRoot.JSON.Data.claims.Item[1].documents.Item[i].type=		 InputLocalEnvironment.ClaimDocuments.acord:ClaimDocument[i].acord:Type;
+		    SET OutputRoot.JSON.Data.claims.Item[1].documents.Item[i].size=		 InputLocalEnvironment.ClaimDocuments.acord:ClaimDocument[i].acord:Size;
+		    SET OutputRoot.JSON.Data.claims.Item[1].documents.Item[i].unit=		 'KB';
+		    SET OutputRoot.JSON.Data.claims.Item[1].documents.Item[i].name=		 InputLocalEnvironment.ClaimDocuments.acord:ClaimDocument[i].acord:Name;
+		    SET OutputRoot.JSON.Data.claims.Item[1].documents.Item[i].documentId=		 InputLocalEnvironment.ClaimDocuments.acord:ClaimDocument[i].acord:Id;
+			SET i = i+1;
+		END WHILE;
+	       
+
+
+		RETURN TRUE;
+	END;
+END MODULE;

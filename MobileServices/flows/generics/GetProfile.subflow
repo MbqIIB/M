@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmWSReply.msgnode="ComIbmWSReply.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:flows_generics_ReturnErrorResponse.subflow="flows/generics/ReturnErrorResponse.subflow" xmlns:flows_generics_ValidateCommonHeader.subflow="flows/generics/ValidateCommonHeader.subflow" xmlns:flows_generics_ValidateToken.subflow="flows/generics/ValidateToken.subflow"
+    xmlns:gen_flows_GetPartyContactInfo_PartyService.subflow="gen/flows/GetPartyContactInfo_PartyService.subflow" xmlns:gen_flows_GetPerson_PartyService.subflow="gen/flows/GetPerson_PartyService.subflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="flows/generics/GetProfile.subflow"
+    nsPrefix="flows_generics_GetProfile.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.WebServiceURL_Security" name="WebServiceURL_Security">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.WebServiceURL_Party" name="WebServiceURL_Party">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <translation xmi:type="utility:TranslatableString" key="GetProfile" bundleName="flows/generics/GetProfile" pluginId="MobileServices"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj16/GetProfile.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj30/GetProfile.gif"/>
+    <composition>
+      <nodes xmi:type="gen_flows_GetPartyContactInfo_PartyService.subflow:FCMComposite_1" xmi:id="FCMComposite_1_3" location="579,287">
+        <translation xmi:type="utility:ConstantString" string="GetPartyContactInfo"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Invokes WSDL operation and extracts the response from SOAP message."/>
+        <longDescription xmi:type="utility:ConstantString" string="This subflow invokes the WSDL operation and extracts message body from the response message."/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="441,286" computeExpression="esql://routine/esqls.profile#SetGetPartyContactInfo.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set GetPartyContactInfo"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="908,175" computeExpression="esql://routine/esqls.profile#CreateOutputErrorNoData.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Error No Data Found"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="53,102" computeExpression="esql://routine/esqls.profile#GetRUTAndTOKENFromHeaderAndSetSubFlowValidateToken.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Get Rut And Token"/>
+      </nodes>
+      <nodes xmi:type="flows_generics_ReturnErrorResponse.subflow:FCMComposite_1" xmi:id="FCMComposite_1_18" location="1060,86">
+        <translation xmi:type="utility:ConstantString" string="ReturnErrorResponse"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_19" location="920,296" computeExpression="esql://routine/esqls.profile#CreateOutputContactInfo.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Get ContactInfo"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_20" location="1084,297">
+        <translation xmi:type="utility:ConstantString" string="HTTP Reply"/>
+      </nodes>
+      <nodes xmi:type="flows_generics_ValidateToken.subflow:FCMComposite_1" xmi:id="FCMComposite_1_6" location="165,103">
+        <translation xmi:type="utility:ConstantString" string="ValidateToken"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="917,7" computeExpression="esql://routine/esqls.profile#CreateOutputErrorUnexpected.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Error Unexpected"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="695,295" computeExpression="esql://routine/esqls.profile#CheckGetPartyContactInfo.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Check GetPartyContactInfo"/>
+      </nodes>
+      <nodes xmi:type="gen_flows_GetPerson_PartyService.subflow:FCMComposite_1" xmi:id="FCMComposite_1_2" location="321,185">
+        <translation xmi:type="utility:ConstantString" string="GetPerson"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Invokes WSDL operation and extracts the response from SOAP message."/>
+        <longDescription xmi:type="utility:ConstantString" string="This subflow invokes the WSDL operation and extracts message body from the response message."/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_12" location="230,184" computeExpression="esql://routine/esqls.profile#SetGetPerson.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set GetPerson"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_17" location="393,193" computeExpression="esql://routine/esqls.profile#GetGetPersonResponse.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Check GetPerson"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.Input" location="-143,28">
+        <translation xmi:type="utility:TranslatableString" key="InTerminal.Input" bundleName="flows/generics/GetProfile" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="flows_generics_ValidateCommonHeader.subflow:FCMComposite_1" xmi:id="FCMComposite_1_1" location="-69,28">
+        <translation xmi:type="utility:ConstantString" string="ValidateCommonHeader"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_19" targetNode="FCMComposite_1_18" sourceNode="FCMComposite_1_7" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_14" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_15" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_22" targetNode="FCMComposite_1_18" sourceNode="FCMComposite_1_8" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_10" targetNode="FCMComposite_1_7" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_27" targetNode="FCMComposite_1_20" sourceNode="FCMComposite_1_19" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_12" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_30" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_31" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_37" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_17" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_17" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.GetPersonResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_25" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_17" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_12" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_29" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.GetPartyContactInfoResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_19" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_1" sourceNode="InTerminal.Input" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8" targetNode="FCMComposite_1_9" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.WebServiceURL_Security">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.WebServiceURL_Security" bundleName="gen/flows/ValidateToken_SecurityService" pluginId="MobileServices"/>
+        <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.WebServiceURL_Party">
+          <propertyName xmi:type="utility:TranslatableString" key="Property.WebServiceURL_Party" bundleName="gen/flows/GetPartyContactInfo_PartyService" pluginId="MobileServices"/>
+        </propertyDescriptor>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <attributeLinks promotedAttribute="Property.WebServiceURL_Security" overriddenNodes="FCMComposite_1_6">
+      <overriddenAttribute href="flows/generics/ValidateToken.subflow#Property.WebServiceURL_Security"/>
+    </attributeLinks>
+    <attributeLinks promotedAttribute="Property.WebServiceURL_Party" overriddenNodes="FCMComposite_1_3">
+      <overriddenAttribute href="gen/flows/GetPartyContactInfo_PartyService.subflow#Property.WebServiceURL_Party"/>
+    </attributeLinks>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

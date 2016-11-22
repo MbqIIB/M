@@ -1,0 +1,93 @@
+BROKER SCHEMA esqls.searchclaims
+
+
+CREATE COMPUTE MODULE SearchClaims_esql_ValidateHeader
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--CALL CopyMessageHeaders();
+		--CALL CopyEntireMessage();
+		SET Environment.HTTPInputHeader1[] = Environment.HTTPinputheader[];	    
+	
+
+		DECLARE contentTypeVal CHARACTER 'application/x-www-form-urlencoded';
+		DECLARE acceptVal CHARACTER 'application/json,application/xml,text/plain,text/html,application/xhtml+xml';
+		DECLARE acceptEncodingVal CHARACTER '*';
+		DECLARE apiVersionVal INTEGER 1;
+		DECLARE tenantIdVal INTEGER 3;
+		--Declare error message var
+		DECLARE errorMessage CHARACTER '';
+		--Declare common attributes from http headers
+		DECLARE contentType CHARACTER;
+		DECLARE accept CHARACTER;
+		DECLARE acceptEncoding CHARACTER;
+		DECLARE apiVersion INTEGER;
+		DECLARE tenantId INTEGER;
+		--Get values from header
+		SET contentType = Environment.HTTPinputheader."Content-Type";
+		SET accept = Environment.HTTPinputheader."Accept";
+		SET acceptEncoding = Environment.HTTPinputheader."Accept-Encoding";
+		SET apiVersion = Environment.HTTPinputheader."Api-Version";
+		SET tenantId = Environment.HTTPinputheader."Tenantid";
+		--Validate values of attribute Content-Type
+		IF (contentType IS NULL OR contentType <> contentTypeVal) THEN
+			SET errorMessage = '"Content-Type" attribute value is wrong, expected "' || contentTypeVal || '" but was "' || contentType || '". ';
+		END IF;
+		--Validate values of attribute Accept
+		IF (accept IS NULL OR accept <> acceptVal) THEN
+			SET errorMessage = errorMessage || '"Accept" attribute value is wrong, expected "' || acceptVal || '" but was "' || accept || '". ';
+		END IF;
+		--Validate values of attribute Accept-Encoding
+		IF (acceptEncoding IS NULL OR acceptEncoding <> acceptEncodingVal) THEN
+			SET errorMessage = errorMessage || '"Accept-Encoding" attribute value is wrong, expected "' || acceptEncodingVal || '" but was "' || acceptEncoding || '". ';
+		END IF;
+		--Validate values of attribute API-Version
+		IF (apiVersion IS NULL OR apiVersion <> apiVersionVal) THEN
+			SET errorMessage = errorMessage || '"API-Version" attribute value is wrong, expected "' || CAST(apiVersionVal AS CHARACTER) || '" but was "' || CAST(apiVersion AS CHARACTER) || '". ';
+		END IF;
+		--Validate values of attribute TenantId
+		IF (tenantId IS NULL OR tenantId <> tenantIdVal) THEN
+			SET errorMessage = errorMessage || '"TenantId" attribute value is wrong, expected "' || CAST(tenantIdVal AS CHARACTER) || '" but was "' || CAST(tenantId AS CHARACTER) || '". ';
+		END IF;
+		--If there is any error propagate to Failure terminal
+		IF (errorMessage IS NOT NULL AND errorMessage <> '') THEN
+			--
+			SET OutputRoot.JSON.Data.error.code = 402;
+			SET OutputRoot.JSON.Data.error.message = 'Unexpected Issue';
+
+			CREATE FIELD OutputRoot.JSON.Data.error.errors IDENTITY(JSON.Array)errors;
+			SET OutputRoot.JSON.Data.error.errors.Item[1].reason = 'Wrong Header';
+			SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList = '';
+			SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList TYPE = JSON.Array;
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;		 
+			-- IF (InContentType = RContentType) AND ( InAccept = RAccept) AND (InAcceptEncoding = RAcceptEncoding) AND (InAPIVersion = RAPIVersion) AND (InTenantId = RTenantId) THEN
+
+		ELSE		  
+
+
+			CALL CopyMessageHeaders();
+
+		END IF;		 
+		
+		
+		
+		
+
+
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

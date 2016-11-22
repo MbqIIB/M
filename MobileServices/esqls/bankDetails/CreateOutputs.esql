@@ -1,0 +1,145 @@
+BROKER SCHEMA esqls.bankDetails
+PATH esqls.generics;
+
+/*******************************
+ * CreateOutputErrorUnexpected *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputErrorUnexpected
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 402;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Unexpected Issue';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'Parsing Error';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+		 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************************
+ * CreateOutputErrorValidation *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputErrorValidation
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 406;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Validation Failed';
+		SET OutputLocalEnvironment.Error.ErrorReason = InputLocalEnvironment.ErrorValidationReason;
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+		 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************************
+ * CreateOutputErrorMandatory *
+ ******************************/
+CREATE COMPUTE MODULE CreateOutputErrorMandatory
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 409;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Mandatory Fields Required';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'MissingParameter';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = InputLocalEnvironment.MissingFields;
+		 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/********************************
+ * CreateOutputErrorCodeExpired *
+ ********************************/
+CREATE COMPUTE MODULE CreateOutputErrorCodeExpired
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 411;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Security Code is expired';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'CodeExpired';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+		 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************************
+ * CreateOutputErrorUpdate *
+ ***************************/
+CREATE COMPUTE MODULE CreateOutputErrorUpdate
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 407;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Update Failed';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'SQLQueryFailed';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+		 
+		CALL LogFullException(InputExceptionList, InputRoot, InputLocalEnvironment.ErrorMessage);
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***********************
+ * CreateOutputSuccess *
+ ***********************/
+CREATE COMPUTE MODULE CreateOutputSuccess
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the responses basic parameters
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line" = 'HTTP/1.1 200 OK'; 
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200; 
+		SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json; charset=utf-8'; 
+		
+		--Set the token in the header
+		SET OutputRoot.HTTPResponseHeader."token" = InputLocalEnvironment.Token;
+
+		--Create the JSON response body
+		SET OutputRoot.JSON.Data.code = 200;
+		SET OutputRoot.JSON.Data.message = 'Success';
+
+		RETURN TRUE;
+	END;
+END MODULE;
+

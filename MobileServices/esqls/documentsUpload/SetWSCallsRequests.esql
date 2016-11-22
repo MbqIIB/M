@@ -1,0 +1,120 @@
+BROKER SCHEMA esqls.documentsUpload
+
+/*******************
+ * SetGetAgreement *
+ *******************/
+CREATE COMPUTE MODULE SetGetAgreement
+	
+	--Declare namespaces
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the parameters in the request of GetAgreement to be done
+		SET OutputRoot.SOAP.Body.agreement:GetAgreement.agreement:agreementNumber = InputLocalEnvironment.PolicyNumber;
+		SET OutputRoot.SOAP.Body.agreement:GetAgreement.agreement:backendId = 2;
+		--TODO: Actualmente sólo se utiliza 2 para SACS, evaluar si se va a utilizar otra línea de negocio.
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************
+ * SetNextDocument *
+ *******************/
+CREATE COMPUTE MODULE SetNextDocument
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get counter of current document element
+		DECLARE currentDocument DECIMAL InputLocalEnvironment.CurrentDocument;
+		SET currentDocument = currentDocument + 1;
+		
+		--Save counter of next agreement element on local environment
+		SET OutputLocalEnvironment.CurrentDocument = currentDocument;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************
+ * SetPutDocument *
+ ******************/
+CREATE COMPUTE MODULE SetPutDocument
+	
+	--Declare namespaces
+	DECLARE fnet NAMESPACE 'http://filenet.ws.metlife.cl/';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get documents pointer
+		DECLARE currentDocument INTEGER InputLocalEnvironment.CurrentDocument;
+		DECLARE i INTEGER 1;
+		
+		--Set the parameter in the request of PutDocument to be done
+		SET OutputRoot.SOAP.Body.fnet:putDocument.ApplicationId = 3;
+		SET OutputRoot.SOAP.Body.fnet:putDocument.CreatorTaskId = 1;
+		SET OutputRoot.SOAP.Body.fnet:putDocument.BusinessDocumentId = '0000';
+		SET OutputRoot.SOAP.Body.fnet:putDocument.Document.filename = InputLocalEnvironment.Documents.Item[currentDocument].name;
+		SET OutputRoot.SOAP.Body.fnet:putDocument.Document.metadataList[i].name  = 'TipoDocumento';
+		SET OutputRoot.SOAP.Body.fnet:putDocument.Document.metadataList[i].value = InputLocalEnvironment.Documents.Item[currentDocument].type;	
+		SET i = i + 1;	
+		SET OutputRoot.SOAP.Body.fnet:putDocument.Document.metadataList[i].name  = 'NumeroReclamo';
+		SET OutputRoot.SOAP.Body.fnet:putDocument.Document.metadataList[i].value = InputLocalEnvironment.ClaimId;
+		SET i = i + 1;	
+		SET OutputRoot.SOAP.Body.fnet:putDocument.Document.metadataList[i].name  = 'RUT';
+		SET OutputRoot.SOAP.Body.fnet:putDocument.Document.metadataList[i].value = InputLocalEnvironment.RUT;
+		--SET i = i + 1; 	
+		--SET OutputRoot.SOAP.Body.fnet:putDocument.Document.metadataList[i].name  = 'Póliza';
+		--SET OutputRoot.SOAP.Body.fnet:putDocument.Document.metadataList[i].value = InputLocalEnvironment.PolicyNumber; 	
+		
+		SET OutputRoot.SOAP.Body.fnet:putDocument.Document.serializedFile = InputLocalEnvironment.Documents.Item[currentDocument].content;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*************************
+ * SetCreateClaimFileNet *
+ *************************/
+CREATE COMPUTE MODULE SetCreateClaimFileNet
+	
+	--Declare namespaces
+	DECLARE prIng NAMESPACE 'metlife.cl';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get vars to call CreateClaimFileNet
+		DECLARE documentId CHARACTER OutputLocalEnvironment.CurrentDocumentId;
+		DECLARE currentDocument INTEGER InputLocalEnvironment.CurrentDocument;
+		
+		--Set the parameter in the request of CreateClaimFileNet to be done
+		
+		SET OutputRoot.SOAP.Body.prIng:CreateClaimFileNet.prIng:claimNumber = InputLocalEnvironment.ClaimId;
+		SET OutputRoot.SOAP.Body.prIng:CreateClaimFileNet.prIng:documentType = 1;
+		SET OutputRoot.SOAP.Body.prIng:CreateClaimFileNet.prIng:fileNetId = documentId;
+		
+
+		SET OutputRoot.SOAP.Body.prIng:CreateClaimFileNet.prIng:fileName = InputLocalEnvironment.Documents.Item[currentDocument].name;
+		SET OutputRoot.SOAP.Body.prIng:CreateClaimFileNet.prIng:fileType = InputLocalEnvironment.Documents.Item[currentDocument].type;
+		SET OutputRoot.SOAP.Body.prIng:CreateClaimFileNet.prIng:fileSize = InputLocalEnvironment.Documents.Item[currentDocument].size;
+		
+
+		RETURN TRUE;
+	END;
+END MODULE;

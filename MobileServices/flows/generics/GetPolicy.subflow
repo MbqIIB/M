@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:gen_flows_GetAgreementBenefits_AgreementService.subflow="gen/flows/GetAgreementBenefits_AgreementService.subflow" xmlns:gen_flows_GetAgreementParties_AgreementService.subflow="gen/flows/GetAgreementParties_AgreementService.subflow" xmlns:gen_flows_GetAgreement_AgreementService.subflow="gen/flows/GetAgreement_AgreementService.subflow"
+    xmlns:gen_flows_GetPerson_PartyService.subflow="gen/flows/GetPerson_PartyService.subflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="flows/generics/GetPolicy.subflow"
+    nsPrefix="flows_generics_GetPolicy.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" useDefaults="true" udpSupport="true">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.WebServiceURL_Agreement" name="WebServiceURL_Agreement">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <translation xmi:type="utility:TranslatableString" key="GetPolicy" bundleName="flows/generics/GetPolicy" pluginId="MobileServices"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj16/GetPolicy.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj30/GetPolicy.gif"/>
+    <composition>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.Input" location="9,32">
+        <translation xmi:type="utility:TranslatableString" key="InTerminal.Input" bundleName="flows/generics/GetPolicy" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output" location="1565,313">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.Output" bundleName="flows/generics/GetPolicy" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="568,196" computeExpression="esql://routine/esqls.policy#CheckGetAgreementParties.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Check GetAgreementParties"/>
+      </nodes>
+      <nodes xmi:type="gen_flows_GetAgreement_AgreementService.subflow:FCMComposite_1" xmi:id="FCMComposite_1_3" location="151,104">
+        <translation xmi:type="utility:ConstantString" string="GetAgreement"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Invokes WSDL operation and extracts the response from SOAP message."/>
+        <longDescription xmi:type="utility:ConstantString" string="This subflow invokes the WSDL operation and extracts message body from the response message."/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="245,104" computeExpression="esql://routine/esqls.policy#CheckGetAgreement.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Check GetAgreement"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="300,188" computeExpression="esql://routine/esqls.policy#SetGetAgreementParties.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set GetAgreementParties"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="38,104" computeExpression="esql://routine/esqls.policy#SetGetAgreement.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set GetAgreement"/>
+      </nodes>
+      <nodes xmi:type="gen_flows_GetAgreementParties_AgreementService.subflow:FCMComposite_1" xmi:id="FCMComposite_1_9" location="443,188">
+        <translation xmi:type="utility:ConstantString" string="GetAgreementParties"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Invokes WSDL operation and extracts the response from SOAP message."/>
+        <longDescription xmi:type="utility:ConstantString" string="This subflow invokes the WSDL operation and extracts message body from the response message."/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output1" location="1565,99">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.Failure" bundleName="flows/generics/GetPolicy" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output2" location="1554,206">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.ErrorNoData" bundleName="flows/generics/GetPolicy" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="742,299" computeExpression="esql://routine/esqls.policy#GetBeneficiary.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Get Beneficiary"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="906,308" computeExpression="esql://routine/esqls.policy#SetNextBeneficiary.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set Next Beneficiary"/>
+      </nodes>
+      <nodes xmi:type="gen_flows_GetPerson_PartyService.subflow:FCMComposite_1" xmi:id="FCMComposite_1_10" location="838,300">
+        <translation xmi:type="utility:ConstantString" string="GetPerson"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_11" location="1058,391" computeExpression="esql://routine/esqls.policy#SetGetAgreementBenefits.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set GetAgreementBenefits"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_12" location="1345,400" computeExpression="esql://routine/esqls.policy#CheckGetAgreementBenefits.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Check GetAgreementBenefits"/>
+      </nodes>
+      <nodes xmi:type="gen_flows_GetAgreementBenefits_AgreementService.subflow:FCMComposite_1" xmi:id="FCMComposite_1_14" location="1209,392">
+        <translation xmi:type="utility:ConstantString" string="GetAgreementBenefits"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_9" targetNode="FCMComposite_1_7" sourceNode="InTerminal.Input" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_10" targetNode="OutTerminal.Output1" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_11" targetNode="OutTerminal.Output1" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_15" targetNode="OutTerminal.Output1" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_16" targetNode="OutTerminal.Output1" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_7" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.GetAgreementResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_9" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8" targetNode="OutTerminal.Output1" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_13" targetNode="OutTerminal.Output1" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_17" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.GetPersonResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_21" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_8" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in">
+        <bendPoints>26,60,200,62</bendPoints>
+        <bendPoints>-234,60,-57,69</bendPoints>
+        <bendPoints>-233,-13,-59,-11</bendPoints>
+      </connections>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_22" targetNode="FCMComposite_1_11" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out1" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_27" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_11" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_28" targetNode="OutTerminal.Output1" sourceNode="FCMComposite_1_14" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_29" targetNode="OutTerminal.Output1" sourceNode="FCMComposite_1_14" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_30" targetNode="FCMComposite_1_12" sourceNode="FCMComposite_1_14" sourceTerminalName="OutTerminal.GetAgreementBenefitsResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_32" targetNode="OutTerminal.Output" sourceNode="FCMComposite_1_12" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_14" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.GetAgreementPartiesResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_23" targetNode="OutTerminal.Output2" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_24" targetNode="OutTerminal.Output2" sourceNode="FCMComposite_1_12" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_12" targetNode="OutTerminal.Output1" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.WebServiceURL_Agreement">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.WebServiceURL_Agreement" bundleName="gen/flows/GetAgreement_AgreementService" pluginId="MobileServices"/>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <attributeLinks promotedAttribute="Property.WebServiceURL_Agreement" overriddenNodes="FCMComposite_1_3">
+      <overriddenAttribute href="gen/flows/GetAgreement_AgreementService.subflow#Property.WebServiceURL_Agreement"/>
+    </attributeLinks>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

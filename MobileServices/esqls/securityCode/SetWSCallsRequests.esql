@@ -1,0 +1,132 @@
+BROKER SCHEMA esqls.securityCode
+PATH esqls.generics;
+
+/******************************************************
+ * GetRUTAndTOKENFromHeaderAndSetSubFlowValidateToken *
+ ******************************************************/
+CREATE COMPUTE MODULE GetRUTAndTOKENFromHeaderAndSetSubFlowValidateToken
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare local vars
+		DECLARE aux CHARACTER;
+		DECLARE rutNumber CHARACTER;
+		DECLARE aux2 CHARACTER;
+		DECLARE queryParameterName CHARACTER;
+		DECLARE queryParameterValue CHARACTER;
+		DECLARE tokenNumber CHARACTER;
+		DECLARE broadLineOfBusinessID DECIMAL;
+
+		--Extract RUT from URL
+		SET aux = SUBSTRING(InputRoot.HTTPInputHeader."X-Original-HTTP-Command" AFTER 'users/');
+		SET rutNumber = SUBSTRING(aux BEFORE '/securityCode');
+
+		--Valid Query Parameters
+		SET aux2 = DecodeString(SUBSTRING(InputRoot.HTTPInputHeader."X-Query-String" AFTER 'q='));
+		SET queryParameterValue = SUBSTRING(SUBSTRING(aux2 AFTER '=="') BEFORE '"');
+		SET queryParameterName = SUBSTRING(aux2 BEFORE '==');
+		
+		--Get token from header
+		SET tokenNumber = InputRoot.HTTPInputHeader."Token";
+		
+		--Save the received variables in the local environment, to be used by ValidateToken.subflow
+		SET OutputLocalEnvironment.RUT = rutNumber;
+		SET OutputLocalEnvironment.Token = tokenNumber;
+		SET OutputLocalEnvironment.QueryParameterValue = queryParameterValue;
+		SET OutputLocalEnvironment.QueryParameterName = queryParameterName;
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***********************
+ * ValidateInputFields *
+ ***********************/
+CREATE COMPUTE MODULE ValidateInputFields
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare local vars
+		DECLARE missingFields CHARACTER '';
+		
+		--Validate input data
+		IF  ((InputLocalEnvironment.QueryParameterName IS NULL) OR (InputLocalEnvironment.QueryParameterName <> 'transactionType' OR InputLocalEnvironment.QueryParameterValue = '')) THEN
+			SET missingFields = missingFields || 'transactionType' || ',';
+		END IF;
+		IF ((InputLocalEnvironment.RUT IS NULL) OR (InputLocalEnvironment.RUT = '')) THEN
+			SET missingFields = missingFields || 'rutNumber' || ',';
+		END IF;
+		
+		--If there is not contact info, throws "No data found" error
+		IF (missingFields <> '') THEN
+			SET OutputLocalEnvironment.MissingFields = missingFields;
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************************
+ * Set GetPartyContactInfo *
+ ***************************/
+CREATE COMPUTE MODULE SetGetPartyContactInfo
+	--Declare namespaces
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the rut from the environment
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		
+		--Set the parameter in the request of GetPartyContactInfo to be done
+		SET OutputRoot.SOAP.Body.buc2:GetPartyContactInfo.buc2:RUT = rutNumber;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************************
+ * Set SegundaClave        *
+ ***************************/
+CREATE COMPUTE MODULE SetSegundaClave
+	--Declare namespaces
+	DECLARE secKey NAMESPACE 'http://segundaclave.ws.metlife.cl/';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the rut from the environment
+		DECLARE userIP CHARACTER '127.0.0.1';
+		DECLARE businessLine CHARACTER 'Colectivo';
+		DECLARE application CHARACTER 'MobileApp';
+		DECLARE funcion CHARACTER 'SecurityCode';
+		DECLARE operation CHARACTER 'SolicitarSegundaClave';
+		DECLARE destination CHARACTER 'sms';
+		DECLARE mobileNumber CHARACTER ClearSpecialChars(InputLocalEnvironment.Phone_1);
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		DECLARE salidaWS CHARACTER;
+		
+		--creation request
+		SET salidaWS = '<?xml version="1.0" encoding="UTF-8" ?><MLEnvelope><MLHeader><Caller><UserIP>' || userIP || '</UserIP><BusinessLine>' || businessLine ||'</BusinessLine><Application>' || application ||'</Application><Function>' || funcion ||'</Function></Caller><Operation>' || operation || '</Operation></MLHeader><MLBody><Destination>' || destination || '</Destination><PhoneNumber>+' || mobileNumber || '</PhoneNumber><RUT>' || rutNumber || '</RUT></MLBody></MLEnvelope>';
+		
+		--Set the parameter in the request of GetPartyContactInfo to be done
+		SET OutputRoot.SOAP.Body.secKey:execute.RequestEnvelope = salidaWS;
+		
+		RETURN TRUE;
+	END;
+END MODULE;

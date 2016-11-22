@@ -1,0 +1,4 @@
+BROKER SCHEMA esqls.searchclaims
+
+DECLARE submittedDate EXTERNAL CHARACTER 'submittedDate';
+DECLARE status EXTERNAL CHARACTER 'status';

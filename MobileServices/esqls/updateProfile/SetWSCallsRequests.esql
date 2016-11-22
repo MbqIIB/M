@@ -1,0 +1,342 @@
+BROKER SCHEMA esqls.updateProfile
+PATH esqls.generics;
+
+/****************
+ * GetInputData *
+ ****************/
+CREATE COMPUTE MODULE GetInputData
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;		
+		
+		--Declare local vars for input header
+		DECLARE aux CHARACTER;
+		DECLARE rutNumber CHARACTER;
+		DECLARE tokenNumber CHARACTER;	
+		
+		--Extract RUT from URL and token from header
+		SET aux = SUBSTRING(InputRoot.HTTPInputHeader."X-Original-HTTP-Command" AFTER 'users/');
+		SET rutNumber = SUBSTRING(aux BEFORE '/profile');
+		SET tokenNumber = InputRoot.HTTPInputHeader."Token";
+		
+		--Validate rut (uri parameter)
+		IF ((rutNumber IS NULL) OR (rutNumber = '')) THEN
+			SET OutputLocalEnvironment.MissingFields = 'rutNumber' || ',';
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+		END IF;		
+		
+		--Get values of contact information for update
+		DECLARE metadataChannel CHARACTER InputRoot.JSON.Data.metaData.channel;
+		DECLARE metadataOrigin CHARACTER InputRoot.JSON.Data.metaData.origin;
+		DECLARE rutBeneficiary CHARACTER InputRoot.JSON.Data.beneficiaries.Item[1].rutNumber;
+		DECLARE firstName CHARACTER InputRoot.JSON.Data.beneficiaries.Item[1].firstName;
+		DECLARE lastName CHARACTER InputRoot.JSON.Data.beneficiaries.Item[1].lastName;
+		DECLARE relationShip CHARACTER InputRoot.JSON.Data.beneficiaries.Item[1].relationShip;
+		DECLARE birthDate CHARACTER InputRoot.JSON.Data.beneficiaries.Item[1].birthDate;
+		DECLARE provider CHARACTER InputRoot.JSON.Data.beneficiaries.Item[1].provider;
+		DECLARE gender CHARACTER InputRoot.JSON.Data.beneficiaries.Item[1].gender;
+		DECLARE emails REFERENCE TO InputRoot.JSON.Data.beneficiaries.Item[1].contactInformation.emails;
+		DECLARE phoneNumbers REFERENCE TO InputRoot.JSON.Data.beneficiaries.Item[1].contactInformation.phoneNumbers;		
+		DECLARE addresses REFERENCE TO InputRoot.JSON.Data.beneficiaries.Item[1].contactInformation.addresses;
+		
+		IF (InputRoot.JSON.Data.beneficiaries.Item[1].contactInformation.emails IS NULL) THEN
+			SET emails = NULL;
+		END IF;	
+		IF (InputRoot.JSON.Data.beneficiaries.Item[1].contactInformation.phoneNumbers IS NULL) THEN
+			SET phoneNumbers = NULL;
+		END IF;
+		IF (InputRoot.JSON.Data.beneficiaries.Item[1].contactInformation.addresses IS NULL) THEN
+			SET addresses = NULL;
+		END IF;
+		
+		--Save the received variables in the local environment, to be used by ValidateToken.subflow
+		SET OutputLocalEnvironment.RUT = rutNumber;
+		SET OutputLocalEnvironment.Token = tokenNumber;
+		SET OutputLocalEnvironment.MetadataChannel = metadataChannel;
+		SET OutputLocalEnvironment.MetadataOrigin = metadataOrigin;
+		SET OutputLocalEnvironment.Beneficiaries[1].RUT = rutBeneficiary;
+		SET OutputLocalEnvironment.Beneficiaries[1].FirstName = firstName;
+		SET OutputLocalEnvironment.Beneficiaries[1].LastName = lastName;
+		SET OutputLocalEnvironment.Beneficiaries[1].RelationShip = relationShip;
+		SET OutputLocalEnvironment.Beneficiaries[1].BirthDate = birthDate;
+		SET OutputLocalEnvironment.Beneficiaries[1].Provider = provider;
+		SET OutputLocalEnvironment.Beneficiaries[1].Gender = gender;
+		SET OutputLocalEnvironment.Beneficiaries[1].Emails = emails;
+		SET OutputLocalEnvironment.Beneficiaries[1].PhoneNumbers = phoneNumbers;
+		SET OutputLocalEnvironment.Beneficiaries[1].Addresses = addresses;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**********************
+ * ValidateParameters *
+ **********************/
+CREATE COMPUTE MODULE ValidateParameters
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;		
+
+		--Get the parameters to validate
+		DECLARE metadataChannel CHARACTER InputLocalEnvironment.MetadataChannel;
+		DECLARE metadataOrigin CHARACTER InputLocalEnvironment.MetadataOrigin;
+		DECLARE rutBeneficiary CHARACTER InputLocalEnvironment.Beneficiaries[1].RUT;
+		DECLARE firstName CHARACTER InputLocalEnvironment.Beneficiaries[1].FirstName;
+		DECLARE lastName CHARACTER InputLocalEnvironment.Beneficiaries[1].LastName;
+		DECLARE relationShip CHARACTER InputLocalEnvironment.Beneficiaries[1].RelationShip;
+		DECLARE birthDate CHARACTER InputLocalEnvironment.Beneficiaries[1].BirthDate;
+		DECLARE provider CHARACTER InputLocalEnvironment.Beneficiaries[1].Provider;
+		DECLARE gender CHARACTER InputLocalEnvironment.Beneficiaries[1].Gender;
+		DECLARE emails REFERENCE TO InputLocalEnvironment.Beneficiaries[1].Emails;
+		DECLARE phoneNumbers REFERENCE TO InputLocalEnvironment.Beneficiaries[1].PhoneNumbers;		
+		DECLARE addresses REFERENCE TO InputLocalEnvironment.Beneficiaries[1].Addresses;
+		
+		DECLARE emailsCount INTEGER CARDINALITY(emails.Item[]);
+		DECLARE phonesCount INTEGER CARDINALITY(phoneNumbers.Item[]);
+		DECLARE addressesCount INTEGER CARDINALITY(addresses.Item[]);
+		DECLARE i INTEGER 1;
+		
+		--If there is some field empty then throw error 406: Validation Failed
+		DECLARE missingFields CHARACTER '';
+		DECLARE invalidFields CHARACTER '';
+		IF  (metadataChannel IS NULL OR metadataChannel = '') THEN
+			SET missingFields = missingFields || 'metaData.channel' ||',';
+		END IF;
+		IF  (metadataOrigin IS NULL OR metadataOrigin = '') THEN
+			SET missingFields = missingFields || 'metaData.origin' ||',';
+		END IF;
+		IF  (rutBeneficiary IS NULL OR rutBeneficiary = '') THEN
+			SET missingFields = missingFields || 'rutNumber' ||',';
+		END IF;
+		IF  (firstName IS NULL OR firstName = '') THEN
+			SET missingFields = missingFields || 'firstName' ||',';
+		END IF;
+		IF  (lastName IS NULL OR lastName = '') THEN
+			SET missingFields = missingFields || 'lastName' ||',';
+		END IF;
+		IF  (relationShip IS NULL OR relationShip = '') THEN
+			SET missingFields = missingFields || 'relationShip' ||',';
+		END IF;
+		IF  (birthDate IS NULL OR birthDate = '') THEN
+			SET missingFields = missingFields || 'birthDate' ||',';
+		END IF;
+		IF  (provider IS NULL OR provider = '') THEN
+			SET missingFields = missingFields || 'provider' ||',';
+		END IF;
+		IF  (gender IS NULL OR gender = '') THEN
+			SET missingFields = missingFields || 'gender' ||',';
+		END IF;
+		
+		--Validate Emails array
+		IF (emailsCount = 0) THEN
+			SET missingFields = missingFields || 'emails' ||',';
+		ELSE
+			SET i = 1;
+			WHILE (i <= emailsCount) DO
+				IF NOT((emails.Item[i].address IS NOT NULL) AND
+					   (emails.Item[i].address <> '')) THEN
+					SET missingFields = missingFields || 'emails[' || CAST(i AS CHARACTER) || '].address' ||',';
+				END IF;
+				IF NOT((emails.Item[i].type IS NOT NULL) AND 
+					   (emails.Item[i].type <> '')) THEN
+					SET missingFields = missingFields || 'emails[' || CAST(i AS CHARACTER) || '].type' ||',';
+				END IF;
+				SET i = i + 1;					
+			END WHILE;
+		END IF;
+		
+		--Validate Phones array
+		IF (phonesCount = 0) THEN
+			SET missingFields = missingFields || 'phoneNumbers' ||',';
+		ELSE
+			SET i = 1;
+			WHILE (i <= phonesCount) DO
+				IF NOT((phoneNumbers.Item[i].number IS NOT NULL) AND
+					   (phoneNumbers.Item[i].number <> '')) THEN
+					SET missingFields = missingFields || 'phoneNumbers[' || CAST(i AS CHARACTER) || '].number' ||',';
+				END IF;
+				IF NOT((phoneNumbers.Item[i].type IS NOT NULL) AND 
+					   (phoneNumbers.Item[i].type <> '')) THEN
+					SET missingFields = missingFields || 'phoneNumbers[' || CAST(i AS CHARACTER) || '].type' ||',';
+				END IF;
+				SET i = i + 1;					
+			END WHILE;
+		END IF;
+			
+		--Validate Addresses array
+		IF (addressesCount = 0) THEN
+			SET missingFields = missingFields || 'addresses' ||',';
+		ELSE
+			SET i = 1;
+			WHILE (i <= addressesCount) DO
+				IF NOT((addresses.Item[i].addressLine1 IS NOT NULL) AND
+					   (addresses.Item[i].addressLine1 <> '')) THEN
+					SET missingFields = missingFields || 'addresses[' || CAST(i AS CHARACTER) || '].addressLine1' ||',';
+				END IF;
+				IF NOT((addresses.Item[i].region IS NOT NULL) AND 
+					   (addresses.Item[i].region <> '')) THEN
+					SET missingFields = missingFields || 'addresses[' || CAST(i AS CHARACTER) || '].region' ||',';
+				END IF;
+				IF NOT((addresses.Item[i].municipality IS NOT NULL) AND 
+					   (addresses.Item[i].municipality <> '')) THEN
+					SET missingFields = missingFields || 'addresses[' || CAST(i AS CHARACTER) || '].municipality' ||',';
+				END IF;
+				IF NOT((addresses.Item[i].country IS NOT NULL) AND 
+					   (addresses.Item[i].country <> '')) THEN
+					SET missingFields = missingFields || 'addresses[' || CAST(i AS CHARACTER) || '].country' ||',';
+				END IF;
+				IF NOT((addresses.Item[i].type IS NOT NULL) AND 
+					   (addresses.Item[i].type <> '')) THEN
+					SET missingFields = missingFields || 'addresses[' || CAST(i AS CHARACTER) || '].type' ||',';
+				END IF;
+				SET i = i + 1;					
+			END WHILE;
+		END IF;
+		
+		--Throw error 406: Validation Failed
+		IF  (missingFields <> '') THEN
+			SET OutputLocalEnvironment.ErrorReason = 'EmptyField';
+			SET OutputLocalEnvironment.MissingFields = missingFields;
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--If there is some mandatory field missing throw Error 409: Mandatory Check Failed		
+		DECLARE thereIsMandatory BOOLEAN;
+		SET missingFields = '';
+		
+		--Check EmailsData
+		SET i = 1;
+		WHILE (i <= emailsCount) DO
+			IF (emails.Item[i].type = 'Casa') THEN
+				SET OutputLocalEnvironment.Beneficiaries[1].Email = emails.Item[i].address;
+			END IF;
+			IF (emails.Item[i].type = 'Trabajo') THEN
+				SET OutputLocalEnvironment.Beneficiaries[1].EmailWork = emails.Item[i].address;
+			END IF;
+			IF NOT((emails.Item[i].type = 'Casa') OR (emails.Item[i].type = 'Trabajo')) THEN
+				SET invalidFields = invalidFields || 'emails[' || CAST(i AS CHARACTER) || '].Type=' || emails.Item[i].type || ',';
+			ELSE
+				
+			END IF;
+			SET i = i + 1;
+		END WHILE;
+			
+		--Check if there is Mobile phone (specified as mandatory)
+		SET thereIsMandatory = FALSE;
+		SET i = 1;
+		WHILE (i <= phonesCount) DO
+			IF (phoneNumbers.Item[i].type = 'Celular') THEN
+				SET thereIsMandatory = TRUE;
+				SET OutputLocalEnvironment.Beneficiaries[1].Mobile = phoneNumbers.Item[i].number;
+			END IF;
+			IF (phoneNumbers.Item[i].type = 'Casa') THEN
+				SET OutputLocalEnvironment.Beneficiaries[1].Phone = phoneNumbers.Item[i].number;
+			END IF;
+			IF (phoneNumbers.Item[i].type = 'Trabajo') THEN
+				SET OutputLocalEnvironment.Beneficiaries[1].PhoneWork = phoneNumbers.Item[i].number;
+			END IF;
+			IF NOT((phoneNumbers.Item[i].type = 'Celular') OR (phoneNumbers.Item[i].type = 'Casa') OR (phoneNumbers.Item[i].type = 'Trabajo')) THEN
+				SET invalidFields = invalidFields || 'phoneNumbers[' || CAST(i AS CHARACTER) || '].Type=' || phoneNumbers.Item[i].type || ',';
+			END IF;
+			SET i = i +1;
+		END WHILE;
+		
+		IF (thereIsMandatory = FALSE) THEN
+			SET missingFields = missingFields || 'phoneNumbers.type=Celular' ||',';
+		END IF;
+		
+		--Check if there is Home Address (specified as mandatory)
+		SET thereIsMandatory = FALSE;
+		SET i = 1;		
+		WHILE (i <= addressesCount) DO
+			IF (addresses.Item[i].type = 'Casa') THEN
+				SET thereIsMandatory = TRUE;
+				SET OutputLocalEnvironment.Beneficiaries[1].Address = addresses.Item[i].addressLine1;
+				SET OutputLocalEnvironment.Beneficiaries[1].Region = addresses.Item[i].region;
+				SET OutputLocalEnvironment.Beneficiaries[1].Municipality = addresses.Item[i].municipality;				
+			END IF;
+			IF (addresses.Item[i].type = 'Trabajo') THEN
+				SET thereIsMandatory = TRUE;
+				SET OutputLocalEnvironment.Beneficiaries[1].AddressWork = addresses.Item[i].addressLine1;
+				SET OutputLocalEnvironment.Beneficiaries[1].RegionWork = addresses.Item[i].region;
+				SET OutputLocalEnvironment.Beneficiaries[1].MunicipalityWork = addresses.Item[i].municipality;				
+			END IF;
+			IF NOT((addresses.Item[i].type = 'Casa') OR (addresses.Item[i].type = 'Trabajo')) THEN
+				SET invalidFields = invalidFields || 'addresses[' || CAST(i AS CHARACTER) || '].Type=' || addresses.Item[i].type || ',';
+			END IF;
+			SET i = i +1;
+		END WHILE;
+		
+		IF (thereIsMandatory = FALSE) THEN
+			SET missingFields = missingFields || 'addresses.type=Casa' ||',';
+		END IF;
+		
+		--Throw error 406 for invalid types
+		IF  (invalidFields <> '') THEN
+			SET OutputLocalEnvironment.ErrorReason = 'InvalidField';
+			SET OutputLocalEnvironment.MissingFields = invalidFields;
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Throw error 409: Mandatory Check Failed
+		IF  (missingFields <> '') THEN
+			SET OutputLocalEnvironment.MissingFields = missingFields;
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*****************************
+ * SetUpdatePartyContactInfo *
+ *****************************/
+CREATE COMPUTE MODULE SetUpdatePartyContactInfo
+	
+	--Declare namespaces
+	DECLARE party NAMESPACE 'urn:metlife.services.acord.party';
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the data from local environment
+		DECLARE rutBeneficiary CHARACTER InputLocalEnvironment.Beneficiaries[1].RUT;
+		DECLARE email CHARACTER InputLocalEnvironment.Beneficiaries[1].Email;
+		DECLARE emailWork CHARACTER InputLocalEnvironment.Beneficiaries[1].EmailWork;
+		DECLARE mobile CHARACTER InputLocalEnvironment.Beneficiaries[1].Mobile;
+		DECLARE phone CHARACTER InputLocalEnvironment.Beneficiaries[1].Phone;
+		DECLARE phoneWork CHARACTER InputLocalEnvironment.Beneficiaries[1].PhoneWork;
+		DECLARE address CHARACTER InputLocalEnvironment.Beneficiaries[1].Address;
+		DECLARE region INTEGER InputLocalEnvironment.Beneficiaries[1].Region;
+		DECLARE comune INTEGER InputLocalEnvironment.Beneficiaries[1].Municipality;
+		DECLARE addressWork CHARACTER InputLocalEnvironment.Beneficiaries[1].AddressWork;
+		DECLARE regionWork INTEGER InputLocalEnvironment.Beneficiaries[1].RegionWork;
+		DECLARE comuneWork INTEGER InputLocalEnvironment.Beneficiaries[1].MunicipalityWork;
+		DECLARE country INTEGER 43;
+		
+		--Set the parameter in the request of GetPartyContactInfo to be done
+		SET OutputRoot.SOAP.Body.party:UpdatePartyContactInfo.party:updatePartyContactInfo.acord:Address = address;
+		SET OutputRoot.SOAP.Body.party:UpdatePartyContactInfo.party:updatePartyContactInfo.acord:ComuneId = comune;
+		SET OutputRoot.SOAP.Body.party:UpdatePartyContactInfo.party:updatePartyContactInfo.acord:CountryId = country;
+		SET OutputRoot.SOAP.Body.party:UpdatePartyContactInfo.party:updatePartyContactInfo.acord:MobileNumber = mobile;
+		SET OutputRoot.SOAP.Body.party:UpdatePartyContactInfo.party:updatePartyContactInfo.acord:PartyRUT = rutBeneficiary;
+		SET OutputRoot.SOAP.Body.party:UpdatePartyContactInfo.party:updatePartyContactInfo.acord:PhoneNumber = phone;
+		SET OutputRoot.SOAP.Body.party:UpdatePartyContactInfo.party:updatePartyContactInfo.acord:PrimaryEmail = email;
+		--SET OutputRoot.SOAP.Body.party:UpdatePartyContactInfo.party:updatePartyContactInfo.acord:SecondaryEmail = emailWork;
+		SET OutputRoot.SOAP.Body.party:UpdatePartyContactInfo.party:updatePartyContactInfo.acord:RegionId = region;
+		
+		RETURN TRUE;
+	END;
+END MODULE;

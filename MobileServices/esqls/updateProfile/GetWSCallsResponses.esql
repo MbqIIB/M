@@ -1,0 +1,32 @@
+BROKER SCHEMA esqls.updateProfile
+PATH esqls.generics;
+
+/*******************************
+ * CheckUpdatePartyContactInfo *
+ *******************************/
+CREATE COMPUTE MODULE CheckUpdatePartyContactInfo
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE party NAMESPACE 'urn:metlife.services.acord.party';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get response into local vars
+		DECLARE result CHARACTER InputRoot.SOAP.Body.party:UpdatePartyContactInfoResponse.party:UpdatePartyContactInfoResult.Status;
+		DECLARE code CHARACTER InputRoot.SOAP.Body.party:UpdatePartyContactInfoResponse.party:UpdatePartyContactInfoResult.Code;
+
+		IF  NOT(result = 'Success' AND code = 73) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+

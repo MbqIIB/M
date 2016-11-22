@@ -1,0 +1,161 @@
+BROKER SCHEMA esqls.documents
+PATH esqls.generics;
+
+
+/***************************
+ * CreateOutputErrorNoData *
+ ***************************/
+CREATE COMPUTE MODULE CreateOutputErrorNoData
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 202;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'NoDataFound';
+		SET OutputLocalEnvironment.Error.ErrorReason = InputLocalEnvironment.ErrorReason;
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************************
+ * CreateOutputErrorValidation *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputErrorValidation
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 409;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'MandatoryCheckFailed';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'MissingParameter';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = InputLocalEnvironment.MissingFields;
+ 
+		CALL LogFullException(InputExceptionList, InputRoot,'');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************************
+ * CreateOutputErrorUnexpected *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputErrorUnexpected
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 402;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'UnexpectedIssue';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'ParsingError';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************************
+ * CreateOutputGetDocuments *
+ ******************************/
+
+CREATE COMPUTE MODULE CreateOutputGetDocuments
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the responses basic parameters
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line" = 'HTTP/1.1 200 OK'; 
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200; 
+		SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json; charset=utf-8'; 
+		
+		--Get array of Documents 
+		DECLARE totalCount DECIMAL InputLocalEnvironment.TotalCount;
+		DECLARE documentCount INTEGER 1;		
+		
+		--Create the JSON response body
+		SET OutputRoot.JSON.Data.claimDetail.claimId = InputLocalEnvironment.ClaimNumber;
+		SET OutputRoot.JSON.Data.claimDetail.policyNumber = InputLocalEnvironment.policyNumber;
+        
+		-- Policies array
+		SET OutputRoot.JSON.Data.documents TYPE = JSON.Array;		
+		WHILE (documentCount <= totalCount) DO
+			SET OutputRoot.JSON.Data.documents.Item[documentCount].name=	InputLocalEnvironment.FinalDocuments[documentCount].doc_name;
+		    SET OutputRoot.JSON.Data.documents.Item[documentCount].content=	InputLocalEnvironment.FinalDocuments[documentCount].doc_content;
+		    SET OutputRoot.JSON.Data.documents.Item[documentCount].type=	InputLocalEnvironment.FinalDocuments[documentCount].doc_type;
+		    SET OutputRoot.JSON.Data.documents.Item[documentCount].size=	InputLocalEnvironment.FinalDocuments[documentCount].doc_size;
+		    SET OutputRoot.JSON.Data.documents.Item[documentCount].unit=	InputLocalEnvironment.FinalDocuments[documentCount].doc_unit;
+		    SET OutputRoot.JSON.Data.documents.Item[documentCount].id=		InputLocalEnvironment.FinalDocuments[documentCount].doc_id;
+							
+			--Set next agreement counter
+			SET documentCount = documentCount + 1;
+
+		END WHILE;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************************
+ * CreateOutputGetDocument *
+ ******************************/
+
+CREATE COMPUTE MODULE CreateOutputGetDocument
+
+	--Declare namespaces
+	DECLARE claimns NAMESPACE 'urn:metlife.services.acord.claim';
+	DECLARE filenetns NAMESPACE 'http://filenet.ws.metlife.cl/';
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the responses basic parameters
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line" = 'HTTP/1.1 200 OK'; 
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200; 
+		SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json; charset=utf-8'; 
+		
+		--Get array of Documents 
+		DECLARE totalCount DECIMAL InputLocalEnvironment.TotalCount;
+		DECLARE documentCount INTEGER 1;
+		
+		--Create the JSON response body
+		SET OutputRoot.JSON.Data.claimDetail.claimId = InputLocalEnvironment.ClaimID;
+		SET OutputRoot.JSON.Data.claimDetail.policyNumber = InputLocalEnvironment.PolicyNumber;
+        
+		-- Policies array
+		SET OutputRoot.JSON.Data.documents TYPE = JSON.Array;		
+		
+		SET OutputRoot.JSON.Data.documents.Item[1].name = InputLocalEnvironment.DocName;
+	    SET OutputRoot.JSON.Data.documents.Item[1].content = InputLocalEnvironment.DocContent;
+	    SET OutputRoot.JSON.Data.documents.Item[1].type = InputLocalEnvironment.DocType;
+	    SET OutputRoot.JSON.Data.documents.Item[1].size = InputLocalEnvironment.DocSize;
+	    SET OutputRoot.JSON.Data.documents.Item[1].unit = InputLocalEnvironment.DocUnit;
+	    SET OutputRoot.JSON.Data.documents.Item[1].id =	InputLocalEnvironment.DocNumber;							
+
+		RETURN TRUE;
+	END;
+END MODULE;

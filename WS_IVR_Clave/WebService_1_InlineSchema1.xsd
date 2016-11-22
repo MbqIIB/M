@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:tns="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      <xsd:element ibmSchExtn:docRoot="true" name="Serv1">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="RUT" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="telefono" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="Token" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element ibmSchExtn:docRoot="true" name="Serv1Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="Serv1Result" type="tns:obj_vigencia"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="obj_vigencia">
+        <xsd:sequence>
+          <xsd:element maxOccurs="1" minOccurs="0" name="vigencia" type="xsd:string"/>
+          <xsd:element maxOccurs="1" minOccurs="0" name="codigo_error" type="xsd:string"/>
+          <xsd:element maxOccurs="1" minOccurs="0" name="descripcion_error" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element ibmSchExtn:docRoot="true" name="Serv4">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="rut" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="Token" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element ibmSchExtn:docRoot="true" name="Serv4Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="Serv4Result" type="tns:obj_reseteo"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="obj_reseteo">
+        <xsd:sequence>
+          <xsd:element maxOccurs="1" minOccurs="0" name="reseteo" type="xsd:string"/>
+          <xsd:element maxOccurs="1" minOccurs="0" name="codigo_error" type="xsd:string"/>
+          <xsd:element maxOccurs="1" minOccurs="0" name="descripcion_error" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="obj_vigencia" nillable="true" type="tns:obj_vigencia"/>
+      <xsd:element name="obj_reseteo" nillable="true" type="tns:obj_reseteo"/>
+    </xsd:schema>

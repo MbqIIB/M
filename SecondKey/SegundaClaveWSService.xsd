@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://segundaclave.ws.metlife.cl/" version="1.0" targetNamespace="http://segundaclave.ws.metlife.cl/">
+
+  <xs:element name="execute" type="tns:execute"></xs:element>
+
+  <xs:element name="executeResponse" type="tns:executeResponse"></xs:element>
+
+  <xs:complexType name="execute">
+    <xs:sequence>
+      <xs:element name="RequestEnvelope" type="xs:string" minOccurs="0"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="executeResponse">
+    <xs:sequence>
+      <xs:element name="ResponseEnvelope" type="xs:string" minOccurs="0"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

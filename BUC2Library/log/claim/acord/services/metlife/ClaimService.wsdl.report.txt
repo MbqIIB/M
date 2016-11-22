@@ -1,0 +1,44 @@
+
+
+Importing file: /home/soaint/Desktop/WMB MetLIfe/ClaimService.wsdl
+
+
+The following is a list of WS-I warning messages found when importing:
+XSD: The location 'ClaimService_1_2.xsd' has not been resolved because the import is unused, Line: 13, Column: 7
+XSD: There is no xmlns declaration for namespace 'http://schemas.microsoft.com/2003/10/Serialization/', Line: 13, Column: 7
+XSD: The location 'ClaimService_1.xsd' has not been resolved because the import is unused, Line: 14, Column: 7
+XSD: There is no xmlns declaration for namespace 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD', Line: 14, Column: 7
+
+
+The WSDL import will proceed with bindings basicHttpBinding_ClaimService.
+Creating wsdl schema document for file:///home/soaint/Desktop/WMB MetLIfe/ClaimService.wsdl.
+Parsing wsdl binding {urn:metlife.services.acord.claim}basicHttpBinding_ClaimService.
+Parsing wsdl binding input SearchClaims.
+Parsing wsdl binding output SearchClaims.
+Parsing wsdl binding input GetClaim.
+Parsing wsdl binding output GetClaim.
+Parsing wsdl binding input GetClaimSettlement.
+Parsing wsdl binding output GetClaimSettlement.
+Parsing wsdl binding input GetClaimDocuments.
+Parsing wsdl binding output GetClaimDocuments.
+Parsing wsdl binding input GetClaimDocument.
+Parsing wsdl binding output GetClaimDocument.
+Processing doc style for operation SearchClaims.
+Processing doc style for operation GetClaim.
+Processing doc style for operation GetClaimSettlement.
+Processing doc style for operation GetClaimDocuments.
+Processing doc style for operation GetClaimDocument.
+Populating WSDL schema ClaimService_wsdl.xsd.
+Creating file ClaimService_wsdl.xsd in the workspace.
+Creating file /BUC2Library/ClaimService.xsd in the workspace.
+Creating file /BUC2Library/ClaimService_1.xsd in the workspace.
+Creating file /BUC2Library/ClaimService_1_2.xsd in the workspace.
+Copying source WSDL ClaimService.wsdl to ClaimService.wsdl.
+
+Elapsed time processing this message definition file: 0.287 seconds
+Number of warnings for this message definition file: 0
+
+
+Number of files processed: 1
+
+

@@ -1,0 +1,120 @@
+BROKER SCHEMA esqls.submitClaim
+PATH esqls.generics;
+
+/*******************************
+ * CreateOutputErrorUnexpected *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputErrorUnexpected
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 402;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'UnexpectedIssue';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'ParsingError';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		CALL LogFullException(InputExceptionList, InputRoot, CAST(InputLocalEnvironment.OtherError AS CHARACTER));
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************************
+ * Claim creation error output*
+ ******************************/
+CREATE COMPUTE MODULE ClaimCreationErrorOutput
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 408;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'InsertFailed';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'claimIdCreationFailed';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+ 
+		CALL LogFullException(InputExceptionList, InputRoot,CAST(InputLocalEnvironment.OtherError AS CHARACTER));
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*****************************************
+ * Create Output Error Validation Failed *
+ *****************************************/
+CREATE COMPUTE MODULE CreateOutputErrorEmpty406
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 406;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Validation Failed';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'ExceedCurrentDate';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = InputLocalEnvironment.MissingFields;
+ 
+		CALL LogFullException(InputExceptionList, InputRoot,'');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**********************************************
+ * Create Output Error Mandatory Check Failed *
+ **********************************************/
+CREATE COMPUTE MODULE CreateOutputErrorEmpty409
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 409;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Mandatory Check Failed';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'MissingParameter';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = InputLocalEnvironment.MissingFields;
+ 
+		CALL LogFullException(InputExceptionList, InputRoot,'');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***********************
+ * CreateOutputSuccess *
+ ***********************/
+CREATE COMPUTE MODULE CreateOutputSuccess
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the responses basic parameters
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line" = 'HTTP/1.1 200 OK'; 
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200; 
+		SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json; charset=utf-8'; 
+		SET OutputRoot.HTTPResponseHeader."token" = InputLocalEnvironment.Token;
+
+		--Create the JSON response body
+		SET OutputRoot.JSON.Data.claimNumber = CAST(InputLocalEnvironment.claimNumber as CHARACTER);
+		SET OutputRoot.JSON.Data.code = 200;
+		SET OutputRoot.JSON.Data.message = 'Claim Initated success. Required mandatory document';		
+
+		RETURN TRUE;
+	END;
+END MODULE;

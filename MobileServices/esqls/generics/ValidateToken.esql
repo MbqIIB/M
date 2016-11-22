@@ -1,0 +1,168 @@
+BROKER SCHEMA esqls.generics
+
+/********************
+ * SetValidateToken *
+ ********************/
+CREATE COMPUTE MODULE SetValidateToken
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.security';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the parameter in the request to be done (the RUT number)
+		SET OutputRoot.SOAP.Body.buc2:ValidateToken.buc2:token = InputLocalEnvironment.Token;
+		SET OutputRoot.SOAP.Body.buc2:ValidateToken.buc2:RUT = InputLocalEnvironment.RUT;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/********************
+ * GetValidateToken *
+ ********************/
+CREATE COMPUTE MODULE GetValidateToken
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.security';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the result from the previous call
+		DECLARE result BOOLEAN InputRoot.SOAP.Body.buc2:ValidateTokenResponse.buc2:ValidateTokenResult;
+
+		--If result fails then propagate to failure output
+		IF ((result IS NULL) OR (result = FALSE)) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**************************
+ * SetValidateTokenError1 *
+ **************************/
+CREATE COMPUTE MODULE SetValidateTokenError1
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 401;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Unauthorized Access';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'Invalid Token';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**************************
+ * SetValidateTokenError2 *
+ **************************/
+CREATE COMPUTE MODULE SetValidateTokenError2
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 401;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Unauthorized Access';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'Token Expired';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**************************
+ * SetValidateTokenError3 *
+ **************************/
+CREATE COMPUTE MODULE SetValidateTokenError3
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 401;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Unauthorized Access';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'Token Not Found';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**************************
+ * SetValidateTokenError4 *
+ **************************/
+CREATE COMPUTE MODULE SetValidateTokenError4
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 401;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Unauthorized Access';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'Token Missmatch';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*********************************
+ * ProcessValidateTokenException *
+ *********************************/
+CREATE COMPUTE MODULE ProcessValidateTokenException
+
+	DECLARE soap NAMESPACE 'http://schemas.xmlsoap.org/soap/envelope/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the error message from the exception
+		DECLARE errorMessage CHARACTER InputRoot.SOAP.Body.soap:Fault.faultstring;
+
+		IF ((errorMessage IS NULL) OR (errorMessage = '')) THEN
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+		ELSEIF ((InputLocalEnvironment.Token IS NULL) OR (InputLocalEnvironment.Token = '')) THEN --Token Missmatch
+			PROPAGATE TO TERMINAL 'out4' FINALIZE NONE DELETE NONE;
+		ELSEIF (errorMessage = 'Invalid Token') THEN
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+		ELSEIF (errorMessage = 'Token expired') THEN
+			PROPAGATE TO TERMINAL 'out2' FINALIZE NONE DELETE NONE;
+		ELSEIF (errorMessage = 'Token not found') THEN
+			PROPAGATE TO TERMINAL 'out3' FINALIZE NONE DELETE NONE;
+		ELSEIF (errorMessage = 'Token Missmatch') THEN
+			PROPAGATE TO TERMINAL 'out4' FINALIZE NONE DELETE NONE;
+		ELSE
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+		END IF;
+
+		RETURN FALSE;
+	END;
+END MODULE;

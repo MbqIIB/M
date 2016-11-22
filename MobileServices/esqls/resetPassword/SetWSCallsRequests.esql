@@ -1,0 +1,106 @@
+BROKER SCHEMA esqls.resetPassword
+
+DECLARE UserID_Authentication EXTERNAL CHARACTER ''; 
+DECLARE Password_Authentication EXTERNAL CHARACTER ''; 
+
+/***************
+ * CheckInputs *
+ ***************/
+CREATE COMPUTE MODULE CheckInputs
+
+	DECLARE sec NAMESPACE 'http://tuxpan.com/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Declare Rut variables
+		DECLARE aux CHARACTER;
+		DECLARE rutNumber CHARACTER;
+
+		--Extract RUT from URL
+		SET aux = SUBSTRING(InputRoot.HTTPInputHeader."X-Original-HTTP-Command" AFTER 'users/');
+		SET rutNumber = SUBSTRING(aux BEFORE '/resetPassword');
+
+		--Set the parameter in the request to be done (the RUT number without the verification digit)
+		SET OutputRoot.SOAP.Body.sec:ValidaIndividual.sec:rut = SUBSTRING(rutNumber FROM 0 FOR LENGTH (rutNumber));
+
+		--Save the received variables in the local environment
+		SET OutputLocalEnvironment.RUT = rutNumber;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**************************
+ * SetGetPartyContactInfo *
+ **************************/
+CREATE COMPUTE MODULE SetGetPartyContactInfo
+	
+	--Declare namespaces
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the rut from the environment
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		
+		--Set the parameter in the request of GetPartyContactInfo to be done
+		SET OutputRoot.SOAP.Body.buc2:GetPartyContactInfo.buc2:RUT = rutNumber;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************
+ * SetReseteoClave *
+ *******************/
+CREATE COMPUTE MODULE SetReseteoClave
+
+	--DECLARE sec NAMESPACE 'http://tuxpan.com/';
+	DECLARE ns NAMESPACE 'http://tempuri.org/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Declare and set local variable
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+
+		--Set the parameter in the request to be done (the RUT number without the verification digit)
+		--SET OutputRoot.SOAP.Body.sec:ReseteoClave.sec:rut = SUBSTRING(rutNumber FROM 0 FOR LENGTH (rutNumber));
+		SET OutputRoot.SOAP.Body.ns:Serv4.ns:rut = SUBSTRING(rutNumber FROM 0 FOR LENGTH (rutNumber));
+		SET OutputRoot.SOAP.Body.ns:Serv4.ns:Token = '';
+
+		RETURN TRUE;
+		
+	END;
+END MODULE;
+
+/******************
+ * SetCreateToken *
+ ******************/
+CREATE COMPUTE MODULE SetCreateToken
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.security';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the parameter in the request to be done (the RUT number)
+		SET OutputRoot.SOAP.Body.buc2:CreateToken.buc2:RUT = InputLocalEnvironment.RUT;
+
+		RETURN TRUE;
+	END;
+END MODULE;

@@ -1,0 +1,196 @@
+BROKER SCHEMA esqls.claim
+
+/*********************
+ * ValidateInputData *
+ *********************/
+CREATE COMPUTE MODULE ValidateInputData
+
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE claim NAMESPACE 'urn:metlife.services.acord.claim';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Declare local vars
+		DECLARE missingFields CHARACTER '';
+		
+		--Validate empty fields
+		IF ((InputLocalEnvironment.RUT IS NULL) OR (InputLocalEnvironment.RUT = '')) THEN
+			SET missingFields = missingFields || 'rutNumber' || ',';
+		END IF;
+		IF ((InputLocalEnvironment.Token IS NULL) OR (InputLocalEnvironment.Token = '')) THEN
+			SET missingFields = missingFields || 'token' || ',';
+		END IF;
+		IF ((InputLocalEnvironment.ClaimNumber IS NULL) OR (InputLocalEnvironment.ClaimNumber = '')) THEN
+			SET missingFields = missingFields || 'claimId' || ',';
+		END IF;
+		IF ((InputLocalEnvironment.PolicyNumber IS NULL) OR (InputLocalEnvironment.PolicyNumber = '')) THEN
+			SET missingFields = missingFields || 'policyNumber' || ',';
+		END IF;
+
+		--If there is some field empty throw missing mandatory field
+		IF (missingFields <> '') THEN
+			SET OutputLocalEnvironment.MissingFields = missingFields;
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*********************
+ * CheckSearchClaims *
+ *********************/
+CREATE COMPUTE MODULE CheckSearchClaims
+
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE claim NAMESPACE 'urn:metlife.services.acord.claim';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get response into local vars
+		DECLARE claimid CHARACTER InputRoot.SOAP.Body.claim:SearchClaimsResponse.claim:SearchClaimsResult.acord:Claim.acord:Id;
+		
+		--If there is no claim, throws "No Data Found" error.
+		IF ((claimid IS NULL) OR (claimid = '')) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		--Save the claim info into the local environment
+		SET OutputLocalEnvironment.ClaimId = claimid;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*****************
+ * CheckGetClaim *
+ *****************/
+CREATE COMPUTE MODULE CheckGetClaim
+
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.claim';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get response into local vars
+		DECLARE claimid CHARACTER InputRoot.SOAP.Body.buc2:GetClaimResponse.buc2:GetClaimResult.acord:Id;
+		
+		--If there is not contact info, throws "No Data Found" error.
+		IF ((claimid IS NULL) OR (claimid = '')) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		--Save the claim info into the local environment
+		
+		SET OutputLocalEnvironment.Claim = InputRoot.SOAP.Body.buc2:GetClaimResponse.buc2:GetClaimResult;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+/*****************
+ * CheckGetClaimSettlement *
+ *****************/
+CREATE COMPUTE MODULE CheckGetClaimSettlement
+
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.claim';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get response into local vars
+
+		--Save the claim info into the local environment
+		SET OutputLocalEnvironment.ClaimSettlement = InputRoot.SOAP.Body.buc2:GetClaimSettlementResponse.buc2:GetClaimSettlementResult;
+		
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+/*****************
+ * CheckGetClaimDocuments *
+ *****************/
+CREATE COMPUTE MODULE CheckGetClaimDocuments
+
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.claim';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get response into local vars
+
+		--If there is no claim, throws "No Data Found" error
+
+		--Save the claim info into the local environment
+		
+		SET OutputLocalEnvironment.ClaimDocuments = InputRoot.SOAP.Body.buc2:GetClaimDocumentsResponse.buc2:GetClaimDocumentsResult;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+/*****************
+ * CheckGetClaimPDF *
+ *****************/
+CREATE COMPUTE MODULE CheckGetClaimPDF
+
+	--Declare namespaces
+	DECLARE prIng NAMESPACE 'metlife.cl';
+	DECLARE WSClm NAMESPACE 'http://schemas.datacontract.org/2004/07/WcfClaims';
+	
+	
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get response into local vars
+
+		--If there is no claim, throws "No Data Found" error
+
+		--Save the claim info into the local environment
+		
+		SET OutputLocalEnvironment.ClaimPDF = InputRoot.SOAP.Body.prIng:GetClaimSummaryDocumentResponse.prIng:GetClaimSummaryDocumentResult;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+
+
+

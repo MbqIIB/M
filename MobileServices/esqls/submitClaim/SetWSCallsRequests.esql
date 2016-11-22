@@ -1,0 +1,167 @@
+BROKER SCHEMA esqls.submitClaim
+PATH esqls.generics;
+
+/******************************************************
+ * GetRUTAndTOKENFromHeaderAndSetSubFlowValidateToken *
+ ******************************************************/
+CREATE COMPUTE MODULE GetInputData
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;		
+		
+		--Declare local vars for input header
+		DECLARE aux CHARACTER;
+		DECLARE rutNumber CHARACTER;
+		DECLARE tokenNumber CHARACTER;
+		DECLARE poliza CHARACTER;	
+		
+		--Extract RUT from URL and token from header
+		SET aux = SUBSTRING(InputRoot.HTTPInputHeader."X-Original-HTTP-Command" AFTER 'users/');
+		SET rutNumber = SUBSTRING(aux BEFORE '/');
+		SET tokenNumber = InputRoot.HTTPInputHeader."Token";
+		SET poliza = SUBSTRING(SUBSTRING(aux AFTER '/') BEFORE '/claim');
+		
+		--Get values of contact information for update
+		DECLARE metadataChannel CHARACTER InputRoot.JSON.Data.metaData.channel;
+		DECLARE metadataOrigin CHARACTER InputRoot.JSON.Data.metaData.origin;
+		DECLARE rutClaimt CHARACTER InputRoot.JSON.Data.claimantRutNumber;
+		DECLARE nameClaim CHARACTER InputRoot.JSON.Data.claimantName;
+		
+		DECLARE nameBeneficiary CHARACTER InputRoot.JSON.Data.principalBeneficiaryName;
+		
+		DECLARE dateClaim CHARACTER InputRoot.JSON.Data.dateOfService;
+		DECLARE totalClaim CHARACTER InputRoot.JSON.Data.totalClaimAmt;
+
+		--Save the received variables in the local environment, to be used by ValidateToken.subflow
+		SET OutputLocalEnvironment.RUT = rutNumber;
+		SET OutputLocalEnvironment.Token = tokenNumber;
+		SET OutputLocalEnvironment.MetadataChannel = metadataChannel;
+		SET OutputLocalEnvironment.MetadataOrigin = metadataOrigin;
+		SET OutputLocalEnvironment.RutClaimt = rutClaimt;
+		SET OutputLocalEnvironment.NameClaim = nameClaim;
+		
+		SET OutputLocalEnvironment.NameBeneficiary = nameBeneficiary;
+		
+		SET OutputLocalEnvironment.DateClaim = dateClaim;
+		SET OutputLocalEnvironment.TotalClaim = totalClaim;
+		SET OutputLocalEnvironment.Poliza = poliza;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**********************
+ * ValidateParameters *
+ **********************/
+CREATE COMPUTE MODULE ValidateParameters
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the parameters to validate
+		DECLARE metadataChannel CHARACTER InputLocalEnvironment.MetadataChannel;
+		DECLARE metadataOrigin CHARACTER InputLocalEnvironment.MetadataOrigin;
+		DECLARE rutClaimt CHARACTER InputLocalEnvironment.RutClaimt;
+		DECLARE nameClaim CHARACTER InputLocalEnvironment.NameClaim;		
+		DECLARE nameBeneficiary CHARACTER InputLocalEnvironment.NameBeneficiary;		
+		DECLARE dateClaim CHARACTER InputLocalEnvironment.DateClaim;
+		DECLARE totalClaim CHARACTER InputLocalEnvironment.TotalClaim;
+		DECLARE poliza CHARACTER InputLocalEnvironment.Poliza;
+		DECLARE dateAux DATE;
+		DECLARE dateNow DATE CURRENT_DATE;
+		
+		--If there is some field empty then throw error 406: Validation Failed
+		DECLARE missingFields CHARACTER '';
+		IF  (metadataChannel IS NULL OR metadataChannel = '') THEN
+			SET missingFields = missingFields || 'metaData.channel' ||',';
+		END IF;
+		IF  (metadataOrigin IS NULL OR metadataOrigin = '') THEN
+			SET missingFields = missingFields || 'metaData.origin' ||',';
+		END IF;
+		IF  (rutClaimt IS NULL OR rutClaimt = '') THEN
+			SET missingFields = missingFields || 'claimantRutNumber' ||',';
+		END IF;
+		IF  (nameClaim IS NULL OR nameClaim = '') THEN
+			SET missingFields = missingFields || 'claimantName' ||',';
+		END IF;
+		IF  (nameBeneficiary IS NULL OR nameBeneficiary = '') THEN
+			SET missingFields = missingFields || 'principalBeneficiaryName' ||',';
+		END IF;
+		IF  (dateClaim IS NULL OR dateClaim = '') THEN
+			SET missingFields = missingFields || 'dateOfService' ||',';
+		END IF;
+		IF  (totalClaim IS NULL OR totalClaim = '') THEN
+			SET missingFields = missingFields || 'totalClaimAmt' ||',';
+		END IF;
+		
+		--Throw error 409: Mandatory Check Failed
+		IF  (missingFields <> '') THEN
+			SET OutputLocalEnvironment.MissingFields = missingFields;
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		CALL CharacterToDate(dateClaim, 'dd/MM/yyyy') INTO dateAux;
+				
+		--Throw error 406: Validation Failed
+		IF  (dateAux > dateNow) THEN
+			SET missingFields = missingFields || 'dateOfService' ||',';
+			SET OutputLocalEnvironment.MissingFields = missingFields;
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*****************************
+ * SetUpdatePartyContactInfo *
+ *****************************/
+CREATE COMPUTE MODULE SetUpdatePartyContactInfo
+	
+	--Declare namespaces
+	DECLARE claims NAMESPACE 'metlife.cl';
+	DECLARE ns NAMESPACE 'http://schemas.xmlsoap.org/soap/envelope/';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the data from local environment
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		DECLARE rutBeneficiary CHARACTER InputLocalEnvironment.RutClaimt;
+		DECLARE dateClaim DATE CharacterToDate(InputLocalEnvironment.DateClaim, 'dd/MM/yyyy');
+		DECLARE totalClaim INTEGER CAST(ClearSpecialChars(InputLocalEnvironment.TotalClaim) AS INTEGER);
+		DECLARE poliza INTEGER CAST(InputLocalEnvironment.Poliza AS INTEGER);
+		DECLARE numberDocuments INTEGER 1;
+		DECLARE businessLine INTEGER 2;
+		DECLARE channel CHARACTER 'Mobile';
+		DECLARE productId INTEGER 2;
+		
+		--If rutBeneficiary is null then pass the ensured rut
+		IF ((rutBeneficiary IS NULL) OR (rutBeneficiary = '')) THEN
+			SET rutBeneficiary = rutNumber;
+		END IF;
+		
+		--Set the parameter in the request of GetPartyContactInfo to be done
+        SET OutputRoot.SOAP.Body.claims:CreateClaim.claims:rutNumber = rutNumber;
+        SET OutputRoot.SOAP.Body.claims:CreateClaim.claims:policyNumber = poliza;
+        SET OutputRoot.SOAP.Body.claims:CreateClaim.claims:beneficiaryRut = rutBeneficiary;
+        SET OutputRoot.SOAP.Body.claims:CreateClaim.claims:numberDocuments = numberDocuments;	
+        SET OutputRoot.SOAP.Body.claims:CreateClaim.claims:totalAmount = totalClaim;
+        SET OutputRoot.SOAP.Body.claims:CreateClaim.claims:registerDateTime = dateClaim;
+        SET OutputRoot.SOAP.Body.claims:CreateClaim.claims:businessLine = businessLine;
+		SET OutputRoot.SOAP.Body.claims:CreateClaim.claims:channel = channel;		
+		SET OutputRoot.SOAP.Body.claims:CreateClaim.claims:productId = productId;	
+		
+		RETURN TRUE;
+	END;
+END MODULE;

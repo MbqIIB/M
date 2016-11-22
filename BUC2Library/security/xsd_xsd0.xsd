@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="urn:metlife.services.acord.security" xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" xmlns:tns="urn:metlife.services.acord.security">
+  <xsd:element ibmSchExtn:docRoot="true" name="CreateToken">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="RUT" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="CreateTokenResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="CreateTokenResult" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="ValidateToken">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="token" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="ValidateTokenResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="ValidateTokenResult" type="xsd:boolean"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="KillToken">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="token" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="KillTokenResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="KillTokenResult" type="xsd:boolean"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

@@ -1,0 +1,4 @@
+BROKER SCHEMA esqls.generics
+
+DECLARE BroadLineOfBusinessID EXTERNAL INTEGER 4;
+

@@ -1,0 +1,79 @@
+BROKER SCHEMA esqls.generics
+
+CREATE COMPUTE MODULE ValidateCommonHeader
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		SET OutputRoot.HTTPInputHeader = InputRoot.HTTPInputHeader;
+		SET OutputRoot = InputRoot;
+		
+		--Declare common attributes default values (We could get these from configuration later)
+		DECLARE contentTypeVal CHARACTER 'application/x-www-form-urlencoded';
+		DECLARE acceptVal CHARACTER 'application/json,application/xml,text/plain,text/html,application/xhtml+xml';
+		DECLARE acceptEncodingVal CHARACTER '*';
+		DECLARE apiVersionVal INTEGER 1;
+		DECLARE tenantIdVal INTEGER 3;
+		
+		--Declare error message var
+		DECLARE errorMessage CHARACTER '';
+		
+		--Declare common attributes from http headers
+		DECLARE contentType CHARACTER;
+		DECLARE accept CHARACTER;
+		DECLARE acceptEncoding CHARACTER;
+		DECLARE apiVersion INTEGER;
+		DECLARE tenantId INTEGER; 
+		
+		--Get values from header
+		SET contentType = InputRoot.HTTPInputHeader."Content-Type";
+		SET accept = InputRoot.HTTPInputHeader."Accept";
+		SET acceptEncoding = InputRoot.HTTPInputHeader."Accept-Encoding";
+		SET apiVersion = InputRoot.HTTPInputHeader."Api-Version";
+		SET tenantId = InputRoot.HTTPInputHeader."Tenantid";
+
+		--Validate values of attribute Content-Type
+		IF (contentType IS NULL OR contentType <> contentTypeVal) THEN
+			SET errorMessage = '"Content-Type" attribute value is wrong, expected "' || contentTypeVal || '" but was "' || contentType || '". ';
+		END IF;
+		
+		--Validate values of attribute Accept
+		IF (accept IS NULL OR accept <> acceptVal) THEN
+			SET errorMessage = errorMessage || '"Accept" attribute value is wrong, expected "' || acceptVal || '" but was "' || accept || '". ';
+		END IF;
+		
+		--Validate values of attribute Accept-Encoding
+		IF (acceptEncoding IS NULL OR acceptEncoding <> acceptEncodingVal) THEN
+			SET errorMessage = errorMessage || '"Accept-Encoding" attribute value is wrong, expected "' || acceptEncodingVal || '" but was "' || acceptEncoding || '". ';
+		END IF;
+		
+		--Validate values of attribute API-Version
+		IF (apiVersion IS NULL OR apiVersion <> apiVersionVal) THEN
+			SET errorMessage = errorMessage || '"API-Version" attribute value is wrong, expected "' || CAST(apiVersionVal AS CHARACTER) || '" but was "' || CAST(apiVersion AS CHARACTER) || '". ';
+		END IF;
+		
+		--Validate values of attribute TenantId
+		IF (tenantId IS NULL OR tenantId <> tenantIdVal) THEN
+			SET errorMessage = errorMessage || '"TenantId" attribute value is wrong, expected "' || CAST(tenantIdVal AS CHARACTER) || '" but was "' || CAST(tenantId AS CHARACTER) || '". ';
+		END IF;
+		
+		--If there is any error propagate to Failure terminal
+		IF (errorMessage IS NOT NULL AND errorMessage <> '') THEN
+			
+			--Log the error message
+			LOG EVENT SEVERITY 3 CATALOG 'Mobile Services' VALUES('Header validation errors: ' || errorMessage);
+			
+			--Set the error values in local environment acording to the business rules
+			SET OutputLocalEnvironment.Error.ErrorCode = 402;
+			SET OutputLocalEnvironment.Error.ErrorMessage = 'Unexpected Issue';
+			SET OutputLocalEnvironment.Error.ErrorReason = 'Wrong Header';
+			SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+			
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		RETURN TRUE;
+	END;
+END MODULE;

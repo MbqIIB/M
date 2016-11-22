@@ -1,0 +1,233 @@
+BROKER SCHEMA esqls.documents
+
+
+/*********************
+ * ValidateInputData *
+ *********************/
+CREATE COMPUTE MODULE ValidateInputData
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare local vars
+		DECLARE missingFields CHARACTER '';
+		
+		--Validate Empty Fields
+		IF ((OutputLocalEnvironment.RUT IS NULL) OR (OutputLocalEnvironment.RUT = '')) THEN
+			SET missingFields = missingFields || 'rutNumber' || ',';
+		END IF;
+		IF ((OutputLocalEnvironment.policyNumber IS NULL) OR (OutputLocalEnvironment.policyNumber = '')) THEN
+			SET missingFields = missingFields || 'policyNumber' || ',';
+		END IF;
+		IF ((OutputLocalEnvironment.ClaimNumber IS NULL) OR (OutputLocalEnvironment.ClaimNumber = '')) THEN
+			SET missingFields = missingFields || 'claimId' || ',';
+		END IF;
+		
+		--If there is some field empty throw missing mandatory field
+		IF (missingFields <> '') THEN 
+			SET OutputLocalEnvironment.MissingFields = missingFields;
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*********************************
+ * CheckGetClaimDocuments      *
+ *********************************/
+CREATE COMPUTE MODULE CheckGetClaimDocuments
+	
+    DECLARE claimns NAMESPACE 'urn:metlife.services.acord.claim';
+    DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+
+		--Get number of agreements responsed
+		DECLARE totalCount INTEGER;
+		SET totalCount = CARDINALITY(InputRoot.SOAP.Body.claimns:GetClaimDocumentsResponse.claimns:GetClaimDocumentsResult.acord:ClaimDocument[]);
+		
+		--If there is no agreements, throws "No Data Found" error.
+		IF ((totalCount IS NULL) OR (totalCount = 0)) THEN 
+			SET OutputLocalEnvironment.ErrorReason = 'NoDocumentsFound';
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Save the agreements array and data into local environment
+		SET OutputLocalEnvironment.Documents = InputRoot.SOAP.Body.claimns:GetClaimDocumentsResponse.claimns:GetClaimDocumentsResult;
+		SET OutputLocalEnvironment.TotalCount = totalCount;
+		SET OutputLocalEnvironment.CurrentDocument = 1; 
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*********************************
+ * CheckGetClaimDocument      *
+ *********************************/
+CREATE COMPUTE MODULE CheckGetClaimDocument
+	
+    DECLARE claimns NAMESPACE 'urn:metlife.services.acord.claim';
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get response data into local vars
+		DECLARE documentID CHARACTER InputRoot.SOAP.Body.claimns:GetClaimDocumentResponse.claimns:GetClaimDocumentResult.acord:Location;
+		DECLARE doc_type CHARACTER InputRoot.SOAP.Body.claimns:GetClaimDocumentResponse.claimns:GetClaimDocumentResult.acord:Type;
+		
+		--If there is no document
+		IF ((documentID IS NULL) OR (documentID = '')) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Save the agreements array and data into local environment
+		SET OutputLocalEnvironment.Document = InputRoot.SOAP.Body.claimns:GetClaimDocumentResponse.claimns:GetClaimDocumentResult;
+		SET OutputLocalEnvironment.ClaimID = InputRoot.SOAP.Body.claimns:GetClaimDocumentResponse.claimns:GetClaimDocumentResult.acord:ClaimNumber;
+		SET OutputLocalEnvironment.PolicyNumber = InputRoot.SOAP.Body.claimns:GetClaimDocumentResponse.claimns:GetClaimDocumentResult.acord:AgreementNumber;
+		SET OutputLocalEnvironment.documentID = documentID;
+		SET OutputLocalEnvironment.CurrentDocument = 1;	
+		SET OutputLocalEnvironment.DocType = doc_type;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************************
+ * CheckGetDocumentFileNet *
+ ***************************/
+CREATE COMPUTE MODULE CheckGetDocumentFileNet
+	
+	--Declare namespaces
+	DECLARE filenetns NAMESPACE 'http://filenet.ws.metlife.cl/';
+	
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Declare local vars
+		DECLARE doc_name	CHARACTER;
+		DECLARE doc_content	CHARACTER;			
+		DECLARE doc_size	CHARACTER;
+		DECLARE doc_unit	CHARACTER;
+		DECLARE doc_id		CHARACTER;
+		DECLARE nameLength 	INTEGER;
+		
+		--Get response data		
+		SET doc_name = InputRoot.SOAP.Body.filenetns:getDocumentResponse.Document.filename;
+		SET doc_content	= InputRoot.SOAP.Body.filenetns:getDocumentResponse.Document.serializedFile;	
+		SET doc_size = LENGTH(doc_content);
+		SET doc_unit = 'b';
+
+		
+		--If there is no document throw No data found error
+		IF ((doc_name IS NULL) OR (doc_name = '')) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		--Sava data into local environment
+		SET OutputLocalEnvironment.DocName = doc_name;
+		SET OutputLocalEnvironment.DocContent = doc_content;
+		SET OutputLocalEnvironment.DocSize = doc_size;
+		SET OutputLocalEnvironment.DocUnit = doc_unit;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************************
+ * CheckGetMetadataFileNet *
+ ***************************/
+CREATE COMPUTE MODULE CheckGetMetadataFileNet
+	
+	--Declare namespaces
+	DECLARE filenetns NAMESPACE 'http://filenet.ws.metlife.cl/';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Declare local vars
+		DECLARE claimID INTEGER;
+		DECLARE docType CHARACTER;
+		DECLARE metadata REFERENCE TO InputRoot.SOAP.Body.filenetns:getMetadataResponse.MetadataList;
+		DECLARE countMetadata INTEGER CARDINALITY(metadata.Item[]);
+		DECLARE i INTEGER 1;
+		
+		--Get Claim ID
+		WHILE (i <= countMetadata) DO
+			IF (CAST(metadata.Item[i].name AS CHARACTER) = 'NumeroReclamo') THEN
+				SET claimID = CAST(metadata.Item[i].value AS INTEGER);
+			END IF;
+			IF (CAST(metadata.Item[i].name AS CHARACTER) = 'TipoDocumento') THEN
+				SET docType = metadata.Item[i].value;
+			END IF;
+			SET i = i + 1;
+		END WHILE;
+		
+		--If there is no claim found
+		IF ((claimID IS NULL) OR (claimID = 0)) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Save data on local environment
+		SET OutputLocalEnvironment.ClaimID = claimID;
+		SET OutputLocalEnvironment.DocType = docType;
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*********************
+ * CheckSearchClaims *
+ *********************/
+CREATE COMPUTE MODULE CheckSearchClaims
+
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE claim NAMESPACE 'urn:metlife.services.acord.claim';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get response into local vars
+		DECLARE claimid CHARACTER InputRoot.SOAP.Body.claim:SearchClaimsResponse.claim:SearchClaimsResult.acord:Claim.acord:Id;
+		
+		--If there is no claim, throws "No Data Found" error.
+		IF ((claimid IS NULL) OR (claimid = '')) THEN
+			SET OutputLocalEnvironment.ErrorReason = 'NoClaimFound';
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		--Save the claim info into the local environment
+		SET OutputLocalEnvironment.claimId = claimid;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+

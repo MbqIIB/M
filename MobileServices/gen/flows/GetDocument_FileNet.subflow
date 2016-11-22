@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmSOAPRequest.msgnode="ComIbmSOAPRequest.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="gen/flows/GetDocument_FileNet.subflow"
+    nsPrefix="gen_flows_GetDocument_FileNet.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" useDefaults="true" udpSupport="true">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.WebServiceURL_FileNetService" name="WebServiceURL_FileNetService">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <translation xmi:type="utility:TranslatableString" key="GetDocument_FileNet" bundleName="gen/flows/GetDocument_FileNet" pluginId="MobileServices"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj16/GetDocument_FileNet.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj30/GetDocument_FileNet.gif"/>
+    <composition>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.in" location="20,20">
+        <translation xmi:type="utility:TranslatableString" key="InTerminal.in" bundleName="gen/flows/GetDocument_FileNet" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="ComIbmSOAPRequest.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="362,21" wsdlFileName="FileNet/FileNetWS_1.wsdl" selectedPortType="ConectorFileNetWSI" selectedBinding="FilenetBinding" selectedOperation="getDocument" selectedPort="Filenet" targetNamespace="http://filenet.ws.metlife.cl/" useHTTPTransport="true" webServiceURL="http://mlfprdibmfnet.alico.corp:9080/WsFileNet/FileNetWS" sslProtocol="TLS">
+        <translation xmi:type="utility:ConstantString" string="Request"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.failure" location="537,13">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.failure" bundleName="gen/flows/GetDocument_FileNet" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.fault" location="537,181">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.fault" bundleName="gen/flows/GetDocument_FileNet" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.GetAgreementResponse" location="496,91">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.GetDocumentResponse" bundleName="gen/flows/GetDocument_FileNet" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="169,20" computeExpression="esql://routine/esqls.generics#ChangeWebServiceURL_FileNetService.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Change WS URL"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_2" sourceNode="InTerminal.in" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="OutTerminal.fault" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="OutTerminal.GetAgreementResponse" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="OutTerminal.failure" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.WebServiceURL_FileNetService">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.WebServiceURL_FileNetService" bundleName="gen/flows/GetDocument_FileNet" pluginId="MobileServices"/>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

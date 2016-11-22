@@ -1,0 +1,63 @@
+BROKER SCHEMA esqls.searchclaims
+
+
+CREATE COMPUTE MODULE SearchClaims_esql_Ciclico
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		DECLARE I,J, Count INTEGER;
+		DECLARE NUM DECIMAL;
+		SET I = 1;
+		
+		
+		
+		CREATE FIELD Environment.Claims TYPE Name;
+        CREATE FIELD Environment.CurrentClaim TYPE Name;
+       
+		SET Count = CARDINALITY(Environment.Resultado.SearchClaims.Claims[]);
+        SET J = Count;
+		WHILE I <= J DO
+			
+					
+            SET Environment.CurrentClaim = NULL;
+            CREATE FIELD OutputRoot.XMLNSC.ns13:GetClaimSettlement TYPE Name;
+			DECLARE rOut REFERENCE TO OutputRoot.XMLNSC.ns13:GetClaimSettlement;
+            
+            SET NUM = CAST(Environment.*:Resultado.*:SearchClaims.*:Claims[I].*:Id AS DECIMAL);
+            
+            SET rOut.ns13:claimId = NUM; 
+            --SET rOut.ns13:claimId = 131132; 
+            SET Environment.Resultado.CLAIMID = Environment.*:Resultado.*:SearchClaims.*:Claims[I].*:Id;            
+            SET Environment.CurrentClaim.ClaimId = NUM;
+            SET Environment.CurrentClaim.ClaimInfo = Environment.*:Resultado.*:SearchClaims.*:Claims[I];
+            
+            PROPAGATE TO TERMINAL 'out';
+            
+			CREATE LASTCHILD OF Environment.Claims NAME 'Claim';
+			SET Environment.Claims.Claim[<] = Environment.CurrentClaim;
+			
+			IF I = J THEN
+				RETURN FALSE;
+			END IF;
+			
+			SET I = I + 1;
+			
+		END WHILE;
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

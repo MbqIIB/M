@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="AgreementService" targetNamespace="urn:metlife.services.acord.agreement" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:metlife.services.acord.agreement" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:acord="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD">
+  <wsdl:documentation>
+    <wsdl:appinfo source="WMQI_APPINFO">
+      <MRWSDLAppInfo imported="true">
+        <binding hasEncoding="false" imported="true" name="customBinding_AgreementService" originalBindingStyle="document"/>
+        <binding hasEncoding="false" imported="true" name="basicHttpBinding_AgreementService" originalBindingStyle="document"/>
+      </MRWSDLAppInfo>
+    </wsdl:appinfo>
+  </wsdl:documentation>
+  <wsp:Policy wsu:Id="customBinding_AgreementService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wsaw:UsingAddressing/>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="urn:metlife.services.acord.agreement/Imports">
+      <xsd:import namespace="urn:metlife.services.acord.agreement" schemaLocation="xsd_xsd0.xsd"/>
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD" schemaLocation="xsd_xsd2.xsd"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IAgreementService_SearchEndorsements_InputMessage">
+    <wsdl:part element="tns:SearchEndorsements" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_SearchEndorsements_OutputMessage">
+    <wsdl:part element="tns:SearchEndorsementsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_SearchCoverages_InputMessage">
+    <wsdl:part element="tns:SearchCoverages" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_SearchCoverages_OutputMessage">
+    <wsdl:part element="tns:SearchCoveragesResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetAgreementContactInfo_InputMessage">
+    <wsdl:part element="tns:GetAgreementContactInfo" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetAgreementContactInfo_OutputMessage">
+    <wsdl:part element="tns:GetAgreementContactInfoResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetCoverage_InputMessage">
+    <wsdl:part element="tns:GetCoverage" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetCoverage_OutputMessage">
+    <wsdl:part element="tns:GetCoverageResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_SearchInvestmentFunds_InputMessage">
+    <wsdl:part element="tns:SearchInvestmentFunds" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_SearchInvestmentFunds_OutputMessage">
+    <wsdl:part element="tns:SearchInvestmentFundsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetAgreementParties_InputMessage">
+    <wsdl:part element="tns:GetAgreementParties" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetAgreementParties_OutputMessage">
+    <wsdl:part element="tns:GetAgreementPartiesResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_SearchInvestmentFundQuotaValue_InputMessage">
+    <wsdl:part element="tns:SearchInvestmentFundQuotaValue" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_SearchInvestmentFundQuotaValue_OutputMessage">
+    <wsdl:part element="tns:SearchInvestmentFundQuotaValueResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetInvestmentFund_InputMessage">
+    <wsdl:part element="tns:GetInvestmentFund" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetInvestmentFund_OutputMessage">
+    <wsdl:part element="tns:GetInvestmentFundResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_SearchAgreements_InputMessage">
+    <wsdl:part element="tns:SearchAgreements" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_SearchAgreements_OutputMessage">
+    <wsdl:part element="tns:SearchAgreementsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetAgreement_InputMessage">
+    <wsdl:part element="tns:GetAgreement" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetAgreement_OutputMessage">
+    <wsdl:part element="tns:GetAgreementResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_SearchLoans_InputMessage">
+    <wsdl:part element="tns:SearchLoans" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_SearchLoans_OutputMessage">
+    <wsdl:part element="tns:SearchLoansResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetSavingsInfo_InputMessage">
+    <wsdl:part element="tns:GetSavingsInfo" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetSavingsInfo_OutputMessage">
+    <wsdl:part element="tns:GetSavingsInfoResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_SearchClaims_InputMessage">
+    <wsdl:part element="tns:SearchClaims" name="parameters"/>
+  </wsdl:message>
+    <wsdl:message name="IAgreementService_GetAgreementBenefits_InputMessage">
+    <wsdl:part element="tns:GetAgreementBenefits" name="parameters"/>
+  </wsdl:message>  
+  <wsdl:message name="IAgreementService_SearchClaims_OutputMessage">
+    <wsdl:part element="tns:SearchClaimsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetAgreementBenefits_OutputMessage">
+    <wsdl:part element="tns:GetAgreementBenefitsResponse" name="parameters"/>
+  </wsdl:message>  
+  <wsdl:message name="IAgreementService_GetLoan_InputMessage">
+    <wsdl:part element="tns:GetLoan" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetLoan_OutputMessage">
+    <wsdl:part element="tns:GetLoanResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_UpdateProductContactInfo_InputMessage">
+    <wsdl:part element="tns:UpdateProductContactInfo" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_UpdateProductContactInfo_OutputMessage">
+    <wsdl:part element="tns:UpdateProductContactInfoResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_UpdateProductContactInfo_FaultExceptionDetailFault_FaultMessage">
+    <wsdl:part element="q1:FaultExceptionDetail" name="detail" xmlns:q1="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetAgreementEmployees_InputMessage">
+    <wsdl:part element="tns:GetAgreementEmployees" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IAgreementService_GetAgreementEmployees_OutputMessage">
+    <wsdl:part element="tns:GetAgreementEmployeesResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="IAgreementService">
+    <wsdl:operation name="SearchEndorsements">
+      <wsdl:input message="tns:IAgreementService_SearchEndorsements_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchEndorsements"/>
+      <wsdl:output message="tns:IAgreementService_SearchEndorsements_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchEndorsementsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="SearchCoverages">
+      <wsdl:input message="tns:IAgreementService_SearchCoverages_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchCoverages"/>
+      <wsdl:output message="tns:IAgreementService_SearchCoverages_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchCoveragesResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreementContactInfo">
+      <wsdl:input message="tns:IAgreementService_GetAgreementContactInfo_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementContactInfo"/>
+      <wsdl:output message="tns:IAgreementService_GetAgreementContactInfo_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementContactInfoResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetCoverage">
+      <wsdl:input message="tns:IAgreementService_GetCoverage_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetCoverage"/>
+      <wsdl:output message="tns:IAgreementService_GetCoverage_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetCoverageResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="SearchInvestmentFunds">
+      <wsdl:input message="tns:IAgreementService_SearchInvestmentFunds_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchInvestmentFunds"/>
+      <wsdl:output message="tns:IAgreementService_SearchInvestmentFunds_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchInvestmentFundsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreementParties">
+      <wsdl:input message="tns:IAgreementService_GetAgreementParties_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementParties"/>
+      <wsdl:output message="tns:IAgreementService_GetAgreementParties_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementPartiesResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="SearchInvestmentFundQuotaValue">
+      <wsdl:input message="tns:IAgreementService_SearchInvestmentFundQuotaValue_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchInvestmentFundQuotaValue"/>
+      <wsdl:output message="tns:IAgreementService_SearchInvestmentFundQuotaValue_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchInvestmentFundQuotaValueResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetInvestmentFund">
+      <wsdl:input message="tns:IAgreementService_GetInvestmentFund_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetInvestmentFund"/>
+      <wsdl:output message="tns:IAgreementService_GetInvestmentFund_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetInvestmentFundResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="SearchAgreements">
+      <wsdl:input message="tns:IAgreementService_SearchAgreements_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchAgreements"/>
+      <wsdl:output message="tns:IAgreementService_SearchAgreements_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchAgreementsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreement">
+      <wsdl:input message="tns:IAgreementService_GetAgreement_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetAgreement"/>
+      <wsdl:output message="tns:IAgreementService_GetAgreement_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="SearchLoans">
+      <wsdl:input message="tns:IAgreementService_SearchLoans_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchLoans"/>
+      <wsdl:output message="tns:IAgreementService_SearchLoans_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchLoansResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetSavingsInfo">
+      <wsdl:input message="tns:IAgreementService_GetSavingsInfo_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetSavingsInfo"/>
+      <wsdl:output message="tns:IAgreementService_GetSavingsInfo_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetSavingsInfoResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="SearchClaims">
+      <wsdl:input message="tns:IAgreementService_SearchClaims_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchClaims"/>
+      <wsdl:output message="tns:IAgreementService_SearchClaims_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/SearchClaimsResponse"/>
+    </wsdl:operation>    
+    <wsdl:operation name="GetAgreementBenefits">
+      <wsdl:input message="tns:IAgreementService_GetAgreementBenefits_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementBenefits"/>
+      <wsdl:output message="tns:IAgreementService_GetAgreementBenefits_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementBenefitsResponse"/>
+    </wsdl:operation>        
+    <wsdl:operation name="GetLoan">
+      <wsdl:input message="tns:IAgreementService_GetLoan_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetLoan"/>
+      <wsdl:output message="tns:IAgreementService_GetLoan_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetLoanResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateProductContactInfo">
+      <wsdl:input message="tns:IAgreementService_UpdateProductContactInfo_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/UpdateProductContactInfo"/>
+      <wsdl:output message="tns:IAgreementService_UpdateProductContactInfo_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/UpdateProductContactInfoResponse"/>
+      <wsdl:fault message="tns:IAgreementService_UpdateProductContactInfo_FaultExceptionDetailFault_FaultMessage" name="FaultExceptionDetailFault" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/UpdateProductContactInfoFaultExceptionDetailFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreementEmployees">
+      <wsdl:input message="tns:IAgreementService_GetAgreementEmployees_InputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementEmployees"/>
+      <wsdl:output message="tns:IAgreementService_GetAgreementEmployees_OutputMessage" wsaw:Action="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementEmployeesResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="basicHttpBinding_AgreementService" type="tns:IAgreementService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="SearchEndorsements">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchEndorsements" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchCoverages">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchCoverages" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreementContactInfo">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementContactInfo" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCoverage">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetCoverage" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchInvestmentFunds">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchInvestmentFunds" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreementParties">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementParties" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchInvestmentFundQuotaValue">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchInvestmentFundQuotaValue" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetInvestmentFund">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetInvestmentFund" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchAgreements">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchAgreements" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreement">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetAgreement" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchLoans">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchLoans" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSavingsInfo">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetSavingsInfo" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchClaims">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchClaims" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreementBenefits">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementBenefits" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>    
+    <wsdl:operation name="GetLoan">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetLoan" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateProductContactInfo">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/UpdateProductContactInfo" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="FaultExceptionDetailFault">
+        <soap:fault name="FaultExceptionDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreementEmployees">
+      <soap:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementEmployees" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="customBinding_AgreementService" type="tns:IAgreementService">
+    <wsp:PolicyReference URI="#customBinding_AgreementService_policy"/>
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="SearchEndorsements">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchEndorsements" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchCoverages">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchCoverages" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreementContactInfo">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementContactInfo" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCoverage">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetCoverage" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchInvestmentFunds">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchInvestmentFunds" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreementParties">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementParties" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchInvestmentFundQuotaValue">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchInvestmentFundQuotaValue" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetInvestmentFund">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetInvestmentFund" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchAgreements">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchAgreements" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreement">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetAgreement" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchLoans">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchLoans" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSavingsInfo">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetSavingsInfo" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchClaims">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/SearchClaims" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+        <wsdl:operation name="GetAgreementBenefits">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementBenefits" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetLoan">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetLoan" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateProductContactInfo">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/UpdateProductContactInfo" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="FaultExceptionDetailFault">
+        <soap12:fault name="FaultExceptionDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetAgreementEmployees">
+      <soap12:operation soapAction="urn:metlife.services.acord.agreement/IAgreementService/GetAgreementEmployees" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="AgreementService">
+    <wsdl:port binding="tns:basicHttpBinding_AgreementService" name="basicHttpBinding_AgreementService">
+      <soap:address location="http://mlfpcdesbo:22/Click_admin/AgreementService.svc/http"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:customBinding_AgreementService" name="customBinding_AgreementService">
+      <soap12:address location="http://mlfpcdesbo:22/Click_admin/AgreementService.svc/soap"/>
+      <wsa10:EndpointReference>
+        <wsa10:Address>http://mlfpcdesbo:22/Click_admin/AgreementService.svc/soap</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

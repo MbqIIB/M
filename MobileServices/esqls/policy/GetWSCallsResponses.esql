@@ -1,0 +1,332 @@
+BROKER SCHEMA esqls.policy
+
+
+/*********************************
+ * CheckGetPartyContactInfo      *
+ *********************************/
+CREATE COMPUTE MODULE CheckGetPartyContactInfo
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get response into local vars
+		DECLARE email_0 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:PrimaryEmail;
+		DECLARE phone_0 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:PhoneNumber;
+		DECLARE phone_1 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:MobileNumber;
+		DECLARE address_0 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:Address;
+		DECLARE region_0 INTEGER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:Region.acord:Id;
+		DECLARE comune_0 INTEGER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:Comune.acord:Id;
+		
+		--If there is not contact info, throws "No Data Found" error.
+		IF (((email_0 IS NULL) OR (email_0 = '')) AND 
+			((phone_0 IS NULL) OR (phone_0 = '')) AND 
+			((phone_1 IS NULL) OR (phone_1 = '')) AND 
+			((address_0 IS NULL) OR (address_0 = '')) AND
+			((region_0 IS NULL) OR (region_0 = '')) AND
+			((comune_0 IS NULL) OR (comune_0 = ''))) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Save the personal contact info into the local environment
+		SET OutputLocalEnvironment.Email_0 = email_0;
+		SET OutputLocalEnvironment.Phone_0 = phone_0;
+		SET OutputLocalEnvironment.Phone_1 = phone_1;
+		SET OutputLocalEnvironment.Address_0 = address_0;
+		SET OutputLocalEnvironment.Region_0 = region_0;
+		SET OutputLocalEnvironment.Comune_0 = comune_0;		
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************************
+ * CheckSearchAgreements      *
+ ******************************/
+CREATE COMPUTE MODULE CheckSearchAgreements
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get number of agreements responsed
+		DECLARE totalCount INTEGER;
+		SET totalCount = CARDINALITY(InputRoot.SOAP.Body.agreement:SearchAgreementsResponse.agreement:SearchAgreementsResult.acord:Agreement[]);
+		
+		--If there is no agreements, throws "No Data Found" error.
+		IF ((totalCount IS NULL) OR (totalCount = 0)) THEN 
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Save the agreements array and data into local environment
+		SET OutputLocalEnvironment.Agreements = InputRoot.SOAP.Body.agreement:SearchAgreementsResponse.agreement:SearchAgreementsResult;
+		SET OutputLocalEnvironment.TotalCount = totalCount;
+		SET OutputLocalEnvironment.CurrentAgreement = 1; 
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**************************
+ * CheckGetAgreement      *
+ **************************/
+CREATE COMPUTE MODULE CheckGetAgreement
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get response into local vars
+		DECLARE currentAgreement INTEGER InputLocalEnvironment.CurrentAgreement;
+		DECLARE idAgreement INTEGER InputRoot.SOAP.Body.agreement:GetAgreementResponse.agreement:GetAgreementResult.acord:Id;
+		DECLARE accountType CHARACTER InputRoot.SOAP.Body.agreement:GetAgreementResponse.agreement:GetAgreementResult.acord:BankAccounts.acord:BankAccount[1].acord:Type;
+		DECLARE accountNumber CHARACTER InputRoot.SOAP.Body.agreement:GetAgreementResponse.agreement:GetAgreementResult.acord:BankAccounts.acord:BankAccount[1].acord:Number;
+		DECLARE accountBankName CHARACTER InputRoot.SOAP.Body.agreement:GetAgreementResponse.agreement:GetAgreementResult.acord:BankAccounts.acord:BankAccount[1].acord:Bank.acord:Name;
+		DECLARE emailCommercial CHARACTER InputRoot.SOAP.Body.agreement:GetAgreementResponse.agreement:GetAgreementResult.acord:ContactInfo.acord:AgreementContactInfo.acord:Email;
+		DECLARE phoneCommercial CHARACTER InputRoot.SOAP.Body.agreement:GetAgreementResponse.agreement:GetAgreementResult.acord:ContactInfo.acord:AgreementContactInfo.acord:PhoneNumber;
+		DECLARE adreessCommercial CHARACTER InputRoot.SOAP.Body.agreement:GetAgreementResponse.agreement:GetAgreementResult.acord:ContactInfo.acord:AgreementContactInfo.acord:Address;
+		DECLARE regionCommercial INTEGER InputRoot.SOAP.Body.agreement:GetAgreementResponse.agreement:GetAgreementResult.acord:ContactInfo.acord:AgreementContactInfo.acord:Region.acord:Id;
+		DECLARE comuneCommercial INTEGER InputRoot.SOAP.Body.agreement:GetAgreementResponse.agreement:GetAgreementResult.acord:ContactInfo.acord:AgreementContactInfo.acord:Comune.acord:Id;
+		DECLARE plan CHARACTER InputRoot.SOAP.Body.agreement:GetAgreementResponse.agreement:GetAgreementResult.acord:Plan.acord:Name;
+		
+		
+		IF(regionCommercial IS NULL)THEN
+			SET regionCommercial = 0;
+		END IF;
+		
+		IF(comuneCommercial IS NULL)THEN
+			SET comuneCommercial = 0;
+		END IF;
+		
+		
+		--If response doesn't have agreement id data, throws "No Data Found" error.
+		IF (idAgreement IS NULL) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Save the response in the local environment
+		--Save Plan info
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].PlanName = plan;
+		
+		--Save Contact Information
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].ContactInformation.Email_0 = InputLocalEnvironment.Email_0; --Personal
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].ContactInformation.Email_1 = emailCommercial;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].ContactInformation.Phone_0 = InputLocalEnvironment.Phone_0; --Personal
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].ContactInformation.Phone_1 = InputLocalEnvironment.Phone_1; --Personal (Mobile phone)
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].ContactInformation.Phone_2 = phoneCommercial;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].ContactInformation.Address_0 = InputLocalEnvironment.Address_0; --Personal
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].ContactInformation.Address_1 = adreessCommercial;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].ContactInformation.Region_0 = InputLocalEnvironment.Region_0; --Personal
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].ContactInformation.Region_1 = regionCommercial;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].ContactInformation.Comune_0 = InputLocalEnvironment.Comune_0; --Personal
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].ContactInformation.Comune_1 = comuneCommercial;
+		
+		--Save Bank info
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].BankAccountType = accountType;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].BankAccountNumber = accountNumber;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].BankAccountBankName = accountBankName;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/****************************
+ * CheckGetAgreementParties *
+ ****************************/
+CREATE COMPUTE MODULE CheckGetAgreementParties
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get response into local vars
+		DECLARE currentAgreement INTEGER InputLocalEnvironment.CurrentAgreement;
+		DECLARE partiesCount INTEGER; 
+		DECLARE contractingParty CHARACTER;
+		DECLARE NoBeneficiaries BOOLEAN TRUE;
+		DECLARE role INTEGER;
+		DECLARE i INTEGER 1;
+		DECLARE j INTEGER 1;
+		DECLARE k INTEGER 1;
+		DECLARE totalRoles INTEGER 0;
+		
+		--Get parties count
+		SET partiesCount = CARDINALITY (InputRoot.SOAP.Body.agreement:GetAgreementPartiesResponse.agreement:GetAgreementPartiesResult.acord:AgreementParty[]);		
+		
+		--Find if some party has role 6 or 10 (Contracting Company)
+		WHILE (i <= partiesCount) DO			
+			
+			SET totalRoles = CARDINALITY(InputRoot.SOAP.Body.agreement:GetAgreementPartiesResponse.agreement:GetAgreementPartiesResult.acord:AgreementParty[i].acord:Roles.acord:PartyRole[]);
+			
+			SET k = 1;
+			WHILE(k <= totalRoles) DO
+			
+				SET role = InputRoot.SOAP.Body.agreement:GetAgreementPartiesResponse.agreement:GetAgreementPartiesResult.acord:AgreementParty[i].acord:Roles.acord:PartyRole[k].acord:Role.acord:Id;
+				
+				IF ((role = 6) OR (role = 10)) THEN
+					SET contractingParty = InputRoot.SOAP.Body.agreement:GetAgreementPartiesResponse.agreement:GetAgreementPartiesResult.acord:AgreementParty[i].acord:Party.acord:FullName;
+					SET i = partiesCount;
+					SET k = totalRoles;
+				END IF;
+				
+				SET k = k+1;
+			END WHILE; 
+			SET i = i + 1;
+		END WHILE; 
+		
+		--If none of these parties is Contracting company, throws "No Data Found" error.
+		IF ((contractingParty IS NULL) OR (contractingParty = '')) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		
+		SET i = 1;
+		--Find if some party has role 6 or 10 (Contracting Company)
+		WHILE (i <= partiesCount) DO		
+			
+		    SET totalRoles = CARDINALITY(InputRoot.SOAP.Body.agreement:GetAgreementPartiesResponse.agreement:GetAgreementPartiesResult.acord:AgreementParty[i].acord:Roles.acord:PartyRole[]);
+			SET k = 1;
+			WHILE(k <= totalRoles) DO	
+				SET role = InputRoot.SOAP.Body.agreement:GetAgreementPartiesResponse.agreement:GetAgreementPartiesResult.acord:AgreementParty[i].acord:Roles.acord:PartyRole[k].acord:Role.acord:Id;
+
+			
+				--Get Beneficiary data and save into local environment
+				IF ((role = 3) OR (role = 2)) THEN
+					SET NoBeneficiaries = FALSE;
+					SET OutputLocalEnvironment.FinalAgreements[currentAgreement].Beneficiaries[j].Rut = InputRoot.SOAP.Body.agreement:GetAgreementPartiesResponse.agreement:GetAgreementPartiesResult.acord:AgreementParty[i].acord:Party.acord:RUT;
+					SET OutputLocalEnvironment.FinalAgreements[currentAgreement].Beneficiaries[j].RelationShip = InputRoot.SOAP.Body.agreement:GetAgreementPartiesResponse.agreement:GetAgreementPartiesResult.acord:AgreementParty[i].acord:RelationshipWithInsured.acord:Name;				
+					SET OutputLocalEnvironment.FinalAgreements[currentAgreement].Beneficiaries[j].CoverageStarDate = InputRoot.SOAP.Body.agreement:GetAgreementPartiesResponse.agreement:GetAgreementPartiesResult.acord:AgreementParty[i].acord:Roles.acord:PartyRole[k].acord:Role.acord:ValidSince;
+					SET OutputLocalEnvironment.FinalAgreements[currentAgreement].Beneficiaries[j].CoverageEndDate = InputRoot.SOAP.Body.agreement:GetAgreementPartiesResponse.agreement:GetAgreementPartiesResult.acord:AgreementParty[i].acord:Roles.acord:PartyRole[k].acord:Role.acord:ValidUntil;
+					SET j = j + 1; 
+					SET k = totalRoles;
+				END IF;
+				
+				SET k = k+1;
+			END WHILE; 
+			
+			SET i = i + 1;
+		END WHILE; 
+		
+		--If there is no Beneficiaries then throw failure
+		/*IF (NoBeneficiaries IS TRUE) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;*/
+		
+		--Save the response in the local environment
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].ContractingParty = contractingParty;	
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].BeneficiariesCount = j-1;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].CurrentBeneficiary = 1;
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************
+ * Get Beneficiary *
+ *******************/
+CREATE COMPUTE MODULE GetBeneficiary
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+		
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare local vars
+		DECLARE currentBeneficiary INTEGER;
+		DECLARE rut CHARACTER;
+		DECLARE currentAgreement INTEGER;
+		DECLARE beneficiaryCount INTEGER;
+		
+		--Set values
+		SET currentAgreement = InputLocalEnvironment.CurrentAgreement;
+		SET beneficiaryCount = InputLocalEnvironment.FinalAgreements[currentAgreement].BeneficiariesCount;
+		SET currentBeneficiary = InputLocalEnvironment.FinalAgreements[currentAgreement].CurrentBeneficiary;
+		
+		--If there is no more agreements to process then get out from agreements loop		
+		IF (currentBeneficiary > beneficiaryCount) THEN 
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;			
+		END IF;
+			
+		--Set the parameter in the request to be done (the RUT number)
+		SET OutputRoot.SOAP.Body.buc2:GetPerson.buc2:RUT = InputLocalEnvironment.FinalAgreements[currentAgreement].Beneficiaries[currentBeneficiary].Rut;
+				
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*****************************
+ * CheckGetAgreementBenefits *
+ *****************************/
+CREATE COMPUTE MODULE CheckGetAgreementBenefits
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare local vars
+		DECLARE i INTEGER;
+		DECLARE benefits REFERENCE TO InputRoot.SOAP.Body.agreement:GetAgreementBenefitsResponse.agreement:GetAgreementBenefitsResult;
+		DECLARE totalBenefits INTEGER;
+		DECLARE currentAgreement INTEGER;
+		
+		--Set values
+		SET i = 1;
+		SET totalBenefits = CARDINALITY(benefits.acord:BenefitInsurance[]);
+		SET currentAgreement = InputLocalEnvironment.CurrentAgreement;
+				
+		--If there is no benefits, throws "No Data Found" error.
+		/*IF ((totalBenefits IS NULL) OR (totalBenefits = 0)) THEN 
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;*/
+		
+		--Save benefits data into local environment
+		WHILE(i < totalBenefits) DO
+			SET OutputLocalEnvironment.FinalAgreements[currentAgreement].Benefits[i].CardType =  benefits.acord:BenefitInsurance[i].acord:Plan.acord:Code;
+			SET OutputLocalEnvironment.FinalAgreements[currentAgreement].Benefits[i].PharmacyName =  benefits.acord:BenefitInsurance[i].acord:Plan.acord:Name;
+		END WHILE; 
+		
+		RETURN TRUE;
+	END;
+END MODULE;

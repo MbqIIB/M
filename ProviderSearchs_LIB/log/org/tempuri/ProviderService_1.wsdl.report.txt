@@ -1,0 +1,44 @@
+
+
+Importing file: /home/soaint/Desktop/test4/ProviderService_1.wsdl
+
+
+The following is a list of WS-I warning messages found when importing:
+XSD: The location 'ProviderService_1_2.xsd' has not been resolved because the import is unused, Line: 6, Column: 7
+XSD: There is no xmlns declaration for namespace 'http://schemas.microsoft.com/2003/10/Serialization/', Line: 6, Column: 7
+XSD: The location 'ProviderService_1.xsd' has not been resolved because the import is unused, Line: 7, Column: 7
+XSD: There is no xmlns declaration for namespace 'http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO', Line: 7, Column: 7
+
+
+The WSDL import will proceed with bindings BasicHttpBinding_IProviderService.
+Creating wsdl schema document for file:///home/soaint/Desktop/test4/ProviderService_1.wsdl.
+Parsing wsdl binding {http://tempuri.org/}BasicHttpBinding_IProviderService.
+Parsing wsdl binding input SearchProvidersPerFilter.
+Parsing wsdl binding output SearchProvidersPerFilter.
+Parsing wsdl binding input ModifyProvider.
+Parsing wsdl binding output ModifyProvider.
+Parsing wsdl binding input InsertProvider.
+Parsing wsdl binding output InsertProvider.
+Parsing wsdl binding input ListProvider.
+Parsing wsdl binding output ListProvider.
+Parsing wsdl binding input ListingTypeList.
+Parsing wsdl binding output ListingTypeList.
+Processing doc style for operation SearchProvidersPerFilter.
+Processing doc style for operation ModifyProvider.
+Processing doc style for operation InsertProvider.
+Processing doc style for operation ListProvider.
+Processing doc style for operation ListingTypeList.
+Populating WSDL schema ProviderService_1_wsdl.xsd.
+Creating file ProviderService_1_wsdl.xsd in the workspace.
+Creating file /ProviderSearchs_LIB/ProviderService.xsd in the workspace.
+Creating file /ProviderSearchs_LIB/ProviderService_1.xsd in the workspace.
+Creating file /ProviderSearchs_LIB/ProviderService_1_2.xsd in the workspace.
+Copying source WSDL ProviderService_1.wsdl to ProviderService_1.wsdl.
+
+Elapsed time processing this message definition file: 0.399 seconds
+Number of warnings for this message definition file: 0
+
+
+Number of files processed: 1
+
+

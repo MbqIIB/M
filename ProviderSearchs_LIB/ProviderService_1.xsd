@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO" xmlns:tns="http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:complexType name="ProviderDTO">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Address" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Classification" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Comune" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Contact" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="DescriptionComune" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="DescriptionRegion" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Distance" nillable="true" type="xsd:double"/>
+      <xsd:element minOccurs="0" name="Email" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Latitude" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Longitude" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Priority" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="ProviderID" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="ProviderName" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ProviderNameFather" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Region" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="RutProvider" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="RutProviderFather" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="StrValidity" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Telephone" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Type" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Validity" nillable="true" type="xsd:boolean"/>
+      <xsd:element minOccurs="0" name="WebSite" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="listBusinessLine" nillable="true" type="tns:ArrayOfBusinessLineDTO"/>
+      <xsd:element minOccurs="0" name="radioSearch" nillable="true" type="xsd:double"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ProviderDTO" nillable="true" type="tns:ProviderDTO"/>
+  <xsd:complexType name="ArrayOfBusinessLineDTO">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="BusinessLineDTO" nillable="true" type="tns:BusinessLineDTO"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfBusinessLineDTO" nillable="true" type="tns:ArrayOfBusinessLineDTO"/>
+  <xsd:complexType name="BusinessLineDTO">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="BusinessDescriptionLine" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="BusinessLineID" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="BusinessLineProviderID" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="ProviderID" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="BusinessLineDTO" nillable="true" type="tns:BusinessLineDTO"/>
+  <xsd:complexType name="OutputProviderDTO">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Covenants" nillable="true" type="tns:ArrayOfCovenantsDTO"/>
+      <xsd:element minOccurs="0" name="OutputResponseDto" nillable="true" type="tns:OutputResponseDTO"/>
+      <xsd:element minOccurs="0" name="Providers" nillable="true" type="tns:ArrayOfProviderDTO"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="OutputProviderDTO" nillable="true" type="tns:OutputProviderDTO"/>
+  <xsd:complexType name="ArrayOfCovenantsDTO">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="CovenantsDTO" nillable="true" type="tns:CovenantsDTO"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfCovenantsDTO" nillable="true" type="tns:ArrayOfCovenantsDTO"/>
+  <xsd:complexType name="CovenantsDTO">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Address" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Comune" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Distance" nillable="true" type="xsd:double"/>
+      <xsd:element minOccurs="0" name="Latitude" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Longitude" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Priority" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="ProviderName" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="ProviderNameFather" nillable="true" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Region" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Telephone" nillable="true" type="xsd:decimal"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="CovenantsDTO" nillable="true" type="tns:CovenantsDTO"/>
+  <xsd:complexType name="OutputResponseDTO">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" type="xsd:int"/>
+      <xsd:element minOccurs="0" name="Message" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="OutputResponseDTO" nillable="true" type="tns:OutputResponseDTO"/>
+  <xsd:complexType name="ArrayOfProviderDTO">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ProviderDTO" nillable="true" type="tns:ProviderDTO"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfProviderDTO" nillable="true" type="tns:ArrayOfProviderDTO"/>
+  <xsd:complexType name="OutputTypeListDTO">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="OutputResponseDto" nillable="true" type="tns:OutputResponseDTO"/>
+      <xsd:element minOccurs="0" name="TypeList" nillable="true" type="tns:ArrayOfTypeListDTO"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="OutputTypeListDTO" nillable="true" type="tns:OutputTypeListDTO"/>
+  <xsd:complexType name="ArrayOfTypeListDTO">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="TypeListDTO" nillable="true" type="tns:TypeListDTO"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ArrayOfTypeListDTO" nillable="true" type="tns:ArrayOfTypeListDTO"/>
+  <xsd:complexType name="TypeListDTO">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Code" nillable="true" type="xsd:decimal"/>
+      <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="TypeListDTO" nillable="true" type="tns:TypeListDTO"/>
+</xsd:schema>

@@ -1,0 +1,118 @@
+BROKER SCHEMA esqls.securityCode
+PATH esqls.generics;
+
+/*********************************
+ * CheckGetPartyContactInfo      *
+ *********************************/
+CREATE COMPUTE MODULE CheckGetExample
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get response into local vars
+		DECLARE email_0 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:PrimaryEmail;
+		DECLARE phone_0 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:PhoneNumber;
+		DECLARE phone_1 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:MobileNumber;
+		DECLARE address_0 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:Address;
+		DECLARE region_0 INTEGER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:Region.acord:Id;
+		DECLARE comune_0 INTEGER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:Comune.acord:Id;
+		
+		--If there is not contact info, throws "No Data Found" error.
+		IF (((email_0 IS NULL) OR (email_0 = '')) AND 
+			((phone_0 IS NULL) OR (phone_0 = '')) AND 
+			((phone_1 IS NULL) OR (phone_1 = '')) AND 
+			((address_0 IS NULL) OR (address_0 = '')) AND
+			((region_0 IS NULL) OR (region_0 = '')) AND
+			((comune_0 IS NULL) OR (comune_0 = ''))) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Save the personal contact info into the local environment
+		SET OutputLocalEnvironment.Email_0 = email_0;
+		SET OutputLocalEnvironment.Phone_0 = phone_0;
+		SET OutputLocalEnvironment.Phone_1 = phone_1;
+		SET OutputLocalEnvironment.Address_0 = address_0;
+		SET OutputLocalEnvironment.Region_0 = region_0;
+		SET OutputLocalEnvironment.Comune_0 = comune_0;		
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+/*****************************
+ * Check GetPartyContactInfo *
+ *****************************/
+CREATE COMPUTE MODULE CheckGetPartyContactInfo
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get response into local vars
+		DECLARE phone_1 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:MobileNumber;
+		
+		--If there is not contact info, throws "No data found" error
+		IF  ((phone_1 IS NULL) OR (phone_1 = '')) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Save the response in the local environment
+		SET OutputLocalEnvironment.Phone_1 = phone_1;		
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*****************************
+ * Check SegundaClave        *
+ *****************************/
+CREATE COMPUTE MODULE CheckSegundaClave 
+	--Declare namespaces
+	DECLARE secKey NAMESPACE 'http://segundaclave.ws.metlife.cl/';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the result from the previous call
+		DECLARE aux CHARACTER;
+		DECLARE code CHARACTER;
+		DECLARE envioSegundaClave CHARACTER InputRoot.SOAP.Body.secKey:executeResponse.ResponseEnvelope;
+		
+		--Extract CODE from RESPONSE
+		SET aux = SUBSTRING(envioSegundaClave AFTER '<Code>');
+		SET code = ClearSpecialChars(SUBSTRING(aux BEFORE '</Code>'));
+
+		--If the call result is not equals to 'OK' then continue to the error response
+		IF (code = '16') THEN
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		IF ((code <> '16') AND (code <> '0')) THEN
+			SET OutputLocalEnvironment.OtherError = 'ERROR SEGUNDA CLAVE:  Code: ' || code || SUBSTRING(SUBSTRING(envioSegundaClave AFTER '<Description>') BEFORE '</Description>') || '. Details: ' || SUBSTRING(SUBSTRING(envioSegundaClave AFTER '<Details>') BEFORE '</Details>');
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;		
+
+		RETURN TRUE;
+	END;
+END MODULE;
+

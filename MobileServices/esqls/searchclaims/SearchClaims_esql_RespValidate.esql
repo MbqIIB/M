@@ -1,0 +1,49 @@
+BROKER SCHEMA esqls.searchclaims
+DECLARE ns NAMESPACE 'urn:metlife.services.acord.security';
+
+
+CREATE COMPUTE MODULE SearchClaims_esql_RespValidate
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		
+		 IF InputRoot.XMLNSC.ns:ValidateTokenResponse.ns:ValidateTokenResult <> true or InputRoot.SOAP.Body.*:Fault.*:faultstring = 'Token expired' then 
+		      
+		      SET OutputRoot.JSON.Data.error.code = 401;
+	          SET OutputRoot.JSON.Data.error.message = 'UnauthorizedAccess';
+			  
+			  CREATE FIELD OutputRoot.JSON.Data.error.errors IDENTITY(JSON.Array)errors;
+	          SET OutputRoot.JSON.Data.error.errors.Item[1].reason = 'TokenExpired';
+	          SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList = '';  
+		      SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList TYPE = JSON.Array;
+		      PROPAGATE TO TERMINAL 'out1'; 
+	          RETURN FALSE;
+		 ELSE 
+		 	
+		 CALL CopyMessageHeaders();
+		 --CALL CopyEntireMessage();
+		    
+		 	
+		 END IF; 
+		 
+		
+	    
+		
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

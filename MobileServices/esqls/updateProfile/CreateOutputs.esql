@@ -1,0 +1,143 @@
+BROKER SCHEMA esqls.updateProfile
+PATH esqls.generics;
+
+/*******************************
+ * CreateOutputErrorUnexpected *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputErrorUnexpected
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the Token to responses basic parameters
+		SET OutputLocalEnvironment.HTTPResponseHeader.Token = InputLocalEnvironment.Token;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 402;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'UnexpectedIssue';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'ParsingError';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		CALL LogFullException(InputExceptionList, InputRoot, CAST(InputLocalEnvironment.OtherError AS CHARACTER));
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************************
+ * CreateOutputErrorNoData *
+ ***************************/
+CREATE COMPUTE MODULE CreateOutputErrorUpdating
+
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE party NAMESPACE 'urn:metlife.services.acord.party';
+	DECLARE ns NAMESPACE 'http://schemas.xmlsoap.org/soap/envelope/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the Token to responses basic parameters
+		SET OutputLocalEnvironment.HTTPResponseHeader.Token = InputLocalEnvironment.Token;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 407;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Update Failed';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'SQLQueryFailed';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+		
+		--Get error response
+		DECLARE errorCode CHARACTER InputRoot.SOAP.Body.ns:Fault.faultcode;
+		DECLARE errorMessage CHARACTER InputRoot.SOAP.Body.ns:Fault.faultstring;
+		DECLARE errorFields CHARACTER InputRoot.SOAP.Body.ns:Fault.detail.acord:FaultExceptionDetail.acord:FieldsErrors.acord:FieldValidation.acord:FieldName;
+		DECLARE subErrorMessage CHARACTER InputRoot.SOAP.Body.ns:Fault.detail.acord:FaultExceptionDetail.acord:FieldsErrors.acord:FieldValidation.acord:ErrorMessage;
+ 		DECLARE totalErroressage CHARACTER 'ErrorCode:' || errorCode || '. ErrorMessage:' || errorMessage || ' ErrorFields:' || errorFields || ' ErrorDetailMessage:' || subErrorMessage;
+		CALL LogFullException(InputExceptionList, InputRoot, totalErroressage);
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**********************************
+ * Create Output Error Validation *
+ **********************************/
+CREATE COMPUTE MODULE CreateOutputErrorEmpty
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the Token to responses basic parameters
+		SET OutputLocalEnvironment.HTTPResponseHeader.Token = InputLocalEnvironment.Token;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 406;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Validation Failed';
+		SET OutputLocalEnvironment.Error.ErrorReason = InputLocalEnvironment.ErrorReason;
+		SET OutputLocalEnvironment.Error.ErrorFieldList = InputLocalEnvironment.MissingFields;
+ 
+		CALL LogFullException(InputExceptionList, InputRoot,'');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+/******************************
+ * CreateOutputErrorMandatory *
+ ******************************/
+CREATE COMPUTE MODULE CreateOutputErrorMandatory
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the Token to responses basic parameters
+		SET OutputLocalEnvironment.HTTPResponseHeader.Token = InputLocalEnvironment.Token;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 409;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Mandatory Fields Required';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'Missing Parameter';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = InputLocalEnvironment.MissingFields;
+ 
+		CALL LogFullException(InputExceptionList, InputRoot,'');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***********************
+ * CreateOutputSuccess *
+ ***********************/
+CREATE COMPUTE MODULE CreateOutputSuccess
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the responses basic parameters
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line" = 'HTTP/1.1 200 OK'; 
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200; 
+		SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json; charset=utf-8'; 
+		SET OutputRoot.HTTPResponseHeader."token" = InputLocalEnvironment.Token;
+
+		--Create the JSON response body
+		SET OutputRoot.JSON.Data.code = 200;
+		SET OutputRoot.JSON.Data.message = 'Success';
+
+		RETURN TRUE;
+	END;
+END MODULE;

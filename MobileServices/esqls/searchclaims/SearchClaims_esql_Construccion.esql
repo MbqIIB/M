@@ -1,0 +1,37 @@
+BROKER SCHEMA esqls.searchclaims
+DECLARE ns34 NAMESPACE 'http://schemas.datacontract.org/2004/07/WcfClaims';
+
+
+CREATE COMPUTE MODULE SearchClaims_esql_Construccion
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+	    DECLARE CODE CHARACTER; 
+	    SET CODE = CAST(InputRoot.XMLNSC.ns45:CreateClaimSummaryDocumentResponse.ns45:CreateClaimSummaryDocumentResult.ns34:Code AS CHARACTER);
+	    
+	    CREATE FIELD Environment.CurrentClaim.PDF TYPE Name;
+	    DECLARE currentItem REFERENCE TO Environment.CurrentClaim.PDF;
+	    
+	    IF CODE <> '-1'THEN 
+	    
+	    	--SET Environment.GetDocumentsPDF[] = InputRoot.XMLNSC.ns45:CreateClaimSummaryDocumentResponse.ns45:CreateClaimSummaryDocumentResult[];
+	    	SET currentItem = InputRoot.XMLNSC.ns45:CreateClaimSummaryDocumentResponse.ns45:CreateClaimSummaryDocumentResult.ns34:FileBase64;
+	    ELSE 
+	    END IF;
+		                                                       
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

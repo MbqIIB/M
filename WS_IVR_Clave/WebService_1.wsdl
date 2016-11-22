@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:tns="http://tempuri.org/">
+  <wsdl:documentation>
+    <wsdl:appinfo source="WMQI_APPINFO">
+      <MRWSDLAppInfo imported="true">
+        <generatedXSD location="WebService_1_InlineSchema1.xsd"/>
+        <binding hasEncoding="false" imported="false" name="WebServiceHttpGet" originalBindingStyle="document"/>
+        <binding hasEncoding="false" imported="false" name="WebServiceHttpPost" originalBindingStyle="document"/>
+        <binding hasEncoding="false" imported="false" name="WebServiceSoap12" originalBindingStyle="document"/>
+        <binding hasEncoding="false" imported="true" name="WebServiceSoap" originalBindingStyle="document"/>
+      </MRWSDLAppInfo>
+    </wsdl:appinfo>
+  </wsdl:documentation>
+  <wsdl:types>
+    
+          <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions">
+<xsd:include schemaLocation="WebService_1_InlineSchema1.xsd"/>
+    </xsd:schema>
+    </wsdl:types>
+  <wsdl:message name="Serv1SoapIn">
+    <wsdl:part element="tns:Serv1" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Serv1SoapOut">
+    <wsdl:part element="tns:Serv1Response" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Serv4SoapIn">
+    <wsdl:part element="tns:Serv4" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Serv4SoapOut">
+    <wsdl:part element="tns:Serv4Response" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Serv1HttpGetIn">
+    <wsdl:part name="RUT" type="s:string"/>
+    <wsdl:part name="telefono" type="s:string"/>
+    <wsdl:part name="Token" type="s:string"/>
+  </wsdl:message>
+  <wsdl:message name="Serv1HttpGetOut">
+    <wsdl:part element="tns:obj_vigencia" name="Body"/>
+  </wsdl:message>
+  <wsdl:message name="Serv4HttpGetIn">
+    <wsdl:part name="rut" type="s:string"/>
+    <wsdl:part name="Token" type="s:string"/>
+  </wsdl:message>
+  <wsdl:message name="Serv4HttpGetOut">
+    <wsdl:part element="tns:obj_reseteo" name="Body"/>
+  </wsdl:message>
+  <wsdl:message name="Serv1HttpPostIn">
+    <wsdl:part name="RUT" type="s:string"/>
+    <wsdl:part name="telefono" type="s:string"/>
+    <wsdl:part name="Token" type="s:string"/>
+  </wsdl:message>
+  <wsdl:message name="Serv1HttpPostOut">
+    <wsdl:part element="tns:obj_vigencia" name="Body"/>
+  </wsdl:message>
+  <wsdl:message name="Serv4HttpPostIn">
+    <wsdl:part name="rut" type="s:string"/>
+    <wsdl:part name="Token" type="s:string"/>
+  </wsdl:message>
+  <wsdl:message name="Serv4HttpPostOut">
+    <wsdl:part element="tns:obj_reseteo" name="Body"/>
+  </wsdl:message>
+  <wsdl:portType name="WebServiceSoap">
+    <wsdl:operation name="Serv1">
+      <wsdl:documentation>Consulta Cliente Vigente y registro de llamado</wsdl:documentation>
+      <wsdl:input message="tns:Serv1SoapIn"/>
+      <wsdl:output message="tns:Serv1SoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="Serv4">
+      <wsdl:documentation>Segunda fase(reseteo)</wsdl:documentation>
+      <wsdl:input message="tns:Serv4SoapIn"/>
+      <wsdl:output message="tns:Serv4SoapOut"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="WebServiceHttpGet">
+    <wsdl:operation name="Serv1">
+      <wsdl:documentation>Consulta Cliente Vigente y registro de llamado</wsdl:documentation>
+      <wsdl:input message="tns:Serv1HttpGetIn"/>
+      <wsdl:output message="tns:Serv1HttpGetOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="Serv4">
+      <wsdl:documentation>Segunda fase(reseteo)</wsdl:documentation>
+      <wsdl:input message="tns:Serv4HttpGetIn"/>
+      <wsdl:output message="tns:Serv4HttpGetOut"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="WebServiceHttpPost">
+    <wsdl:operation name="Serv1">
+      <wsdl:documentation>Consulta Cliente Vigente y registro de llamado</wsdl:documentation>
+      <wsdl:input message="tns:Serv1HttpPostIn"/>
+      <wsdl:output message="tns:Serv1HttpPostOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="Serv4">
+      <wsdl:documentation>Segunda fase(reseteo)</wsdl:documentation>
+      <wsdl:input message="tns:Serv4HttpPostIn"/>
+      <wsdl:output message="tns:Serv4HttpPostOut"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WebServiceSoap" type="tns:WebServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Serv1">
+      <soap:operation soapAction="http://tempuri.org/Serv1" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Serv4">
+      <soap:operation soapAction="http://tempuri.org/Serv4" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebServiceSoap12" type="tns:WebServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Serv1">
+      <soap12:operation soapAction="http://tempuri.org/Serv1" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Serv4">
+      <soap12:operation soapAction="http://tempuri.org/Serv4" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebServiceHttpGet" type="tns:WebServiceHttpGet">
+    <http:binding verb="GET"/>
+    <wsdl:operation name="Serv1">
+      <http:operation location="/Serv1"/>
+      <wsdl:input>
+        <http:urlEncoded/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Serv4">
+      <http:operation location="/Serv4"/>
+      <wsdl:input>
+        <http:urlEncoded/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebServiceHttpPost" type="tns:WebServiceHttpPost">
+    <http:binding verb="POST"/>
+    <wsdl:operation name="Serv1">
+      <http:operation location="/Serv1"/>
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Serv4">
+      <http:operation location="/Serv4"/>
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded"/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WebService">
+    <wsdl:port binding="tns:WebServiceSoap" name="WebServiceSoap">
+      <soap:address location="http://webdesacp01.alico.corp:204/WS_IVR_CLAVE/WebService.asmx"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:WebServiceSoap12" name="WebServiceSoap12">
+      <soap12:address location="http://webdesacp01.alico.corp:204/WS_IVR_CLAVE/WebService.asmx"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:WebServiceHttpGet" name="WebServiceHttpGet">
+      <http:address location="http://webdesacp01.alico.corp:204/WS_IVR_CLAVE/WebService.asmx"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:WebServiceHttpPost" name="WebServiceHttpPost">
+      <http:address location="http://webdesacp01.alico.corp:204/WS_IVR_CLAVE/WebService.asmx"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

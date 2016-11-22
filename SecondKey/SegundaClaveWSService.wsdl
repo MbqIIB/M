@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" name="SegundaClaveWSService"
+	targetNamespace="http://segundaclave.ws.metlife.cl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://segundaclave.ws.metlife.cl/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+	xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy"
+	xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<documentation>
+		<appinfo source="WMQI_APPINFO">
+			<MRWSDLAppInfo imported="true">
+				<binding hasEncoding="false" imported="true"
+					name="SegundaClaveWSPortBinding" originalBindingStyle="document" />
+			</MRWSDLAppInfo>
+		</appinfo>
+	</documentation>
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="http://segundaclave.ws.metlife.cl/" schemaLocation="SegundaClaveWSService.xsd"/>
+    </xsd:schema>
+  </types>  
+	<message name="executeResponse">
+		<part element="tns:executeResponse" name="parameters">
+		</part>
+	</message>
+	<message name="execute">
+		<part element="tns:execute" name="parameters">
+		</part>
+	</message>
+	<portType name="SegundaClaveWS">
+		<operation name="execute">
+			<input message="tns:execute"
+				wsam:Action="http://segundaclave.ws.metlife.cl/SegundaClaveWS/executeRequest">
+			</input>
+			<output message="tns:executeResponse"
+				wsam:Action="http://segundaclave.ws.metlife.cl/SegundaClaveWS/executeResponse">
+			</output>
+		</operation>
+	</portType>
+	<binding name="SegundaClaveWSPortBinding" type="tns:SegundaClaveWS">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<operation name="execute">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+	</binding>
+	<service name="SegundaClaveWSService">
+		<port binding="tns:SegundaClaveWSPortBinding" name="SegundaClaveWSPort">
+			<soap:address
+				location="http://mlfsoaqat01.alico.corp:9080/SegundaClave/SegundaClaveWSService" />
+		</port>
+	</service>
+</definitions>

@@ -1,0 +1,128 @@
+BROKER SCHEMA esqls.profile
+
+/*************************************************
+ * GetRUTAndTOKENFromHeaderAndSetSubFlowValidateToken *
+ *************************************************/
+CREATE COMPUTE MODULE GetRUTAndTOKENFromHeaderAndSetSubFlowValidateToken
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare local vars
+		DECLARE aux CHARACTER;
+		DECLARE rutNumber CHARACTER;	
+		DECLARE tokenNumber CHARACTER;
+		DECLARE broadLineOfBusinessID DECIMAL;
+		
+		--Get RUT from URL
+		SET aux = SUBSTRING(InputRoot.HTTPInputHeader."X-Original-HTTP-Command" AFTER 'users/');
+		SET rutNumber = SUBSTRING(aux BEFORE '/profile');
+		
+		--Get token from header
+		SET tokenNumber = InputRoot.HTTPInputHeader."Token";
+
+		--Get Line of business ID, to set up from input if necessary on future
+		SET broadLineOfBusinessID = 4;
+		
+		--Save the received variables in the local environment, to be used by ValidateToken.subflow
+		SET OutputLocalEnvironment.RUT = rutNumber;
+		SET OutputLocalEnvironment.Token = tokenNumber;
+		
+		--Save the LoB in the local environment
+		SET OutputLocalEnvironment.BroadLineOfBusinessID = broadLineOfBusinessID;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*************************************************
+ * SetGetPartyContactInfo *
+ *************************************************/
+CREATE COMPUTE MODULE SetGetPartyContactInfo
+	
+	--Declare namespaces
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the rut from the environment
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		
+		--Set the parameter in the request of GetPartyContactInfo to be done
+		SET OutputRoot.SOAP.Body.buc2:GetPartyContactInfo.buc2:RUT = rutNumber;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***********************
+ * SetSearchAgreements *
+ ***********************/
+CREATE COMPUTE MODULE SetSearchAgreements
+	
+	--Declare namespaces
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the rut from the environment
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		
+		--Set the parameter in the request of SearchAgreements to be done
+		SET OutputRoot.SOAP.Body.agreement:SearchAgreements.agreement:partyRut = rutNumber;
+		SET OutputRoot.SOAP.Body.agreement:SearchAgreements.agreement:broadLineOfBusinessIdentifier = InputLocalEnvironment.BroadLineOfBusinessID;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************************
+ * SetGetAgreementContactInfo *
+ ******************************/
+CREATE COMPUTE MODULE SetGetAgreementContactInfo
+	
+	--Declare namespaces
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the parameter in the request of GetAgreementContactInfo to be done
+		SET OutputRoot.SOAP.Body.agreement:GetAgreementContactInfo.agreement:agreementId = InputLocalEnvironment.AgreementId;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/****************
+ * SetGetPerson *
+ ****************/
+CREATE COMPUTE MODULE SetGetPerson
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the parameter in the request to be done (the RUT number)
+		SET OutputRoot.SOAP.Body.buc2:GetPerson.buc2:RUT = InputLocalEnvironment.RUT;
+
+		RETURN TRUE;
+	END;
+END MODULE;

@@ -1,0 +1,223 @@
+BROKER SCHEMA esqls.generics
+
+/**************************************
+ * ChangeWebServiceURL_Authentication *
+ **************************************/
+
+DECLARE WebServiceURL_Authentication EXTERNAL CHARACTER '';  
+
+--Change the URL of the Web Service destination 
+CREATE COMPUTE MODULE ChangeWebServiceURL_Authentication
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy message and environment so it doesn't get lost
+    	SET OutputRoot = InputRoot;
+        SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		--Overwrite the WebService destination URL
+        SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = WebServiceURL_Authentication;
+
+        RETURN TRUE;
+    END;
+END MODULE;
+
+/*****************************
+ * ChangeWebServiceURL_Party *
+ *****************************/
+
+DECLARE WebServiceURL_Party EXTERNAL CHARACTER '';
+
+--Change the URL of the Web Service destination 
+CREATE COMPUTE MODULE ChangeWebServiceURL_Party
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy message and environment so it doesn't get lost
+    	SET OutputRoot = InputRoot;
+        SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		--Overwrite the WebService destination URL
+        SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = WebServiceURL_Party;
+
+        RETURN TRUE;
+    END;
+END MODULE;
+
+/*********************************
+ * ChangeWebServiceURL_Agreement *
+ *********************************/
+
+DECLARE WebServiceURL_Agreement EXTERNAL CHARACTER '';
+
+--Change the URL of the Web Service destination 
+CREATE COMPUTE MODULE ChangeWebServiceURL_Agreement
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy message and environment so it doesn't get lost
+    	SET OutputRoot = InputRoot;
+        SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		--Overwrite the WebService destination URL
+        SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = WebServiceURL_Agreement;
+
+        RETURN TRUE;
+    END;
+END MODULE;
+
+/********************************
+ * ChangeWebServiceURL_Security *
+ ********************************/
+
+DECLARE WebServiceURL_Security EXTERNAL CHARACTER '';
+
+--Change the URL of the Web Service destination 
+CREATE COMPUTE MODULE ChangeWebServiceURL_Security
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy message and environment so it doesn't get lost
+    	SET OutputRoot = InputRoot;
+        SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		--Overwrite the WebService destination URL
+        SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = WebServiceURL_Security;
+
+        RETURN TRUE;
+    END;
+END MODULE;
+
+/********************************
+ * WebServiceURL_SegundaClave   *
+ ********************************/
+
+DECLARE WebServiceURL_SegundaClave EXTERNAL CHARACTER '';
+
+--Change the URL of the Web Service destination 
+CREATE COMPUTE MODULE ChangeWebServiceURL_SegundaClave
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy message and environment so it doesn't get lost
+    	SET OutputRoot = InputRoot;
+        SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		--Overwrite the WebService destination URL
+        SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = WebServiceURL_SegundaClave;
+
+        RETURN TRUE;
+    END;
+END MODULE;
+
+
+
+
+/**********************************
+ * ChangeWebServiceURL_PreIngreso *
+ **********************************/
+
+DECLARE WebServiceURL_PreIngreso EXTERNAL CHARACTER '';
+
+--Change the URL of the Web Service destination 
+CREATE COMPUTE MODULE ChangeWebServiceURL_PreIngreso
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy message and environment so it doesn't get lost
+    	SET OutputRoot = InputRoot;
+        SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		--Overwrite the WebService destination URL
+        SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = WebServiceURL_PreIngreso;
+
+        RETURN TRUE;
+    END;
+END MODULE;
+
+
+/********************************
+ * WebServiceURL_FileNetService   *
+ ********************************/
+
+DECLARE WebServiceURL_FileNetService EXTERNAL CHARACTER '';
+
+--Change the URL of the Web Service destination 
+CREATE COMPUTE MODULE ChangeWebServiceURL_FileNetService
+
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy message and environment so it doesn't get lost
+    	SET OutputRoot = InputRoot;
+        SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		--Overwrite the WebService destination URL
+        SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = WebServiceURL_FileNetService;
+
+        RETURN TRUE;
+    END;
+END MODULE;
+
+
+
+/********************************
+ * WebServiceURL_ClaimService   *
+ ********************************/
+
+DECLARE WebServiceURL_ClaimService EXTERNAL CHARACTER '';
+
+--Change the URL of the Web Service destination 
+CREATE COMPUTE MODULE ChangeWebServiceURL_ClaimService
+
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy message and environment so it doesn't get lost
+    	SET OutputRoot = InputRoot;
+        SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		--Overwrite the WebService destination URL
+
+        SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = WebServiceURL_ClaimService;
+
+        RETURN TRUE;
+    END;
+END MODULE;
+
+/********************************
+ * WebServiceURL_WS_IVR_Clave   *
+ ********************************/
+
+DECLARE WebServiceURL_WS_IVR_Clave EXTERNAL CHARACTER '';
+
+--Change the URL of the Web Service destination 
+CREATE COMPUTE MODULE ChangeWebServiceURL_WS_IVR_Clave
+
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy message and environment so it doesn't get lost
+    	SET OutputRoot = InputRoot;
+        SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		--Overwrite the WebService destination URL
+
+        SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = WebServiceURL_WS_IVR_Clave;
+
+        RETURN TRUE;
+    END;
+ END MODULE;   
+/*****************************
+ * ChangeWebServiceURL_Provider*
+ *****************************/
+
+DECLARE WebServiceURL_Provider EXTERNAL CHARACTER '';
+
+--Change the URL of the Web Service destination 
+CREATE COMPUTE MODULE ChangeWebServiceURL_Provider
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+		--Copy message and environment so it doesn't get lost
+    	SET OutputRoot = InputRoot;
+        SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		--Overwrite the WebService destination URL
+        SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = WebServiceURL_Provider;
+
+        RETURN TRUE;
+    END;
+END MODULE;
+    
+

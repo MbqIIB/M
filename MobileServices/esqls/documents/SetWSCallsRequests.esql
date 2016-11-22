@@ -1,0 +1,256 @@
+BROKER SCHEMA esqls.documents
+
+
+
+/****************
+ * SetGetClaimDocument *
+ ****************/
+CREATE COMPUTE MODULE SetGetClaimDocument
+
+	DECLARE claimns NAMESPACE 'urn:metlife.services.acord.claim';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the parameter in the request to be done (the RUT number)
+		SET OutputRoot.SOAP.Body.claimns:GetClaimDocument.claimns:documentId = InputLocalEnvironment.documentID;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+
+
+/****************
+ * SetGetClaimDocuments *
+ ****************/
+CREATE COMPUTE MODULE SetGetClaimDocuments
+
+	DECLARE claimns NAMESPACE 'urn:metlife.services.acord.claim';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the parameter in the request to be done (the RUT number)
+		SET OutputRoot.SOAP.Body.claimns:GetClaimDocuments.claimns:claimId = InputLocalEnvironment.claimId;
+
+		RETURN TRUE;
+	END;
+	
+END MODULE;
+
+
+
+
+/****************
+ * GetDocument *
+ ****************/
+CREATE COMPUTE MODULE GetDocument
+	
+	--Declare namespaces
+	DECLARE claimns NAMESPACE 'urn:metlife.services.acord.claim';
+	DECLARE filenetns NAMESPACE 'http://filenet.ws.metlife.cl/';
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the parameters to get next Document data
+		DECLARE currentDocument INTEGER InputLocalEnvironment.CurrentDocument;
+		DECLARE documentID CHARACTER InputLocalEnvironment.Documents.acord:ClaimDocument[currentDocument].acord:Location;
+		DECLARE doc_type CHARACTER;
+		
+		--If there is no more Documents to process then get out from Documents loop
+		DECLARE totalCount DECIMAL InputLocalEnvironment.TotalCount;
+		IF (currentDocument > totalCount) THEN 
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;			
+		END IF;
+
+				
+		SET OutputRoot.SOAP.Body.filenetns:getDocument.filenetns:DocumentId = documentID;
+		
+		--SET OutputRoot.SOAP.Body.filenetns:getDocument.filenetns:DocumentId = '4C9FEF62-41A4-4881-88DB-D8D332CE31E1@FNOS3';
+		
+		
+		SET OutputLocalEnvironment.singleDocumentID = InputLocalEnvironment.Documents.acord:ClaimDocument[currentDocument].acord:Id;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+
+/****************
+ * GetDocument *
+ ****************/
+CREATE COMPUTE MODULE GetSingleDocument222
+	
+	--Declare namespaces
+	DECLARE claimns NAMESPACE 'urn:metlife.services.acord.claim';
+	DECLARE filenetns NAMESPACE 'http://filenet.ws.metlife.cl/';
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the parameters to get next Document data
+		DECLARE currentDocument INTEGER InputLocalEnvironment.CurrentDocument;
+		DECLARE documentID CHARACTER InputLocalEnvironment.Document.acord:Location;
+		
+		--If there is no more Documents to process then get out from Documents loop
+		DECLARE totalCount DECIMAL InputLocalEnvironment.TotalCount;
+		IF (currentDocument > totalCount) THEN 
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;			
+		END IF;
+
+				
+		SET OutputRoot.SOAP.Body.filenetns:getDocument.filenetns:DocumentId = documentID;
+		--SET OutputRoot.SOAP.Body.filenetns:getDocument.filenetns:DocumentId = '4C9FEF62-41A4-4881-88DB-D8D332CE31E1@FNOS3';
+		
+		
+		SET OutputLocalEnvironment.singleDocumentID = InputLocalEnvironment.Documents.acord:ClaimDocument[currentDocument].acord:Id;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+
+/****************
+ * GetSingleDocument *
+ ****************/
+CREATE COMPUTE MODULE GetSingleDocument
+	
+	--Declare namespaces
+	DECLARE filenetns NAMESPACE 'http://filenet.ws.metlife.cl/';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the parameters to get next Document data
+
+		DECLARE documentID CHARACTER InputLocalEnvironment.documentID;
+		
+        SET OutputRoot.SOAP.Body.filenetns:getDocument.DocumentId = documentID;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*************************
+ * SetGetMetadataFileNet *
+ *************************/
+CREATE COMPUTE MODULE SetGetMetadataFileNet
+	
+	--Declare namespaces
+	DECLARE filenetns NAMESPACE 'http://filenet.ws.metlife.cl/';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the parameters to get document metadata
+		DECLARE documentID CHARACTER InputLocalEnvironment.documentID;
+		SET OutputRoot.SOAP.Body.filenetns:getMetadata.DocumentId = documentID;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/********************
+ * SetNextDocument *
+ ********************/
+CREATE COMPUTE MODULE SetNextDocument
+	
+	--Declare namespaces
+	DECLARE claimns NAMESPACE 'urn:metlife.services.acord.claim';
+	DECLARE filenetns NAMESPACE 'http://filenet.ws.metlife.cl/';
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+	
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--declare local var.
+		DECLARE currentDocument INTEGER InputLocalEnvironment.CurrentDocument;		
+		
+		--Get the result from the previous call
+		DECLARE doc_name	CHARACTER InputRoot.SOAP.Body.filenetns:getDocumentResponse.Document.filename;
+		DECLARE doc_content	CHARACTER InputRoot.SOAP.Body.filenetns:getDocumentResponse.Document.serializedFile;
+		DECLARE doc_size	CHARACTER LENGTH(doc_content);
+		DECLARE doc_unit	CHARACTER 'b';
+		DECLARE doc_id		CHARACTER InputLocalEnvironment.Documents.acord:ClaimDocument[currentDocument].acord:Id;	
+		DECLARE doc_typeo	CHARACTER InputLocalEnvironment.Documents.acord:ClaimDocument[currentDocument].acord:Type;
+		
+		--Save beneficiaries info into local environment
+	    SET OutputLocalEnvironment.FinalDocuments[currentDocument].doc_name=	doc_name;
+	    SET OutputLocalEnvironment.FinalDocuments[currentDocument].doc_content=	doc_content;
+	    SET OutputLocalEnvironment.FinalDocuments[currentDocument].doc_type=	doc_typeo;
+	    SET OutputLocalEnvironment.FinalDocuments[currentDocument].doc_size=	doc_size;
+	    SET OutputLocalEnvironment.FinalDocuments[currentDocument].doc_unit=	doc_unit;
+	    SET OutputLocalEnvironment.FinalDocuments[currentDocument].doc_id=		doc_id;
+
+		--set counter of current Document element
+		SET currentDocument = currentDocument + 1;
+		
+		--Save counter of next Document element on local environment
+		SET OutputLocalEnvironment.CurrentDocument = currentDocument;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+/*******************
+ * SetSearchClaims *
+ *******************/
+CREATE COMPUTE MODULE SetSearchClaims
+	
+	--Declare namespaces
+	DECLARE claim NAMESPACE 'urn:metlife.services.acord.claim';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get parameters from local environment
+		DECLARE policyNumber INTEGER InputLocalEnvironment.policyNumber;
+		DECLARE claimNumber INTEGER InputLocalEnvironment.claimId;		
+		
+		--Set the parameter in the request of SearchClaims to be done
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:agreementNumber = policyNumber;
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:backendId = 2;
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:claimNumber = claimNumber;
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:orderBy = 'A';
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:ascendingOrder = CAST('false' AS BOOLEAN);
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:pageIndex = 1;
+		SET OutputRoot.SOAP.Body.claim:SearchClaims.claim:pageCount = 1;		
+		
+		RETURN TRUE;
+	END;
+END MODULE;

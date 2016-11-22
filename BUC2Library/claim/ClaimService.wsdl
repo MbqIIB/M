@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions name="ClaimService" targetNamespace="urn:metlife.services.acord.claim" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:metlife.services.acord.claim" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:documentation>
+    <wsdl:appinfo source="WMQI_APPINFO">
+      <MRWSDLAppInfo imported="true">
+        <binding hasEncoding="false" imported="true" name="basicHttpBinding_ClaimService" originalBindingStyle="document"/>
+        <binding hasEncoding="false" imported="false" name="customBinding_ClaimService" originalBindingStyle="document"/>
+      </MRWSDLAppInfo>
+    </wsdl:appinfo>
+  </wsdl:documentation>
+  <wsp:Policy wsu:Id="customBinding_ClaimService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wsaw:UsingAddressing/>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="urn:metlife.services.acord.claim/Imports">
+<xsd:import namespace="urn:metlife.services.acord.claim" schemaLocation="ClaimService.xsd"/>
+
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IClaimService_SearchClaims_InputMessage">
+    <wsdl:part element="tns:SearchClaims" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IClaimService_SearchClaims_OutputMessage">
+    <wsdl:part element="tns:SearchClaimsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IClaimService_GetClaim_InputMessage">
+    <wsdl:part element="tns:GetClaim" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IClaimService_GetClaim_OutputMessage">
+    <wsdl:part element="tns:GetClaimResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IClaimService_GetClaimSettlement_InputMessage">
+    <wsdl:part element="tns:GetClaimSettlement" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IClaimService_GetClaimSettlement_OutputMessage">
+    <wsdl:part element="tns:GetClaimSettlementResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IClaimService_GetClaimDocuments_InputMessage">
+    <wsdl:part element="tns:GetClaimDocuments" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IClaimService_GetClaimDocuments_OutputMessage">
+    <wsdl:part element="tns:GetClaimDocumentsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IClaimService_GetClaimDocument_InputMessage">
+    <wsdl:part element="tns:GetClaimDocument" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IClaimService_GetClaimDocument_OutputMessage">
+    <wsdl:part element="tns:GetClaimDocumentResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="IClaimService">
+    <wsdl:operation name="SearchClaims">
+      <wsdl:input message="tns:IClaimService_SearchClaims_InputMessage" wsaw:Action="urn:metlife.services.acord.claim/IClaimService/SearchClaims"/>
+      <wsdl:output message="tns:IClaimService_SearchClaims_OutputMessage" wsaw:Action="urn:metlife.services.acord.claim/IClaimService/SearchClaimsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaim">
+      <wsdl:input message="tns:IClaimService_GetClaim_InputMessage" wsaw:Action="urn:metlife.services.acord.claim/IClaimService/GetClaim"/>
+      <wsdl:output message="tns:IClaimService_GetClaim_OutputMessage" wsaw:Action="urn:metlife.services.acord.claim/IClaimService/GetClaimResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaimSettlement">
+      <wsdl:input message="tns:IClaimService_GetClaimSettlement_InputMessage" wsaw:Action="urn:metlife.services.acord.claim/IClaimService/GetClaimSettlement"/>
+      <wsdl:output message="tns:IClaimService_GetClaimSettlement_OutputMessage" wsaw:Action="urn:metlife.services.acord.claim/IClaimService/GetClaimSettlementResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaimDocuments">
+      <wsdl:input message="tns:IClaimService_GetClaimDocuments_InputMessage" wsaw:Action="urn:metlife.services.acord.claim/IClaimService/GetClaimDocuments"/>
+      <wsdl:output message="tns:IClaimService_GetClaimDocuments_OutputMessage" wsaw:Action="urn:metlife.services.acord.claim/IClaimService/GetClaimDocumentsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaimDocument">
+      <wsdl:input message="tns:IClaimService_GetClaimDocument_InputMessage" wsaw:Action="urn:metlife.services.acord.claim/IClaimService/GetClaimDocument"/>
+      <wsdl:output message="tns:IClaimService_GetClaimDocument_OutputMessage" wsaw:Action="urn:metlife.services.acord.claim/IClaimService/GetClaimDocumentResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="basicHttpBinding_ClaimService" type="tns:IClaimService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="SearchClaims">
+      <soap:operation soapAction="urn:metlife.services.acord.claim/IClaimService/SearchClaims" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaim">
+      <soap:operation soapAction="urn:metlife.services.acord.claim/IClaimService/GetClaim" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaimSettlement">
+      <soap:operation soapAction="urn:metlife.services.acord.claim/IClaimService/GetClaimSettlement" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaimDocuments">
+      <soap:operation soapAction="urn:metlife.services.acord.claim/IClaimService/GetClaimDocuments" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaimDocument">
+      <soap:operation soapAction="urn:metlife.services.acord.claim/IClaimService/GetClaimDocument" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="customBinding_ClaimService" type="tns:IClaimService">
+    <wsp:PolicyReference URI="#customBinding_ClaimService_policy"/>
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="SearchClaims">
+      <soap12:operation soapAction="urn:metlife.services.acord.claim/IClaimService/SearchClaims" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaim">
+      <soap12:operation soapAction="urn:metlife.services.acord.claim/IClaimService/GetClaim" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaimSettlement">
+      <soap12:operation soapAction="urn:metlife.services.acord.claim/IClaimService/GetClaimSettlement" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaimDocuments">
+      <soap12:operation soapAction="urn:metlife.services.acord.claim/IClaimService/GetClaimDocuments" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaimDocument">
+      <soap12:operation soapAction="urn:metlife.services.acord.claim/IClaimService/GetClaimDocument" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ClaimService">
+    <wsdl:port binding="tns:basicHttpBinding_ClaimService" name="basicHttpBinding_ClaimService">
+      <soap:address location="http://mlclwsdevqa01.alico.corp:107/ClaimService.svc/http"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:customBinding_ClaimService" name="customBinding_ClaimService">
+      <soap12:address location="http://mlclwsdevqa01.alico.corp:107/ClaimService.svc/soap"/>
+      <wsa10:EndpointReference>
+        <wsa10:Address>http://mlclwsdevqa01.alico.corp:107/ClaimService.svc/soap</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

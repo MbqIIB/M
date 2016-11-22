@@ -1,0 +1,57 @@
+BROKER SCHEMA esqls.changePassword
+
+/*****************************
+ * CheckObtieneClaveResponse *
+ *****************************/
+CREATE COMPUTE MODULE CheckObtieneClaveResponse
+
+	DECLARE sec NAMESPACE 'http://tuxpan.com/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Declare and set local variables
+		DECLARE oldPassword CHARACTER InputLocalEnvironment.OldPassword;
+
+		--Get the result from the previous call
+		DECLARE ObtieneClaveResponse CHARACTER InputRoot.SOAP.Body.sec:ObtieneClaveResponse.sec:ObtieneClaveResult.NewDataSet.Table.CLAVE;
+		--DECLARE ObtieneClaveResponse CHARACTER InputRoot.SOAP.Body.sec:ObtieneClaveResponse.sec:ObtieneClaveResult.*.*.CLAVE;
+
+		--If the call result is not equal to the old password then go to the error response
+		IF (ObtieneClaveResponse <> oldPassword) THEN
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************************
+ * CheckGrabaLocalResponse *
+ ***************************/
+CREATE COMPUTE MODULE CheckGrabaLocalResponse
+
+	DECLARE sec NAMESPACE 'http://tuxpan.com/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the result from the previous call
+		DECLARE GrabaLocalResponse CHARACTER InputRoot.SOAP.Body.sec:GrabaLocalResponse.sec:GrabaLocalResult.NewDataSet.Table.ESTADO;
+
+		--If the call result is empty or not equals to 'Ok' then go to the error response
+		IF ((GrabaLocalResponse IS NULL) OR (GrabaLocalResponse <> 'Ok')) THEN
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;

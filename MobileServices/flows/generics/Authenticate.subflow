@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:flows_generics_ReturnErrorResponse.subflow="flows/generics/ReturnErrorResponse.subflow" xmlns:gen_flows_CheckeoClave_Authentication.subflow="gen/flows/CheckeoClave_Authentication.subflow" xmlns:gen_flows_CreateToken_SecurityService.subflow="gen/flows/CreateToken_SecurityService.subflow" xmlns:gen_flows_GetPerson_PartyService.subflow="gen/flows/GetPerson_PartyService.subflow"
+    xmlns:gen_flows_ValidaIndividual_Authentication.subflow="gen/flows/ValidaIndividual_Authentication.subflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="flows/generics/Authenticate.subflow"
+    nsPrefix="flows_generics_Authenticate.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" useDefaults="true" udpSupport="true">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.WebServiceURL_Authentication" name="WebServiceURL_Authentication" defaultValueLiteral="http://mustbeoverwritten">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.WebServiceURL_Party" name="WebServiceURL_Party" defaultValueLiteral="http://mustbeoverwritten">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.WebServiceURL_Security" name="WebServiceURL_Security" defaultValueLiteral="http://mustbeoverwritten">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <translation xmi:type="utility:TranslatableString" key="Authenticate" bundleName="flows/generics/Authenticate" pluginId="MobileServices"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj16/Authenticate.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj30/Authenticate.gif"/>
+    <composition>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.Input" location="5,109">
+        <translation xmi:type="utility:TranslatableString" key="InTerminal.Input" bundleName="flows/generics/Authenticate" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output" location="1298,389">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.Output" bundleName="flows/generics/Authenticate" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="gen_flows_CheckeoClave_Authentication.subflow:FCMComposite_1" xmi:id="FCMComposite_1_1" location="451,206">
+        <translation xmi:type="utility:ConstantString" string="CheckeoClave"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Invokes WSDL operation and extracts the response from SOAP message."/>
+        <longDescription xmi:type="utility:ConstantString" string="This subflow invokes the WSDL operation and extracts message body from the response message."/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="1028,388" computeExpression="esql://routine/esqls.authentication#CreateOutputOk.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Check CreateToken"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="781,299" computeExpression="esql://routine/esqls.authentication#GetGetPersonResponse.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Check GetPerson"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_6" location="534,214" computeExpression="esql://routine/esqls.authentication#CheckChequeoClaveResponse.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Check CheckeoClave"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="60,109" computeExpression="esql://routine/esqls.authentication#GetRUTAndPswdFromHeaderAndSetValidaIndividual.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set ValidaIndividual"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="845,379" computeExpression="esql://routine/esqls.authentication#SetCreateToken.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set CreateToken"/>
+      </nodes>
+      <nodes xmi:type="gen_flows_ValidaIndividual_Authentication.subflow:FCMComposite_1" xmi:id="FCMComposite_1_9" location="168,110">
+        <translation xmi:type="utility:ConstantString" string="ValidaIndividual"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Invokes WSDL operation and extracts the response from SOAP message."/>
+        <longDescription xmi:type="utility:ConstantString" string="This subflow invokes the WSDL operation and extracts message body from the response message."/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_10" location="1142,12" computeExpression="esql://routine/esqls.authentication#CreateOutputError4.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Unexpected Issue"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_11" location="1144,206" computeExpression="esql://routine/esqls.authentication#CreateOutputError2.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Account Locked"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_12" location="614,290" computeExpression="esql://routine/esqls.authentication#SetGetPerson.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set GetPerson"/>
+      </nodes>
+      <nodes xmi:type="gen_flows_CreateToken_SecurityService.subflow:FCMComposite_1" xmi:id="FCMComposite_1_13" location="946,380">
+        <translation xmi:type="utility:ConstantString" string="CreateToken"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Invokes WSDL operation and extracts the response from SOAP message."/>
+        <longDescription xmi:type="utility:ConstantString" string="This subflow invokes the WSDL operation and extracts message body from the response message."/>
+      </nodes>
+      <nodes xmi:type="gen_flows_GetPerson_PartyService.subflow:FCMComposite_1" xmi:id="FCMComposite_1_14" location="709,291">
+        <translation xmi:type="utility:ConstantString" string="GetPerson"/>
+        <shortDescription xmi:type="utility:ConstantString" string="Invokes WSDL operation and extracts the response from SOAP message."/>
+        <longDescription xmi:type="utility:ConstantString" string="This subflow invokes the WSDL operation and extracts message body from the response message."/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_16" location="1139,109" computeExpression="esql://routine/esqls.authentication#CreateOutputError1.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Invalid Credentials"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_17" location="346,205" computeExpression="esql://routine/esqls.authentication#SetCheckeoClave.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Set CheckeoClave"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_18" location="275,118" computeExpression="esql://routine/esqls.authentication#CheckValidaIndividualResponse.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Check ValidaIndividual"/>
+      </nodes>
+      <nodes xmi:type="flows_generics_ReturnErrorResponse.subflow:FCMComposite_1" xmi:id="FCMComposite_1_19" location="1264,110">
+        <translation xmi:type="utility:ConstantString" string="ReturnErrorResponse"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_11" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.out2" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_32" targetNode="FCMComposite_1_19" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_33" targetNode="FCMComposite_1_19" sourceNode="FCMComposite_1_16" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_34" targetNode="FCMComposite_1_19" sourceNode="FCMComposite_1_11" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_38" targetNode="FCMComposite_1_16" sourceNode="FCMComposite_1_18" sourceTerminalName="OutTerminal.out1" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_42" targetNode="FCMComposite_1_16" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_43" targetNode="FCMComposite_1_16" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_44" targetNode="FCMComposite_1_16" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.out1" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_68" targetNode="OutTerminal.Output" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_7" sourceNode="InTerminal.Input" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_46" targetNode="FCMComposite_1_17" sourceNode="FCMComposite_1_18" sourceTerminalName="OutTerminal.out2" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_47" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_17" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_52" targetNode="FCMComposite_1_9" sourceNode="FCMComposite_1_7" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_54" targetNode="FCMComposite_1_18" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.ValidaIndividualResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_56" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.CheckeoClaveResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_57" targetNode="FCMComposite_1_12" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.out3" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_58" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_12" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_59" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_14" sourceTerminalName="OutTerminal.GetPersonResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_60" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_61" targetNode="FCMComposite_1_13" sourceNode="FCMComposite_1_8" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_62" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_13" sourceTerminalName="OutTerminal.CreateTokenResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_12" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_13" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_13" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_13" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_14" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_14" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_15" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_14" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_16" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_17" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_18" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_19" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.WebServiceURL_Authentication">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.WebServiceURL_Authentication" bundleName="gen/flows/ValidaIndividual_Authentication" pluginId="MobileServices"/>
+        <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.WebServiceURL_Party">
+          <propertyName xmi:type="utility:TranslatableString" key="Property.WebServiceURL_Party" bundleName="gen/flows/GetPerson_PartyService" pluginId="MobileServices"/>
+          <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.WebServiceURL_Security">
+            <propertyName xmi:type="utility:TranslatableString" key="Property.WebServiceURL_Security" bundleName="gen/flows/CreateToken_SecurityService" pluginId="MobileServices"/>
+          </propertyDescriptor>
+        </propertyDescriptor>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <attributeLinks promotedAttribute="Property.WebServiceURL_Authentication" overriddenNodes="FCMComposite_1_9">
+      <overriddenAttribute href="gen/flows/ValidaIndividual_Authentication.subflow#Property.WebServiceURL_Authentication"/>
+    </attributeLinks>
+    <attributeLinks promotedAttribute="Property.WebServiceURL_Party" overriddenNodes="FCMComposite_1_14">
+      <overriddenAttribute href="gen/flows/GetPerson_PartyService.subflow#Property.WebServiceURL_Party"/>
+    </attributeLinks>
+    <attributeLinks promotedAttribute="Property.WebServiceURL_Security" overriddenNodes="FCMComposite_1_13">
+      <overriddenAttribute href="gen/flows/CreateToken_SecurityService.subflow#Property.WebServiceURL_Security"/>
+    </attributeLinks>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

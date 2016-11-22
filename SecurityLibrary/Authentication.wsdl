@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://tuxpan.com/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:tns="http://tuxpan.com/">
+  <wsdl:documentation>
+    <wsdl:appinfo source="WMQI_APPINFO">
+      <MRWSDLAppInfo imported="true">
+        <generatedXSD location="Authentication_InlineSchema1.xsd"/>
+        <binding hasEncoding="false" imported="true" name="WSAutentificaPIPSoap" originalBindingStyle="document"/>
+        <binding hasEncoding="false" imported="false" name="WSAutentificaPIPSoap12" originalBindingStyle="document"/>
+      </MRWSDLAppInfo>
+    </wsdl:appinfo>
+  </wsdl:documentation>
+  <wsdl:types>
+    
+          <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://tuxpan.com/" xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions">
+<xsd:include schemaLocation="Authentication_InlineSchema1.xsd"/>
+    </xsd:schema>
+    </wsdl:types>
+  <wsdl:message name="TipoValidaciondeIngresoSoapIn">
+    <wsdl:part element="tns:TipoValidaciondeIngreso" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="TipoValidaciondeIngresoSoapOut">
+    <wsdl:part element="tns:TipoValidaciondeIngresoResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ValidaIngresoMUTSoapIn">
+    <wsdl:part element="tns:ValidaIngresoMUT" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ValidaIngresoMUTSoapOut">
+    <wsdl:part element="tns:ValidaIngresoMUTResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ValidaIndividualSoapIn">
+    <wsdl:part element="tns:ValidaIndividual" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ValidaIndividualSoapOut">
+    <wsdl:part element="tns:ValidaIndividualResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="CheckeoClaveSoapIn">
+    <wsdl:part element="tns:CheckeoClave" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="CheckeoClaveSoapOut">
+    <wsdl:part element="tns:CheckeoClaveResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="CheckeoClave_NuevaSoapIn">
+    <wsdl:part element="tns:CheckeoClave_Nueva" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="CheckeoClave_NuevaSoapOut">
+    <wsdl:part element="tns:CheckeoClave_NuevaResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GrabaLocalSoapIn">
+    <wsdl:part element="tns:GrabaLocal" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GrabaLocalSoapOut">
+    <wsdl:part element="tns:GrabaLocalResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ReseteoClaveSoapIn">
+    <wsdl:part element="tns:ReseteoClave" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ReseteoClaveSoapOut">
+    <wsdl:part element="tns:ReseteoClaveResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ObtieneClaveSoapIn">
+    <wsdl:part element="tns:ObtieneClave" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ObtieneClaveSoapOut">
+    <wsdl:part element="tns:ObtieneClaveResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="TraeEmailsSoapIn">
+    <wsdl:part element="tns:TraeEmails" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="TraeEmailsSoapOut">
+    <wsdl:part element="tns:TraeEmailsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ActivaClaveTemporalSoapIn">
+    <wsdl:part element="tns:ActivaClaveTemporal" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="ActivaClaveTemporalSoapOut">
+    <wsdl:part element="tns:ActivaClaveTemporalResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="CrearClaveSoapIn">
+    <wsdl:part element="tns:CrearClave" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="CrearClaveSoapOut">
+    <wsdl:part element="tns:CrearClaveResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="WSAutentificaPIPSoap">
+    <wsdl:operation name="TipoValidaciondeIngreso">
+      <wsdl:documentation>[sp_tipo_val]Devuelve contra que servicio debe autentificarse el cliente</wsdl:documentation>
+      <wsdl:input message="tns:TipoValidaciondeIngresoSoapIn"/>
+      <wsdl:output message="tns:TipoValidaciondeIngresoSoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="ValidaIngresoMUT">
+      <wsdl:documentation>[sp_valida_mut]Valida al rut el sistema mut</wsdl:documentation>
+      <wsdl:input message="tns:ValidaIngresoMUTSoapIn"/>
+      <wsdl:output message="tns:ValidaIngresoMUTSoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="ValidaIndividual">
+      <wsdl:documentation>[sp_valida_individual]</wsdl:documentation>
+      <wsdl:input message="tns:ValidaIndividualSoapIn"/>
+      <wsdl:output message="tns:ValidaIndividualSoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="CheckeoClave">
+      <wsdl:documentation>[sp_checkclave]</wsdl:documentation>
+      <wsdl:input message="tns:CheckeoClaveSoapIn"/>
+      <wsdl:output message="tns:CheckeoClaveSoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="CheckeoClave_Nueva">
+      <wsdl:documentation>[sp_check_nuevaclave]</wsdl:documentation>
+      <wsdl:input message="tns:CheckeoClave_NuevaSoapIn"/>
+      <wsdl:output message="tns:CheckeoClave_NuevaSoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="GrabaLocal">
+      <wsdl:documentation>[sp_graba_local]</wsdl:documentation>
+      <wsdl:input message="tns:GrabaLocalSoapIn"/>
+      <wsdl:output message="tns:GrabaLocalSoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="ReseteoClave">
+      <wsdl:documentation>[sp_reseteo_clave]</wsdl:documentation>
+      <wsdl:input message="tns:ReseteoClaveSoapIn"/>
+      <wsdl:output message="tns:ReseteoClaveSoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="ObtieneClave">
+      <wsdl:documentation>[sp_obtiene_clave]</wsdl:documentation>
+      <wsdl:input message="tns:ObtieneClaveSoapIn"/>
+      <wsdl:output message="tns:ObtieneClaveSoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="TraeEmails">
+      <wsdl:documentation>[sp_direcc_correo]</wsdl:documentation>
+      <wsdl:input message="tns:TraeEmailsSoapIn"/>
+      <wsdl:output message="tns:TraeEmailsSoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="ActivaClaveTemporal">
+      <wsdl:documentation>[sp_act_clave]</wsdl:documentation>
+      <wsdl:input message="tns:ActivaClaveTemporalSoapIn"/>
+      <wsdl:output message="tns:ActivaClaveTemporalSoapOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="CrearClave">
+      <wsdl:documentation>[sp_crear_clave]</wsdl:documentation>
+      <wsdl:input message="tns:CrearClaveSoapIn"/>
+      <wsdl:output message="tns:CrearClaveSoapOut"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WSAutentificaPIPSoap" type="tns:WSAutentificaPIPSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="TipoValidaciondeIngreso">
+      <soap:operation soapAction="http://tuxpan.com/TipoValidaciondeIngreso" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidaIngresoMUT">
+      <soap:operation soapAction="http://tuxpan.com/ValidaIngresoMUT" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidaIndividual">
+      <soap:operation soapAction="http://tuxpan.com/ValidaIndividual" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckeoClave">
+      <soap:operation soapAction="http://tuxpan.com/CheckeoClave" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckeoClave_Nueva">
+      <soap:operation soapAction="http://tuxpan.com/CheckeoClave_Nueva" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GrabaLocal">
+      <soap:operation soapAction="http://tuxpan.com/GrabaLocal" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReseteoClave">
+      <soap:operation soapAction="http://tuxpan.com/ReseteoClave" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObtieneClave">
+      <soap:operation soapAction="http://tuxpan.com/ObtieneClave" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TraeEmails">
+      <soap:operation soapAction="http://tuxpan.com/TraeEmails" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ActivaClaveTemporal">
+      <soap:operation soapAction="http://tuxpan.com/ActivaClaveTemporal" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CrearClave">
+      <soap:operation soapAction="http://tuxpan.com/CrearClave" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WSAutentificaPIPSoap12" type="tns:WSAutentificaPIPSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="TipoValidaciondeIngreso">
+      <soap12:operation soapAction="http://tuxpan.com/TipoValidaciondeIngreso" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidaIngresoMUT">
+      <soap12:operation soapAction="http://tuxpan.com/ValidaIngresoMUT" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidaIndividual">
+      <soap12:operation soapAction="http://tuxpan.com/ValidaIndividual" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckeoClave">
+      <soap12:operation soapAction="http://tuxpan.com/CheckeoClave" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckeoClave_Nueva">
+      <soap12:operation soapAction="http://tuxpan.com/CheckeoClave_Nueva" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GrabaLocal">
+      <soap12:operation soapAction="http://tuxpan.com/GrabaLocal" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReseteoClave">
+      <soap12:operation soapAction="http://tuxpan.com/ReseteoClave" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObtieneClave">
+      <soap12:operation soapAction="http://tuxpan.com/ObtieneClave" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TraeEmails">
+      <soap12:operation soapAction="http://tuxpan.com/TraeEmails" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ActivaClaveTemporal">
+      <soap12:operation soapAction="http://tuxpan.com/ActivaClaveTemporal" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CrearClave">
+      <soap12:operation soapAction="http://tuxpan.com/CrearClave" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WSAutentificaPIP">
+    <wsdl:port binding="tns:WSAutentificaPIPSoap" name="WSAutentificaPIPSoap">
+      <soap:address location="http://webdesacp01.alico.corp:204/WS_Autentifica_PIP/WSAutentificaPIP.asmx"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:WSAutentificaPIPSoap12" name="WSAutentificaPIPSoap12">
+      <soap12:address location="http://webdesacp01.alico.corp:204/WS_Autentifica_PIP/WSAutentificaPIP.asmx"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

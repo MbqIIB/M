@@ -1,0 +1,41 @@
+BROKER SCHEMA esqls.providersearch
+
+
+CREATE COMPUTE MODULE ServicioProvider_esql_validation
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		
+		
+		     SET OutputRoot.JSON.Data.error.code = 202;
+
+			SET OutputRoot.JSON.Data.error.message = 'No Data Found';
+
+			CREATE FIELD OutputRoot.JSON.Data.error.errors IDENTITY(JSON.Array)errors;
+
+			SET OutputRoot.JSON.Data.error.errors.Item[1].reason = 'No Data Found';
+
+			SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList = 'limit';
+
+			SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList TYPE = JSON.Array;
+			
+		
+		
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

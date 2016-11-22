@@ -1,0 +1,230 @@
+BROKER SCHEMA esqls.profile
+PATH esqls.generics;
+
+/***************************
+ * CreateOutputErrorNoData *
+ ***************************/
+CREATE COMPUTE MODULE CreateOutputErrorNoData
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 202;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'No Data Found';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'ProfileNotExist';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************************
+ * CreateOutputErrorUnexpected *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputErrorUnexpected
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 402;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'UnexpectedIssue';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'ParsingError';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************************
+ * CreateOutputContactInfo *
+ ***************************/
+--This module creates the structure for the JSON contact information array. The structure is as follows:
+--{
+-- "contactInformation": {
+--      "emails": [
+--           {    
+--                "address": EMAIL_AS_CHARACTER, 
+--                "type": EMAIL_TYPE_AS_CHARACTER  
+--           }
+--      ],
+--      "phoneNumbers": [
+--           {  
+--                "useCode": USE_CODE_AS_CHARACTER,
+--                "number": NUMBER_AS_NUMBER,
+--                "type": PHONE_TYPE_AS_CHARACTER  
+--           }
+--      ],
+--      "addresses": [
+--           {  
+--                "addressLine1": ADDRESS_AS_CHARACTER,
+--                "addressLine2": "",
+--                "addressLine3": "",
+--                "region": REGION_NAME_AS_CHARACTER,
+--                "municipality": COMUNE_NAME_AS_CHARACTER,
+--                "country": COUNTRY_NAME_AS_CHARACTER  
+--           }
+--      ]
+--	}         
+--}
+--The values are fetched from the LocalEnvironment. The variables by Policy, must be setted as:
+--   Email_0		- CHARACTER	: 	Personal email
+--   Email_1		- CHARACTER	: 	Work email
+--   Phone_0		- NUMBER	:	Personal phone
+--   Phone_1		- NUMBER	:	Personal Mobile
+--   Phone_2		- NUMBER	:	Commercial phone
+--   Address_0		- CHARACTER	:	First Address 
+--   Address_1		- CHARACTER	:	Second Address
+--   Region_0		- CHARACTER	:	First Address Region name
+--   Region_1		- CHARACTER	:	Second Address Region name
+--   Comune_0		- CHARACTER	:	First Address Comune name
+--   Comune_1		- CHARACTER	:	Second Address Comune name
+CREATE COMPUTE MODULE CreateOutputContactInfo
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		--DEclare vars for Date format
+		DECLARE dateAux DATE;
+		DECLARE charAux CHARACTER;		
+		
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the responses basic parameters
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line" = 'HTTP/1.1 200 OK'; 
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200; 
+		SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json; charset=utf-8'; 
+		
+		--Get the contact info
+		DECLARE firstName CHARACTER InputLocalEnvironment.FirstName;
+		DECLARE lastName CHARACTER InputLocalEnvironment.LastName;
+		DECLARE gender CHARACTER InputLocalEnvironment.Gender;
+		DECLARE isapre CHARACTER InputLocalEnvironment.Isapre;
+		DECLARE birthdate CHARACTER InputLocalEnvironment.Birthdate;
+		DECLARE email_0 CHARACTER InputLocalEnvironment.Email_0;
+		DECLARE email_1 CHARACTER InputLocalEnvironment.Email_1;
+		DECLARE phone_0 CHARACTER InputLocalEnvironment.Phone_0;
+		DECLARE phone_1 CHARACTER InputLocalEnvironment.Phone_1;
+		DECLARE phone_2 CHARACTER InputLocalEnvironment.Phone_2;
+		DECLARE address_0 CHARACTER InputLocalEnvironment.Address_0;
+		DECLARE address_1 CHARACTER InputLocalEnvironment.Address_1;
+		DECLARE region_0 DECIMAL InputLocalEnvironment.Region_0;
+		DECLARE region_1 DECIMAL InputLocalEnvironment.Region_1;
+		DECLARE comune_0 DECIMAL InputLocalEnvironment.Comune_0;
+		DECLARE comune_1 DECIMAL InputLocalEnvironment.Comune_1;
+
+		--Set empty to null mandatory fields so they are put in the response
+		IF (isapre IS NULL) THEN SET isapre = ''; END IF;
+		IF (address_0 IS NULL) THEN SET address_0 = ''; END IF;
+		IF (region_0 IS NULL) THEN SET region_0 = ''; END IF;
+		IF (comune_0 IS NULL) THEN SET comune_0 = ''; END IF;
+		IF (address_1 IS NULL) THEN SET address_1 = ''; END IF;
+		IF (region_1 IS NULL) THEN SET region_1 = ''; END IF;
+		IF (comune_1 IS NULL) THEN SET comune_1 = ''; END IF;
+
+		--Change format of date to dd/mm/yyyy
+		SET charAux = ClearSpecialChars(SUBSTRING(birthdate AFTER 'TIMESTAMP'));
+		CALL CharacterToDate(charAux, 'yyyyMMddHHmmss') INTO dateAux;
+		CALL DateToCharacter(dateAux,'dd/MM/yyyy') INTO charAux;
+
+		--Create the JSON response body
+
+		--Create the PersonData
+		SET OutputRoot.JSON.Data.firstName = firstName;
+		SET OutputRoot.JSON.Data.lastName = lastName;
+		SET OutputRoot.JSON.Data.gender = gender;
+		SET OutputRoot.JSON.Data.isapre = isapre;
+		SET OutputRoot.JSON.Data.birthdate = charAux;
+
+		--Create the emails array
+		SET OutputRoot.JSON.Data.contactInformation.emails TYPE = JSON.Array;
+		
+		IF NOT (((email_0 IS NULL) OR (email_0 = '')) AND ((email_1 IS NULL) OR (email_1 = ''))) THEN
+			DECLARE i INTEGER 1;
+			
+			--If email_0(Personal email) has data, then save
+			IF (NOT(email_0 IS NULL) AND NOT(email_0 = '')) THEN
+				SET OutputRoot.JSON.Data.contactInformation.emails.Item[i].address = email_0;
+				SET OutputRoot.JSON.Data.contactInformation.emails.Item[i].type = 'Casa';
+				SET i = i + 1;
+			END IF;
+			
+			--If email_1(Work email) has data, then save
+			--IF (NOT (email_1 IS NULL) AND NOT(email_1 = '')) THEN
+			--	SET OutputRoot.JSON.Data.contactInformation.emails.Item[i].address = email_1;
+			--	SET OutputRoot.JSON.Data.contactInformation.emails.Item[i].type = 'Trabajo';
+			--END IF;
+		END IF;
+		
+		--Create the phones array
+		SET OutputRoot.JSON.Data.contactInformation.phoneNumbers TYPE = JSON.Array;
+		
+		IF NOT (((phone_0 IS NULL) OR (phone_0 = '')) AND
+			((phone_1 IS NULL) OR (phone_1 = '')) AND 
+			((phone_2 IS NULL) OR (phone_2 = ''))) THEN
+			DECLARE j INTEGER 1;
+			
+			--If phone_0(Personal phone) has data, then save
+			IF (NOT(phone_0 IS NULL) AND NOT(phone_0 = '')) THEN
+				SET OutputRoot.JSON.Data.contactInformation.phoneNumbers.Item[j].number = phone_0;
+				SET OutputRoot.JSON.Data.contactInformation.phoneNumbers.Item[j].type = 'Casa';
+				SET j = j + 1;
+			END IF;
+			
+			--If phone_1(Personal Mobile) has data, then save
+			IF (NOT(phone_1 IS NULL) AND NOT(phone_1 = '')) THEN
+				SET OutputRoot.JSON.Data.contactInformation.phoneNumbers.Item[j].number = phone_1;
+				SET OutputRoot.JSON.Data.contactInformation.phoneNumbers.Item[j].type = 'Celular';
+				SET j = j + 1;
+			END IF;
+			
+			--If phone_2(Commercial phone) has data, then save
+			--IF (NOT(phone_2 IS NULL) AND NOT(phone_2 = '')) THEN
+			--	SET OutputRoot.JSON.Data.contactInformation.phoneNumbers.Item[j].number = phone_2;
+			--	SET OutputRoot.JSON.Data.contactInformation.phoneNumbers.Item[j].type = 'Trabajo';
+			--END IF;
+		END IF;
+
+		--Create the addresses array
+		SET OutputRoot.JSON.Data.contactInformation.addresses TYPE = JSON.Array;
+		
+		IF NOT (((address_0 IS NULL) OR (address_0 = '')) AND ((address_1 IS NULL) OR (address_1 = ''))) THEN
+			DECLARE k INTEGER 1;
+			
+			--If address_0(First address) has data, then save
+			IF (NOT(address_0 IS NULL) AND NOT(address_0 = '')) THEN
+				SET OutputRoot.JSON.Data.contactInformation.addresses.Item[k].addressLine1 = address_0;
+				SET OutputRoot.JSON.Data.contactInformation.addresses.Item[k].region = region_0;
+				SET OutputRoot.JSON.Data.contactInformation.addresses.Item[k].municipality = comune_0;
+				SET OutputRoot.JSON.Data.contactInformation.addresses.Item[k].type = 'Casa';
+				SET OutputRoot.JSON.Data.contactInformation.addresses.Item[k].country = 'Chile';
+				SET k = k + 1;
+			END IF;
+			
+			--If address_1(Second address) has data, then save
+			--IF (NOT(address_1 IS NULL) AND NOT(address_1 = '')) THEN
+			--	SET OutputRoot.JSON.Data.contactInformation.addresses.Item[k].addressLine1 = address_1;
+			--	SET OutputRoot.JSON.Data.contactInformation.addresses.Item[k].region = region_1;
+			--	SET OutputRoot.JSON.Data.contactInformation.addresses.Item[k].municipality = comune_1;
+			--	SET OutputRoot.JSON.Data.contactInformation.addresses.Item[k].type = 'Trabajo';
+			--	SET OutputRoot.JSON.Data.contactInformation.addresses.Item[k].country = 'Chile';
+			--END IF;
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+

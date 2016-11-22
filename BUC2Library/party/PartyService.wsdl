@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="PartyService" targetNamespace="urn:metlife.services.acord.party" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:metlife.services.acord.party" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:acord="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD">
+  <wsdl:documentation>
+    <wsdl:appinfo source="WMQI_APPINFO">
+      <MRWSDLAppInfo imported="true">
+        <binding hasEncoding="false" imported="true" name="customBinding_PartyService" originalBindingStyle="document"/>
+        <binding hasEncoding="false" imported="true" name="basicHttpBinding_PartyService" originalBindingStyle="document"/>
+      </MRWSDLAppInfo>
+    </wsdl:appinfo>
+  </wsdl:documentation>
+  <wsp:Policy wsu:Id="customBinding_PartyService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wsaw:UsingAddressing/>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="urn:metlife.services.acord.party/Imports">
+      <xsd:import namespace="urn:metlife.services.acord.party" schemaLocation="xsd_xsd0.xsd"/>
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD" schemaLocation="../agreement/xsd_xsd2.xsd"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IPartyService_GetParty_InputMessage">
+    <wsdl:part element="tns:GetParty" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_GetParty_OutputMessage">
+    <wsdl:part element="tns:GetPartyResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_GetPerson_InputMessage">
+    <wsdl:part element="tns:GetPerson" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_GetPerson_OutputMessage">
+    <wsdl:part element="tns:GetPersonResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_GetOrganization_InputMessage">
+    <wsdl:part element="tns:GetOrganization" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_GetOrganization_OutputMessage">
+    <wsdl:part element="tns:GetOrganizationResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_UpdatePartyContactInfo_InputMessage">
+    <wsdl:part element="tns:UpdatePartyContactInfo" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_UpdatePartyContactInfo_OutputMessage">
+    <wsdl:part element="tns:UpdatePartyContactInfoResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_UpdatePartyContactInfo_FaultExceptionDetailFault_FaultMessage">
+    <wsdl:part element="q1:FaultExceptionDetail" name="detail" xmlns:q1="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_GetPartyContactInfo_InputMessage">
+    <wsdl:part element="tns:GetPartyContactInfo" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_GetPartyContactInfo_OutputMessage">
+    <wsdl:part element="tns:GetPartyContactInfoResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_GetPartyCustomerSegment_InputMessage">
+    <wsdl:part element="tns:GetPartyCustomerSegment" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_GetPartyCustomerSegment_OutputMessage">
+    <wsdl:part element="tns:GetPartyCustomerSegmentResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_GetEmployee_InputMessage">
+    <wsdl:part element="tns:GetEmployee" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_GetEmployee_OutputMessage">
+    <wsdl:part element="tns:GetEmployeeResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_SearchCustomerRequirements_InputMessage">
+    <wsdl:part element="tns:SearchCustomerRequirements" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPartyService_SearchCustomerRequirements_OutputMessage">
+    <wsdl:part element="tns:SearchCustomerRequirementsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="IPartyService">
+    <wsdl:operation name="GetParty">
+      <wsdl:input message="tns:IPartyService_GetParty_InputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/GetParty"/>
+      <wsdl:output message="tns:IPartyService_GetParty_OutputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/GetPartyResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetPerson">
+      <wsdl:input message="tns:IPartyService_GetPerson_InputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/GetPerson"/>
+      <wsdl:output message="tns:IPartyService_GetPerson_OutputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/GetPersonResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrganization">
+      <wsdl:input message="tns:IPartyService_GetOrganization_InputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/GetOrganization"/>
+      <wsdl:output message="tns:IPartyService_GetOrganization_OutputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/GetOrganizationResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="UpdatePartyContactInfo">
+      <wsdl:input message="tns:IPartyService_UpdatePartyContactInfo_InputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/UpdatePartyContactInfo"/>
+      <wsdl:output message="tns:IPartyService_UpdatePartyContactInfo_OutputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/UpdatePartyContactInfoResponse"/>
+      <wsdl:fault message="tns:IPartyService_UpdatePartyContactInfo_FaultExceptionDetailFault_FaultMessage" name="FaultExceptionDetailFault" wsaw:Action="urn:metlife.services.acord.party/IPartyService/UpdatePartyContactInfoFaultExceptionDetailFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartyContactInfo">
+      <wsdl:input message="tns:IPartyService_GetPartyContactInfo_InputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/GetPartyContactInfo"/>
+      <wsdl:output message="tns:IPartyService_GetPartyContactInfo_OutputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/GetPartyContactInfoResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartyCustomerSegment">
+      <wsdl:input message="tns:IPartyService_GetPartyCustomerSegment_InputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/GetPartyCustomerSegment"/>
+      <wsdl:output message="tns:IPartyService_GetPartyCustomerSegment_OutputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/GetPartyCustomerSegmentResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployee">
+      <wsdl:input message="tns:IPartyService_GetEmployee_InputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/GetEmployee"/>
+      <wsdl:output message="tns:IPartyService_GetEmployee_OutputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/GetEmployeeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="SearchCustomerRequirements">
+      <wsdl:input message="tns:IPartyService_SearchCustomerRequirements_InputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/SearchCustomerRequirements"/>
+      <wsdl:output message="tns:IPartyService_SearchCustomerRequirements_OutputMessage" wsaw:Action="urn:metlife.services.acord.party/IPartyService/SearchCustomerRequirementsResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="basicHttpBinding_PartyService" type="tns:IPartyService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetParty">
+      <soap:operation soapAction="urn:metlife.services.acord.party/IPartyService/GetParty" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPerson">
+      <soap:operation soapAction="urn:metlife.services.acord.party/IPartyService/GetPerson" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrganization">
+      <soap:operation soapAction="urn:metlife.services.acord.party/IPartyService/GetOrganization" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdatePartyContactInfo">
+      <soap:operation soapAction="urn:metlife.services.acord.party/IPartyService/UpdatePartyContactInfo" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="FaultExceptionDetailFault">
+        <soap:fault name="FaultExceptionDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartyContactInfo">
+      <soap:operation soapAction="urn:metlife.services.acord.party/IPartyService/GetPartyContactInfo" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartyCustomerSegment">
+      <soap:operation soapAction="urn:metlife.services.acord.party/IPartyService/GetPartyCustomerSegment" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployee">
+      <soap:operation soapAction="urn:metlife.services.acord.party/IPartyService/GetEmployee" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchCustomerRequirements">
+      <soap:operation soapAction="urn:metlife.services.acord.party/IPartyService/SearchCustomerRequirements" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="customBinding_PartyService" type="tns:IPartyService">
+    <wsp:PolicyReference URI="#customBinding_PartyService_policy"/>
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetParty">
+      <soap12:operation soapAction="urn:metlife.services.acord.party/IPartyService/GetParty" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPerson">
+      <soap12:operation soapAction="urn:metlife.services.acord.party/IPartyService/GetPerson" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrganization">
+      <soap12:operation soapAction="urn:metlife.services.acord.party/IPartyService/GetOrganization" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdatePartyContactInfo">
+      <soap12:operation soapAction="urn:metlife.services.acord.party/IPartyService/UpdatePartyContactInfo" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="FaultExceptionDetailFault">
+        <soap12:fault name="FaultExceptionDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartyContactInfo">
+      <soap12:operation soapAction="urn:metlife.services.acord.party/IPartyService/GetPartyContactInfo" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartyCustomerSegment">
+      <soap12:operation soapAction="urn:metlife.services.acord.party/IPartyService/GetPartyCustomerSegment" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployee">
+      <soap12:operation soapAction="urn:metlife.services.acord.party/IPartyService/GetEmployee" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchCustomerRequirements">
+      <soap12:operation soapAction="urn:metlife.services.acord.party/IPartyService/SearchCustomerRequirements" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PartyService">
+    <wsdl:port binding="tns:basicHttpBinding_PartyService" name="basicHttpBinding_PartyService">
+      <soap:address location="http://mlfpcdesbo:22/Click_admin/PartyService.svc/http"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:customBinding_PartyService" name="customBinding_PartyService">
+      <soap12:address location="http://mlfpcdesbo:22/Click_admin/PartyService.svc/soap"/>
+      <wsa10:EndpointReference>
+        <wsa10:Address>http://mlfpcdesbo:22/Click_admin/PartyService.svc/soap</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

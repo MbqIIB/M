@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified"
+	targetNamespace="urn:metlife.services.acord.claim"
+	xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions"
+	xmlns:tns="urn:metlife.services.acord.claim"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pref="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD">
+	<xsd:import schemaLocation="../agreement/xsd_xsd2.xsd" namespace="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"></xsd:import>
+	<xsd:element ibmSchExtn:docRoot="true" name="SearchClaims">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="partyRUT"
+					nillable="true" type="xsd:string" />
+				<xsd:element minOccurs="0" name="partyIdentifier"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="partyRoleId"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="agreementId"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="agreementNumber"
+					nillable="true" type="xsd:string" />
+				<xsd:element minOccurs="0" name="backendId"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="insuredRUT"
+					nillable="true" type="xsd:string" />
+				<xsd:element minOccurs="0" name="insuredPartyIdentifier"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="claimId"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="claimNumber"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="claimStatusId"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="settlementId"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="startDate"
+					nillable="true" type="xsd:dateTime" />
+				<xsd:element minOccurs="0" name="endDate"
+					nillable="true" type="xsd:dateTime" />
+				<xsd:element minOccurs="0" name="orderBy"
+					nillable="true" type="xsd:string" />
+				<xsd:element minOccurs="0" name="ascendingOrder"
+					type="xsd:boolean" />
+				<xsd:element minOccurs="0" name="pageIndex"
+					type="xsd:int" />
+				<xsd:element minOccurs="0" name="pageCount"
+					type="xsd:int" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true"
+		name="SearchClaimsResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="SearchClaimsResult"
+					nillable="true" type="q1:ArrayOfClaim"
+					xmlns:q1="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true" name="GetClaim">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="claimId"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="claimNumber"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="backendId"
+					nillable="true" type="xsd:decimal" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true" name="GetClaimResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="GetClaimResult"
+					nillable="true" type="q2:Claim"
+					xmlns:q2="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true" name="GetClaimSettlement">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="claimId"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="claimNumber"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="backendId"
+					nillable="true" type="xsd:decimal" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true"
+		name="GetClaimSettlementResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0"
+					name="GetClaimSettlementResult" nillable="true" type="q3:Claim"
+					xmlns:q3="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true" name="GetClaimDocuments">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="claimId"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="claimNumber"
+					nillable="true" type="xsd:decimal" />
+				<xsd:element minOccurs="0" name="backendId"
+					nillable="true" type="xsd:decimal" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true"
+		name="GetClaimDocumentsResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0"
+					name="GetClaimDocumentsResult" nillable="true"
+					type="q4:ArrayOfClaimDocument"
+					xmlns:q4="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true" name="GetClaimDocument">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="documentId"
+					type="xsd:decimal" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true"
+		name="GetClaimDocumentResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="GetClaimDocumentResult"
+					nillable="true" type="q5:ClaimDocument"
+					xmlns:q5="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

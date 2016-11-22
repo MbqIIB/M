@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="urn:metlife.services.acord.party" xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" xmlns:tns="urn:metlife.services.acord.party" xmlns:acord="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD">
+  <xsd:import namespace="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD" schemaLocation="../agreement/xsd_xsd2.xsd"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetParty">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="RUT" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetPartyResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetPartyResult" nillable="true" type="q1:Party" xmlns:q1="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetPerson">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="RUT" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetPersonResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetPersonResult" nillable="true" type="q2:Person" xmlns:q2="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetOrganization">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="RUT" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetOrganizationResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetOrganizationResult" nillable="true" type="q3:Organization" xmlns:q3="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="UpdatePartyContactInfo">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="updatePartyContactInfo" nillable="true" type="q4:UpdatePartyContactInfo" xmlns:q4="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="UpdatePartyContactInfoResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="UpdatePartyContactInfoResult" nillable="true" type="q5:TransactionResult" xmlns:q5="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetPartyContactInfo">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="RUT" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetPartyContactInfoResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetPartyContactInfoResult" nillable="true" type="q6:PersonLocationDetail" xmlns:q6="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetPartyCustomerSegment">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="RUT" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetPartyCustomerSegmentResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetPartyCustomerSegmentResult" nillable="true" type="q7:PartyCustomerSegment" xmlns:q7="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetEmployee">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="employeeId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="RUT" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="advisorCode" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetEmployeeResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetEmployeeResult" nillable="true" type="q8:Employee" xmlns:q8="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchCustomerRequirements">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="partyRut" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="partyId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="broadLineOfBusinessId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="lineOfBusinessId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="customerContactOperationId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="customerContactChannelId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="creationDateSince" nillable="true" type="xsd:dateTime"/>
+        <xsd:element minOccurs="0" name="creationDateUntil" nillable="true" type="xsd:dateTime"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchCustomerRequirementsResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="SearchCustomerRequirementsResult" nillable="true" type="q9:ArrayOfCustomerContact" xmlns:q9="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

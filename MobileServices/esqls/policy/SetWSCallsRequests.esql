@@ -1,0 +1,271 @@
+BROKER SCHEMA esqls.policy
+
+/*************************************************
+ * GetRUTAndTOKENFromHeaderAndSetSubFlowValidateToken *
+ *************************************************/
+CREATE COMPUTE MODULE GetRUTAndTOKENFromHeaderAndSetSubFlowValidateToken
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare local vars
+		DECLARE aux CHARACTER;
+		DECLARE rutNumber CHARACTER;
+		DECLARE tokenNumber CHARACTER;	
+		DECLARE broadLineOfBusinessID DECIMAL;
+
+		--Extract RUT from URL
+		SET aux = SUBSTRING(InputRoot.HTTPInputHeader."X-Original-HTTP-Command" AFTER 'users/');
+		SET rutNumber = SUBSTRING(aux BEFORE '/policies');
+		
+		--Get token from header
+		SET tokenNumber = InputRoot.HTTPInputHeader."Token";
+
+		--Declare Line of business ID, to set up from input if necessary on future
+		SET broadLineOfBusinessID = 4;
+		
+		--Save the received variables in the local environment, to be used by ValidateToken.subflow
+		SET OutputLocalEnvironment.RUT = rutNumber;
+		SET OutputLocalEnvironment.Token = tokenNumber;
+		
+		--Save the LoB in the local environment
+		SET OutputLocalEnvironment.BroadLineOfBusinessID = broadLineOfBusinessID;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*************************************************
+ * SetGetPartyContactInfo *
+ *************************************************/
+CREATE COMPUTE MODULE SetGetPartyContactInfo
+	
+	--Declare namespaces
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the rut from the environment
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		
+		--Set the parameter in the request of GetPartyContactInfo to be done
+		SET OutputRoot.SOAP.Body.buc2:GetPartyContactInfo.buc2:RUT = rutNumber;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***********************
+ * SetSearchAgreements *
+ ***********************/
+CREATE COMPUTE MODULE SetSearchAgreements
+	
+	--Declare namespaces
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the rut from the environment
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		
+		--Set the parameter in the request of SearchAgreements to be done (the RUT number without the verification digit)
+		SET OutputRoot.SOAP.Body.agreement:SearchAgreements.agreement:partyRut = rutNumber;
+		--SET OutputRoot.SOAP.Body.agreement:SearchAgreements.agreement:broadLineOfBusinessIdentifier = InputLocalEnvironment.BroadLineOfBusinessID;
+		SET OutputRoot.SOAP.Body.agreement:SearchAgreements.agreement:backendId = 2;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/****************
+ * GetAgreement *
+ ****************/
+CREATE COMPUTE MODULE GetAgreement
+	
+	--Declare namespaces
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the parameters to get next agreement data
+		DECLARE currentAgreement INTEGER InputLocalEnvironment.CurrentAgreement;
+		DECLARE agreementID INTEGER InputLocalEnvironment.Agreements.acord:Agreement[currentAgreement].acord:Id;
+		
+		--If there is no more agreements to process then get out from agreements loop
+		DECLARE totalCount DECIMAL InputLocalEnvironment.TotalCount;
+		IF (currentAgreement > totalCount) THEN 
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;			
+		END IF;
+		
+		--Get current agreement data
+		DECLARE policyType CHARACTER InputLocalEnvironment.Agreements.acord:Agreement[currentAgreement].acord:Product.acord:MarketingName;
+		DECLARE policyNumber CHARACTER InputLocalEnvironment.Agreements.acord:Agreement[currentAgreement].acord:Number;
+		DECLARE policyStartDate CHARACTER InputLocalEnvironment.Agreements.acord:Agreement[currentAgreement].acord:IssueDate;
+		DECLARE status CHARACTER InputLocalEnvironment.Agreements.acord:Agreement[currentAgreement].acord:Status.acord:Name;
+		DECLARE policyExpireDate CHARACTER InputLocalEnvironment.Agreements.acord:Agreement[currentAgreement].acord:ValidUntil;
+		DECLARE company CHARACTER InputLocalEnvironment.Agreements.acord:Agreement[currentAgreement].acord:InsuranceInstitution.acord:Name;
+				
+		--Save current agreement data into local environment
+		SET OutputLocalEnvironment.AgreementId = agreementID;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].PolicyType = policyType;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].PolicyNumber = policyNumber;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].PolicyStartDate = policyStartDate;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].Status = status;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].PolicyExpireDate = policyExpireDate;
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].Company = company;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************
+ * SetGetAgreement *
+ *******************/
+CREATE COMPUTE MODULE SetGetAgreement
+	
+	--Declare namespaces
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get ID agreement from local environment
+		DECLARE agreementID DECIMAL InputLocalEnvironment.AgreementId;
+		
+		--Set the parameter in the request of GetAgreement to be done
+		SET OutputRoot.SOAP.Body.agreement:GetAgreement.agreement:agreementId = agreementID;
+		SET OutputRoot.SOAP.Body.agreement:GetAgreement.agreement:partyRut = InputLocalEnvironment.RUT;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**************************
+ * SetGetAgreementParties *
+ **************************/
+CREATE COMPUTE MODULE SetGetAgreementParties
+	
+	--Declare namespaces
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get ID agreement from local environment
+		DECLARE agreementID DECIMAL InputLocalEnvironment.AgreementId;
+		
+		--Set the parameter in the request of GetAgreementParties to be done
+		SET OutputRoot.SOAP.Body.agreement:GetAgreementParties.agreement:agreementId = agreementID;
+		SET OutputRoot.SOAP.Body.agreement:GetAgreementParties.agreement:insuredRUT = InputLocalEnvironment.RUT;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/********************
+ * SetNextAgreement *
+ ********************/
+CREATE COMPUTE MODULE SetNextAgreement
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get counter of current agreement element
+		DECLARE currentAgreement DECIMAL InputLocalEnvironment.CurrentAgreement;
+		SET currentAgreement = currentAgreement + 1;
+		
+		--Save counter of next agreement element on local environment
+		SET OutputLocalEnvironment.CurrentAgreement = currentAgreement;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/************************
+ * Set Next Beneficiary *
+ ************************/
+CREATE COMPUTE MODULE SetNextBeneficiary
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+		
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--declare local var.
+		DECLARE currentAgreement INTEGER InputLocalEnvironment.CurrentAgreement;
+		DECLARE currentBeneficiary INTEGER InputLocalEnvironment.FinalAgreements[currentAgreement].CurrentBeneficiary;		
+		
+		--Get the result from the previous call
+		DECLARE firstName CHARACTER InputRoot.SOAP.Body.buc2:GetPersonResponse.buc2:GetPersonResult.acord:Name.acord:FirstName;
+		DECLARE lastName CHARACTER InputRoot.SOAP.Body.buc2:GetPersonResponse.buc2:GetPersonResult.acord:Name.acord:LastName;
+		DECLARE provider CHARACTER InputRoot.SOAP.Body.buc2:GetPersonResponse.buc2:GetPersonResult.acord:HealthDetail.acord:HealthProvider.acord:Name;
+		DECLARE birthDate CHARACTER InputRoot.SOAP.Body.buc2:GetPersonResponse.buc2:GetPersonResult.acord:BirthDate;				
+		
+		--Save beneficiaries info into local environment
+	    SET OutputLocalEnvironment.FinalAgreements[currentAgreement].Beneficiaries[currentBeneficiary].FirsName = firstName;
+	    SET OutputLocalEnvironment.FinalAgreements[currentAgreement].Beneficiaries[currentBeneficiary].LastName = lastName;
+	    SET OutputLocalEnvironment.FinalAgreements[currentAgreement].Beneficiaries[currentBeneficiary].Provider = provider;
+	    SET OutputLocalEnvironment.FinalAgreements[currentAgreement].Beneficiaries[currentBeneficiary].BirthDate = birthDate;
+	    
+		--Save counter of next agreement element on local environment
+		SET OutputLocalEnvironment.FinalAgreements[currentAgreement].CurrentBeneficiary = currentBeneficiary + 1;
+		
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************************
+ * SetGetAgreementBenefits *
+ ***************************/
+CREATE COMPUTE MODULE SetGetAgreementBenefits
+	
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get counter of current agreement element
+		DECLARE currentAgreement DECIMAL InputLocalEnvironment.CurrentAgreement;
+		DECLARE agreementId INTEGER InputLocalEnvironment.AgreementId;
+		DECLARE rut CHARACTER InputLocalEnvironment.RUT;
+					
+		--Set the parameter in the request of GetAgreementParties to be done
+		SET OutputRoot.SOAP.Body.agreement:GetAgreementBenefits.agreement:agreementId = agreementId;
+		SET OutputRoot.SOAP.Body.agreement:GetAgreementBenefits.agreement:RUT = rut;
+
+		RETURN TRUE;
+	END;
+END MODULE;

@@ -1,0 +1,254 @@
+BROKER SCHEMA esqls.documentsUpload
+
+/****************
+ * GetInputData *
+ ****************/
+CREATE COMPUTE MODULE GetInputData
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare an set Rut from URI
+		DECLARE aux CHARACTER;
+		DECLARE rutNumber CHARACTER;
+		
+		--Declare and set vars from input header data
+		DECLARE tokenNumber CHARACTER InputRoot.HTTPInputHeader."Token";
+		
+		--Declare and set vars from input body data
+		DECLARE metadataChannel CHARACTER InputRoot.JSON.Data.metaData.channel;
+		DECLARE metadataOrigin CHARACTER InputRoot.JSON.Data.metaData.origin;
+		DECLARE claimId CHARACTER InputRoot.JSON.Data.claimDetail.claimId;
+		DECLARE policyNumber CHARACTER InputRoot.JSON.Data.claimDetail.policyNumber;
+		DECLARE documents REFERENCE TO InputRoot.JSON.Data.documents;
+		
+		--Extract RUT from URL
+		SET aux = SUBSTRING(InputRoot.HTTPInputHeader."X-Original-HTTP-Command" AFTER 'users/');
+		SET rutNumber = SUBSTRING(SUBSTRING(aux BEFORE '/documents/') BEFORE '/');
+		
+		--Save data into local environment
+		SET OutputLocalEnvironment.RUT = rutNumber;
+		SET OutputLocalEnvironment.Token = tokenNumber;
+		SET OutputLocalEnvironment.MetadataChannel = metadataChannel;
+		SET OutputLocalEnvironment.MetadataOrigin = metadataOrigin;
+		SET OutputLocalEnvironment.ClaimId = claimId;
+		SET OutputLocalEnvironment.PolicyNumber = policyNumber;
+		SET OutputLocalEnvironment.Documents = documents;
+		SET OutputLocalEnvironment.DocumentsCount = CARDINALITY(InputRoot.JSON.Data.documents.Item[]);
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*********************
+ * ValidateInputData *
+ *********************/
+CREATE COMPUTE MODULE ValidateInputData
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get count of items from Documents array
+		DECLARE metadataChannel CHARACTER InputLocalEnvironment.MetadataChannel;
+		DECLARE metadataOrigin CHARACTER InputLocalEnvironment.MetadataOrigin;
+		DECLARE claimID CHARACTER InputLocalEnvironment.ClaimId;
+		DECLARE policyNumber CHARACTER InputLocalEnvironment.PolicyNumber;
+		DECLARE documents REFERENCE TO InputLocalEnvironment.Documents;
+		
+		--Declare local vars
+		DECLARE missingFields CHARACTER '';
+		DECLARE documentsCount INTEGER CARDINALITY(documents.Item[]);
+		DECLARE i INTEGER 1;
+		
+		--Validate required data
+		IF NOT(metadataChannel IS NOT NULL AND metadataChannel <> '') THEN
+			SET missingFields = missingFields || 'metaData.channel' ||',';
+		END IF;
+		IF NOT(metadataOrigin IS NOT NULL AND metadataOrigin <> '') THEN
+			SET missingFields = missingFields || 'metaData.origin' ||',';
+		END IF;
+		IF NOT(claimID IS NOT NULL AND claimID <> '') THEN
+			SET missingFields = missingFields || 'claimID' ||',';
+		END IF;
+		IF NOT(policyNumber IS NOT NULL AND policyNumber <> '') THEN
+			SET missingFields = missingFields || 'policyNumber' ||',';
+		END IF;
+		
+		--Check if there are empty fields throw error 406
+		IF (missingFields IS NOT NULL AND missingFields <> '') THEN
+			SET OutputLocalEnvironment.MissingFields = missingFields;
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		--Check if there are no doocuments on the list throw error 409
+		IF (documentsCount = 0) THEN
+			PROPAGATE TO TERMINAL 2 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		-- Validate if there are empty fields on documents list
+		SET missingFields = '';
+		WHILE (i <= documentsCount) DO
+			IF NOT(documents.Item[i].type IS NOT NULL AND documents.Item[i].type <> '') THEN
+				SET missingFields = missingFields || 'documents[' || CAST(i AS CHARACTER) ||'].type' || ',';
+			END IF;
+			IF NOT(documents.Item[i].unit IS NOT NULL AND documents.Item[i].unit <> '') THEN
+				SET missingFields = missingFields || 'documents[' || CAST(i AS CHARACTER) ||'].unit' || ',';
+			END IF;
+			IF NOT(documents.Item[i].size IS NOT NULL AND documents.Item[i].size <> '') THEN
+				SET missingFields = missingFields || 'documents[' || CAST(i AS CHARACTER) ||'].size' || ',';
+			END IF;
+			IF NOT(documents.Item[i].name IS NOT NULL AND documents.Item[i].name <> '') THEN
+				SET missingFields = missingFields || 'documents[' || CAST(i AS CHARACTER) ||'].name' || ',';
+			END IF;
+			IF NOT(documents.Item[i].content IS NOT NULL AND documents.Item[i].content <> '') THEN
+				SET missingFields = missingFields || 'documents[' || CAST(i AS CHARACTER) ||'].content' || ',';
+			END IF;			
+			SET i = i +1;
+		END WHILE;
+		
+		--Chack if there are empty fields on the documents list throw error 406
+		IF (missingFields IS NOT NULL AND missingFields <> '') THEN
+			SET OutputLocalEnvironment.MissingFields = missingFields;
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*********************
+ * CheckGetAgreement *
+ *********************/
+CREATE COMPUTE MODULE CheckGetAgreement
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE agreement NAMESPACE 'urn:metlife.services.acord.agreement';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get response into local vars
+		DECLARE idAgreement INTEGER InputRoot.SOAP.Body.agreement:GetAgreementResponse.agreement:GetAgreementResult.acord:Id;
+		
+		--If response doesn't have agreementId data, throws "No Data Found" error.
+		IF (idAgreement IS NULL) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*********************
+ * ValidateDocuments *
+ *********************/
+CREATE COMPUTE MODULE GetDocuments
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get count of items from Documents array
+		DECLARE documentsCount INTEGER InputLocalEnvironment.DocumentsCount;
+		
+		--Save the value into local environment and set pointer to fetch documents array
+		SET OutputLocalEnvironment.CurrentDocument = 1;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************
+ * GetDocument *
+ ***************/
+CREATE COMPUTE MODULE GetDocument
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the parameters to get next agreement data
+		DECLARE currentDocument INTEGER InputLocalEnvironment.CurrentDocument;
+		DECLARE documentsCount INTEGER InputLocalEnvironment.DocumentsCount;
+
+		--If there is no more documents to process then get out from documents loop
+		IF (currentDocument > documentsCount) THEN 
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;			
+		END IF;
+			
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/********************
+ * CheckPutDocument *
+ ********************/
+CREATE COMPUTE MODULE CheckPutDocument
+	
+	--Declare namespaces
+	DECLARE fnet NAMESPACE 'http://filenet.ws.metlife.cl/';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get response
+		DECLARE documentId CHARACTER InputRoot.SOAP.Body.fnet:putDocumentResponse.DocumentId;
+		
+		IF (documentId = 'error') THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		--Save the Document Id on Local environment
+		SET OutputLocalEnvironment.CurrentDocumentId = documentId;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************************
+ * CheckCreateClaimFileNet *
+ ***************************/
+CREATE COMPUTE MODULE CheckCreateClaimFileNet
+	
+	--Declare namespaces
+	DECLARE prIng NAMESPACE 'metlife.cl';
+	DECLARE WSClm NAMESPACE 'http://schemas.datacontract.org/2004/07/WcfClaims';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get response to validate
+		DECLARE code INTEGER InputRoot.SOAP.Body.prIng:CreateClaimFileNetResponse.prIng:CreateClaimFileNetResult.WSClm:Code;
+		
+		--Check if code is 0, else throw error
+		IF (code <> 0) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+

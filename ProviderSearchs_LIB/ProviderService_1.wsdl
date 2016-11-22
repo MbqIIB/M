@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions name="ProviderService" targetNamespace="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:documentation>
+    <wsdl:appinfo source="WMQI_APPINFO">
+      <MRWSDLAppInfo imported="true">
+        <binding hasEncoding="false" imported="true" name="BasicHttpBinding_IProviderService" originalBindingStyle="document"/>
+      </MRWSDLAppInfo>
+    </wsdl:appinfo>
+  </wsdl:documentation>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+<xsd:import namespace="http://tempuri.org/" schemaLocation="ProviderService.xsd"/>
+
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IProviderService_SearchProvidersPerFilter_InputMessage">
+    <wsdl:part element="tns:SearchProvidersPerFilter" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IProviderService_SearchProvidersPerFilter_OutputMessage">
+    <wsdl:part element="tns:SearchProvidersPerFilterResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IProviderService_ModifyProvider_InputMessage">
+    <wsdl:part element="tns:ModifyProvider" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IProviderService_ModifyProvider_OutputMessage">
+    <wsdl:part element="tns:ModifyProviderResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IProviderService_InsertProvider_InputMessage">
+    <wsdl:part element="tns:InsertProvider" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IProviderService_InsertProvider_OutputMessage">
+    <wsdl:part element="tns:InsertProviderResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IProviderService_ListProvider_InputMessage">
+    <wsdl:part element="tns:ListProvider" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IProviderService_ListProvider_OutputMessage">
+    <wsdl:part element="tns:ListProviderResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IProviderService_ListingTypeList_InputMessage">
+    <wsdl:part element="tns:ListingTypeList" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IProviderService_ListingTypeList_OutputMessage">
+    <wsdl:part element="tns:ListingTypeListResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="IProviderService">
+    <wsdl:operation name="SearchProvidersPerFilter">
+      <wsdl:input message="tns:IProviderService_SearchProvidersPerFilter_InputMessage" wsaw:Action="http://tempuri.org/IProviderService/SearchProvidersPerFilter"/>
+      <wsdl:output message="tns:IProviderService_SearchProvidersPerFilter_OutputMessage" wsaw:Action="http://tempuri.org/IProviderService/SearchProvidersPerFilterResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyProvider">
+      <wsdl:input message="tns:IProviderService_ModifyProvider_InputMessage" wsaw:Action="http://tempuri.org/IProviderService/ModifyProvider"/>
+      <wsdl:output message="tns:IProviderService_ModifyProvider_OutputMessage" wsaw:Action="http://tempuri.org/IProviderService/ModifyProviderResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="InsertProvider">
+      <wsdl:input message="tns:IProviderService_InsertProvider_InputMessage" wsaw:Action="http://tempuri.org/IProviderService/InsertProvider"/>
+      <wsdl:output message="tns:IProviderService_InsertProvider_OutputMessage" wsaw:Action="http://tempuri.org/IProviderService/InsertProviderResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="ListProvider">
+      <wsdl:input message="tns:IProviderService_ListProvider_InputMessage" wsaw:Action="http://tempuri.org/IProviderService/ListProvider"/>
+      <wsdl:output message="tns:IProviderService_ListProvider_OutputMessage" wsaw:Action="http://tempuri.org/IProviderService/ListProviderResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="ListingTypeList">
+      <wsdl:input message="tns:IProviderService_ListingTypeList_InputMessage" wsaw:Action="http://tempuri.org/IProviderService/ListingTypeList"/>
+      <wsdl:output message="tns:IProviderService_ListingTypeList_OutputMessage" wsaw:Action="http://tempuri.org/IProviderService/ListingTypeListResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IProviderService" type="tns:IProviderService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="SearchProvidersPerFilter">
+      <soap:operation soapAction="http://tempuri.org/IProviderService/SearchProvidersPerFilter" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyProvider">
+      <soap:operation soapAction="http://tempuri.org/IProviderService/ModifyProvider" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InsertProvider">
+      <soap:operation soapAction="http://tempuri.org/IProviderService/InsertProvider" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ListProvider">
+      <soap:operation soapAction="http://tempuri.org/IProviderService/ListProvider" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ListingTypeList">
+      <soap:operation soapAction="http://tempuri.org/IProviderService/ListingTypeList" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ProviderService">
+    <wsdl:port binding="tns:BasicHttpBinding_IProviderService" name="BasicHttpBinding_IProviderService">
+      <soap:address location="http://mlclwsdevqa01:107/WSPrestador/ProviderService.svc"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,105 @@
+BROKER SCHEMA esqls.documents
+
+
+/*************************************************
+ * GetRUTAndTOKENFromHeaderAndSetSubFlowValidateToken *
+ *************************************************/
+CREATE COMPUTE MODULE GetRUTAndTOKENFromHeaderAndSetSubFlowValidateToken
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare local vars
+		DECLARE aux CHARACTER;
+		DECLARE rutNumber CHARACTER;
+		DECLARE tokenNumber CHARACTER;
+		DECLARE policyNumber CHARACTER;	
+		DECLARE claimId CHARACTER;	
+		DECLARE broadLineOfBusinessID DECIMAL;
+
+		--Extract RUT from URL
+		SET aux = SUBSTRING(InputRoot.HTTPInputHeader."X-Original-HTTP-Command" AFTER 'users/');
+		SET rutNumber = SUBSTRING(aux BEFORE '/');
+		
+		--Extract policyNumber from URL
+		SET aux = SUBSTRING(aux AFTER '/');
+		SET policyNumber = SUBSTRING(aux BEFORE '/');
+
+		--Extract claimId from URL
+		SET aux = SUBSTRING(aux AFTER '/');
+		SET claimId = SUBSTRING(aux BEFORE '/documents');
+		
+		
+		--Get token from header
+		SET tokenNumber = InputRoot.HTTPInputHeader."Token";
+
+		--TODO: Se deben cambiar las líneas de negocio algo configurable
+		--Declare Line of business ID, to set up from input if necessary on future
+		SET broadLineOfBusinessID = 4;
+		
+		--Save the received variables in the local environment, to be used by ValidateToken.subflow
+		SET OutputLocalEnvironment.RUT = rutNumber;
+		SET OutputLocalEnvironment.Token = tokenNumber;
+		SET OutputLocalEnvironment.policyNumber = policyNumber;
+		SET OutputLocalEnvironment.claimId = claimId;
+		SET OutputLocalEnvironment.ClaimNumber = claimId;
+		
+		--Save the LoB in the local environment
+		SET OutputLocalEnvironment.BroadLineOfBusinessID = broadLineOfBusinessID;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+
+
+/*************************************************
+ * GetRUTAndTOKENAnddocumentIdFromHeaderAndSetSubFlowValidateToken *
+ *************************************************/
+CREATE COMPUTE MODULE GetRUTAndTOKENAnddocumentIdFromHeaderAndSetSubFlowValidateToken
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare local vars
+		DECLARE aux CHARACTER;
+		DECLARE rutNumber CHARACTER;
+		DECLARE tokenNumber CHARACTER;
+		DECLARE documentId CHARACTER;	
+		DECLARE broadLineOfBusinessID DECIMAL;
+
+		--Extract RUT from URL
+		SET aux = SUBSTRING(InputRoot.HTTPInputHeader."X-Original-HTTP-Command" AFTER 'users/');
+		SET rutNumber = SUBSTRING(aux BEFORE '/');
+		
+		--Extract documentId from URL
+
+		SET documentId = SUBSTRING(aux AFTER '/documents/');	
+		SET documentId = SUBSTRING(documentId BEFORE ' ');		
+		
+				
+		--Get token from header
+		SET tokenNumber = InputRoot.HTTPInputHeader."Token";
+
+		--TODO: Se deben cambiar las líneas de negocio a algo configurable
+		--Declare Line of business ID, to set up from input if necessary on future
+		SET broadLineOfBusinessID = 4;
+		
+		--Save the received variables in the local environment, to be used by ValidateToken.subflow
+		SET OutputLocalEnvironment.RUT = rutNumber;
+		SET OutputLocalEnvironment.Token = tokenNumber;
+		SET OutputLocalEnvironment.documentID = documentId;
+		
+		--Save the LoB in the local environment
+		SET OutputLocalEnvironment.BroadLineOfBusinessID = broadLineOfBusinessID;
+		SET OutputLocalEnvironment.DocNumber = documentId;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+

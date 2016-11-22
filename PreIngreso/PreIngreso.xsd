@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="metlife.cl" xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" xmlns:tns="metlife.cl">
+  <xsd:import namespace="http://schemas.datacontract.org/2004/07/WcfClaims" schemaLocation="PreIngreso_1.xsd"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="CreateClaim">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="rutNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="policyNumber" type="xsd:int"/>
+        <xsd:element minOccurs="0" name="beneficiaryRut" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="numberDocuments" type="xsd:int"/>
+        <xsd:element minOccurs="0" name="totalAmount" type="xsd:int"/>
+        <xsd:element minOccurs="0" name="registerDateTime" type="xsd:dateTime"/>
+        <xsd:element minOccurs="0" name="businessLine" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="channel" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="productId" type="xsd:int"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="CreateClaimResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="CreateClaimResult" nillable="true" type="q1:Result" xmlns:q1="http://schemas.datacontract.org/2004/07/WcfClaims"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="CreateClaimFileNet">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="claimNumber" type="xsd:long"/>
+        <xsd:element minOccurs="0" name="documentType" type="xsd:int"/>
+        <xsd:element minOccurs="0" name="fileNetId" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="fileName" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="fileType" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="fileSize" nillable="true" type="xsd:decimal"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="CreateClaimFileNetResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="CreateClaimFileNetResult" nillable="true" type="q2:ResultCode" xmlns:q2="http://schemas.datacontract.org/2004/07/WcfClaims"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="CreateClaimSummaryDocument">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="claimNumber" type="xsd:long"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="CreateClaimSummaryDocumentResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="CreateClaimSummaryDocumentResult" nillable="true" type="q3:ResultFileBase64" xmlns:q3="http://schemas.datacontract.org/2004/07/WcfClaims"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetClaimSummaryDocument">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="claimNumber" type="xsd:long"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetClaimSummaryDocumentResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetClaimSummaryDocumentResult" nillable="true" type="q4:ResultFileNet" xmlns:q4="http://schemas.datacontract.org/2004/07/WcfClaims"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetClaims">
+    <xsd:complexType>
+      <xsd:sequence/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetClaimsResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetClaimsResult" nillable="true" type="q5:ResultCode" xmlns:q5="http://schemas.datacontract.org/2004/07/WcfClaims"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="DeleteClaim">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="claimNumber" type="xsd:long"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="DeleteClaimResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="DeleteClaimResult" nillable="true" type="q6:ResultCode" xmlns:q6="http://schemas.datacontract.org/2004/07/WcfClaims"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="UpdateBankInformation">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="rutNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="policyNumber" nillable="true" type="xsd:long"/>
+        <xsd:element minOccurs="0" name="groupNumber" nillable="true" type="xsd:int"/>
+        <xsd:element minOccurs="0" name="productId" nillable="true" type="xsd:long"/>
+        <xsd:element minOccurs="0" name="paymentType" nillable="true" type="xsd:int"/>
+        <xsd:element minOccurs="0" name="accountType" nillable="true" type="xsd:int"/>
+        <xsd:element minOccurs="0" name="accountNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="bank" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="UpdateBankInformationResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="UpdateBankInformationResult" nillable="true" type="q7:ResultCode" xmlns:q7="http://schemas.datacontract.org/2004/07/WcfClaims"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="metlife.cl" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="metlife.cl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:documentation>
+    <wsdl:appinfo source="WMQI_APPINFO">
+      <MRWSDLAppInfo imported="true"/>
+    </wsdl:appinfo>
+  </wsdl:documentation>
+  <wsdl:types>
+    <xsd:schema targetNamespace="metlife.cl/Imports">
+<xsd:import namespace="metlife.cl" schemaLocation="PreIngreso.xsd"/>
+<xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" schemaLocation="PreIngreso_1_2.xsd"/>
+<xsd:import namespace="http://schemas.datacontract.org/2004/07/WcfClaims" schemaLocation="PreIngreso_1.xsd"/>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IPreIngreso_CreateClaim_InputMessage">
+    <wsdl:part element="tns:CreateClaim" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_CreateClaim_OutputMessage">
+    <wsdl:part element="tns:CreateClaimResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_CreateClaimFileNet_InputMessage">
+    <wsdl:part element="tns:CreateClaimFileNet" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_CreateClaimFileNet_OutputMessage">
+    <wsdl:part element="tns:CreateClaimFileNetResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_CreateClaimSummaryDocument_InputMessage">
+    <wsdl:part element="tns:CreateClaimSummaryDocument" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_CreateClaimSummaryDocument_OutputMessage">
+    <wsdl:part element="tns:CreateClaimSummaryDocumentResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_GetClaimSummaryDocument_InputMessage">
+    <wsdl:part element="tns:GetClaimSummaryDocument" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_GetClaimSummaryDocument_OutputMessage">
+    <wsdl:part element="tns:GetClaimSummaryDocumentResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_GetClaims_InputMessage">
+    <wsdl:part element="tns:GetClaims" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_GetClaims_OutputMessage">
+    <wsdl:part element="tns:GetClaimsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_DeleteClaim_InputMessage">
+    <wsdl:part element="tns:DeleteClaim" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_DeleteClaim_OutputMessage">
+    <wsdl:part element="tns:DeleteClaimResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_UpdateBankInformation_InputMessage">
+    <wsdl:part element="tns:UpdateBankInformation" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="IPreIngreso_UpdateBankInformation_OutputMessage">
+    <wsdl:part element="tns:UpdateBankInformationResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="IPreIngreso">
+    <wsdl:operation name="CreateClaim">
+      <wsdl:input message="tns:IPreIngreso_CreateClaim_InputMessage" wsaw:Action="metlife.cl/IPreIngreso/CreateClaim"/>
+      <wsdl:output message="tns:IPreIngreso_CreateClaim_OutputMessage" wsaw:Action="metlife.cl/IPreIngreso/CreateClaimResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="CreateClaimFileNet">
+      <wsdl:input message="tns:IPreIngreso_CreateClaimFileNet_InputMessage" wsaw:Action="metlife.cl/IPreIngreso/CreateClaimFileNet"/>
+      <wsdl:output message="tns:IPreIngreso_CreateClaimFileNet_OutputMessage" wsaw:Action="metlife.cl/IPreIngreso/CreateClaimFileNetResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="CreateClaimSummaryDocument">
+      <wsdl:input message="tns:IPreIngreso_CreateClaimSummaryDocument_InputMessage" wsaw:Action="metlife.cl/IPreIngreso/CreateClaimSummaryDocument"/>
+      <wsdl:output message="tns:IPreIngreso_CreateClaimSummaryDocument_OutputMessage" wsaw:Action="metlife.cl/IPreIngreso/CreateClaimSummaryDocumentResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaimSummaryDocument">
+      <wsdl:input message="tns:IPreIngreso_GetClaimSummaryDocument_InputMessage" wsaw:Action="metlife.cl/IPreIngreso/GetClaimSummaryDocument"/>
+      <wsdl:output message="tns:IPreIngreso_GetClaimSummaryDocument_OutputMessage" wsaw:Action="metlife.cl/IPreIngreso/GetClaimSummaryDocumentResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetClaims">
+      <wsdl:input message="tns:IPreIngreso_GetClaims_InputMessage" wsaw:Action="metlife.cl/IPreIngreso/GetClaims"/>
+      <wsdl:output message="tns:IPreIngreso_GetClaims_OutputMessage" wsaw:Action="metlife.cl/IPreIngreso/GetClaimsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteClaim">
+      <wsdl:input message="tns:IPreIngreso_DeleteClaim_InputMessage" wsaw:Action="metlife.cl/IPreIngreso/DeleteClaim"/>
+      <wsdl:output message="tns:IPreIngreso_DeleteClaim_OutputMessage" wsaw:Action="metlife.cl/IPreIngreso/DeleteClaimResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateBankInformation">
+      <wsdl:input message="tns:IPreIngreso_UpdateBankInformation_InputMessage" wsaw:Action="metlife.cl/IPreIngreso/UpdateBankInformation"/>
+      <wsdl:output message="tns:IPreIngreso_UpdateBankInformation_OutputMessage" wsaw:Action="metlife.cl/IPreIngreso/UpdateBankInformationResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

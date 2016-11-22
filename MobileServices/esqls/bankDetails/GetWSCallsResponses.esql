@@ -1,0 +1,150 @@
+BROKER SCHEMA esqls.bankDetails
+PATH esqls.generics;
+
+
+/********************
+* ValidateInputData *
+*********************/
+CREATE COMPUTE MODULE ValidateInputData
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare local vars
+		DECLARE missingFields CHARACTER '';
+				
+		--Get the input values
+		DECLARE rutNumber CHARACTER OutputLocalEnvironment.RUT;
+		DECLARE metadataChannel CHARACTER OutputLocalEnvironment.MetadataChannel;
+		DECLARE metadataOrigin CHARACTER OutputLocalEnvironment.MetadataOrigin;
+		DECLARE securityCode CHARACTER OutputLocalEnvironment.SecurityCode;
+		DECLARE policyNumber CHARACTER OutputLocalEnvironment.PolicyNumber;
+		DECLARE bankName CHARACTER OutputLocalEnvironment.BankName;
+		DECLARE accountType CHARACTER OutputLocalEnvironment.AccountType;
+		DECLARE accountNumber CHARACTER OutputLocalEnvironment.AccountNumber;
+		DECLARE bankCode CHARACTER OutputLocalEnvironment.BankCode;
+		
+		--If there is some empty value then throw error 409
+		IF ((rutNumber IS NULL) OR (rutNumber = '')) THEN
+			SET missingFields = missingFields || 'rutNumber' || ',';
+		END IF;
+		IF ((metadataChannel IS NULL) OR (metadataChannel = '')) THEN
+			SET missingFields = missingFields || 'metaData.channel' || ',';
+		END IF;
+		IF ((metadataOrigin IS NULL) OR (metadataOrigin = '')) THEN
+			SET missingFields = missingFields || 'metaData.origin' || ',';
+		END IF;
+		IF ((securityCode IS NULL) OR (securityCode = '')) THEN
+			SET missingFields = missingFields || 'securityCode' || ',';
+		END IF;
+		IF ((policyNumber IS NULL) OR (policyNumber = '')) THEN
+			SET missingFields = missingFields || 'policyNumber' || ',';
+		END IF;
+		IF ((bankName IS NULL) OR (bankName = '')) THEN
+			SET missingFields = missingFields || 'bankName' || ',';
+		END IF;
+		IF ((accountType IS NULL) OR (accountType = '')) THEN
+			SET missingFields = missingFields || 'accountType' || ',';
+		END IF;
+		IF ((accountNumber IS NULL) OR (accountNumber = '')) THEN
+			SET missingFields = missingFields || 'accountNumber' || ',';
+		END IF;
+		IF ((bankCode IS NULL) OR (bankCode = '')) THEN
+			SET missingFields = missingFields || 'bankCode' || ',';
+		END IF;
+		
+		--Mandatory field missing error
+		IF (missingFields <> '') THEN
+			SET OutputLocalEnvironment.MissingFields = missingFields;
+			PROPAGATE TO TERMINAL 2 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Check another validation throw error 406
+		SET missingFields = '';
+		IF (missingFields <> '') THEN
+			SET InputLocalEnvironment.ErrorValidationReason = '';
+			SET OutputLocalEnvironment.MissingFields = missingFields;
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/********************
+* CheckSegundaClave *
+*********************/
+CREATE COMPUTE MODULE CheckSegundaClave
+	
+	--Declare namespaces
+	DECLARE secKey NAMESPACE 'http://segundaclave.ws.metlife.cl/';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the result from the previous call
+		DECLARE aux CHARACTER;
+		DECLARE code CHARACTER;
+		DECLARE reason CHARACTER;
+		DECLARE envioSegundaClave CHARACTER InputRoot.SOAP.Body.secKey:executeResponse.ResponseEnvelope;
+		
+		--Extract CODE from RESPONSE
+		SET aux = SUBSTRING(envioSegundaClave AFTER '<Code>');
+		SET code = ClearSpecialChars(SUBSTRING(aux BEFORE '</Code>'));
+		SET aux = SUBSTRING(envioSegundaClave AFTER '<RejectReason>');
+		SET reason = ClearSpecialChars(SUBSTRING(aux BEFORE '</RejectReason>'));
+		
+		--If the security code is expired throw error 411
+		IF (code <> '1' AND reason = '5') THEN
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--If the seurity code is incorrect throw error 406
+		IF (code <> '1' AND reason <> '5') THEN
+			SET OutputLocalEnvironment.ErrorValidationReason = 'IncorrectSecurityCode';
+			PROPAGATE TO TERMINAL 2 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**********************
+* CheckUpdateBankInfo *
+***********************/
+CREATE COMPUTE MODULE CheckUpdateBankInfo
+	
+	--Declare namespaces
+	DECLARE mlf NAMESPACE 'metlife.cl';
+	DECLARE claims NAMESPACE 'http://schemas.datacontract.org/2004/07/WcfClaims';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the result from the previous call
+		DECLARE code INTEGER InputRoot.SOAP.Body.mlf:UpdateBankInformationResponse.mlf:UpdateBankInformationResult.claims:Code;
+		DECLARE message CHARACTER InputRoot.SOAP.Body.mlf:UpdateBankInformationResponse.mlf:UpdateBankInformationResult.claims:Message;
+			
+		--If the security code is expired throw error 411
+		IF (code <> '0') THEN
+			SET OutputLocalEnvironment.ErrorMessage = 'ErrorCode:' || CAST(code AS CHARACTER) || ' ErrorMesage:' || message;
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		RETURN TRUE;
+	END;
+END MODULE;

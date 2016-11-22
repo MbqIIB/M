@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified"
+	targetNamespace="http://tempuri.org/"
+	xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions"
+	xmlns:tns="http://tempuri.org/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pref="http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO">
+	<xsd:import schemaLocation="ProviderService_1.xsd" namespace="http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO"></xsd:import>
+	<xsd:element ibmSchExtn:docRoot="true"
+		name="SearchProvidersPerFilter">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="Provider"
+					nillable="true" type="q1:ProviderDTO"
+					xmlns:q1="http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true"
+		name="SearchProvidersPerFilterResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0"
+					name="SearchProvidersPerFilterResult" nillable="true"
+					type="q2:OutputProviderDTO"
+					xmlns:q2="http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true" name="ModifyProvider">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="provider"
+					nillable="true" type="q3:ProviderDTO"
+					xmlns:q3="http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true"
+		name="ModifyProviderResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="ModifyProviderResult"
+					nillable="true" type="q4:OutputResponseDTO"
+					xmlns:q4="http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true" name="InsertProvider">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="provider"
+					nillable="true" type="q5:ProviderDTO"
+					xmlns:q5="http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true"
+		name="InsertProviderResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="InsertProviderResult"
+					nillable="true" type="q6:OutputResponseDTO"
+					xmlns:q6="http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true" name="ListProvider">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="idProvider"
+					nillable="true" type="xsd:decimal" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true"
+		name="ListProviderResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="ListProviderResult"
+					nillable="true" type="q7:OutputProviderDTO"
+					xmlns:q7="http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true" name="ListingTypeList">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="idType" type="xsd:int" />
+				<xsd:element minOccurs="0" name="code"
+					type="xsd:decimal" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element ibmSchExtn:docRoot="true"
+		name="ListingTypeListResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="ListingTypeListResult"
+					nillable="true" type="q8:OutputTypeListDTO"
+					xmlns:q8="http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

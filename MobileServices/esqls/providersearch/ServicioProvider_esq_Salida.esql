@@ -1,0 +1,167 @@
+BROKER SCHEMA esqls.providersearch
+PATH esqls.generics;
+
+CREATE COMPUTE MODULE ServicioProvider_esq_Salida
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+
+		DECLARE model CHARACTER '0.00';
+
+
+		IF (InputRoot.XMLNSC.ns:SearchProvidersPerFilterResponse.ns:SearchProvidersPerFilterResult.ns1:OutputResponseDto.ns1:Code = 4) OR (InputRoot.XMLNSC.ns:SearchProvidersPerFilterResponse.ns:SearchProvidersPerFilterResult.ns1:OutputResponseDto.ns1:Code = 99) OR (InputRoot.XMLNSC.ns:SearchProvidersPerFilterResponse.ns:SearchProvidersPerFilterResult.ns1:Providers.ns1:ProviderDTO.ns1:ProviderID = '') AND (InputRoot.XMLNSC.ns:SearchProvidersPerFilterResponse.ns:SearchProvidersPerFilterResult.ns1:Providers.ns1:ProviderDTO.ns1:ProviderID = NULL )THEN
+			-- SET OutputRoot.JSON.Data.error.code = 202;
+			-- SET OutputRoot.JSON.Data.error.message = 'No Data Found';
+			-- SET OutputRoot.JSON.Data.error.errors[1].reason = 'NoMatchFound';
+			-- SET OutputRoot.JSON.Data.error.errors[1].fieldList = '';
+
+
+			SET OutputRoot.JSON.Data.error.code = 202;
+
+			SET OutputRoot.JSON.Data.error.message = 'No Data Found';
+
+			CREATE FIELD OutputRoot.JSON.Data.error.errors IDENTITY(JSON.Array)errors;
+
+			SET OutputRoot.JSON.Data.error.errors.Item[1].reason = 'NoMatchFound';
+
+			SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList = '';
+
+			SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList TYPE = JSON.Array;
+
+
+			PROPAGATE TO TERMINAL 'out1';
+			RETURN FALSE;
+
+		ELSE
+
+
+			DECLARE rIn REFERENCE TO InputRoot.XMLNSC.ns:SearchProvidersPerFilterResponse.ns:SearchProvidersPerFilterResult.ns1:Providers;
+			DECLARE Count INTEGER CARDINALITY(InputRoot.XMLNSC.ns:SearchProvidersPerFilterResponse.ns:SearchProvidersPerFilterResult.ns1:Providers.ns1:ProviderDTO[]);
+			DECLARE Limite1 INTEGER;
+			SET Limite1 = CAST(Environment.limit AS INTEGER);
+
+			SET OutputRoot.JSON.Data.metadata.totalCount = Count;
+
+			IF Environment.limit IS NULL OR Limite1 > Count THEN
+				SET OutputRoot.JSON.Data.metadata.limit = 25;
+			ELSE
+				SET OutputRoot.JSON.Data.metadata.limit = CAST(Environment.limit AS INTEGER);
+			END IF;
+
+			IF Environment.*:val IS NULL THEN
+				SET OutputRoot.JSON.Data.metadata.offset = CAST(Environment.offset AS INTEGER);
+			ELSE
+				SET OutputRoot.JSON.Data.metadata.offset = 0;
+			END IF;
+
+
+
+			DECLARE I, J INTEGER;
+			DECLARE DIST CHARACTER;
+
+			SET I = 1;
+			SET J = Count;
+
+			CREATE FIELD OutputRoot.JSON.Data.providers IDENTITY(JSON.Array)providers;
+			WHILE (I <= J) DO
+
+
+				SET OutputRoot.JSON.Data.providers.Item[I].providerId = rIn.ns1:ProviderDTO[I].ns1:ProviderID;
+				SET OutputRoot.JSON.Data.providers.Item[I].providerName = rIn.ns1:ProviderDTO[I].ns1:ProviderName;
+				--SET OutputRoot.JSON.Data.providers.Item[I].providerType = CAST(Environment.Type AS CHARACTER);
+
+				SET OutputRoot.JSON.Data.providers.Item[I].languages.Item[1].code = 'es-CL';
+				--SET OutputRoot.JSON.Data.providers.Item[I].languages[I].code = 'es-CL';
+				--SET OutputRoot.JSON.Data.providers.Item[I].languages[I].name = 'Spanish';
+				SET OutputRoot.JSON.Data.providers.Item[I].languages.Item[1].name = 'Spanish';
+				--SET DIST = CAST(rIn.ns1:ProviderDTO[I].ns1:Distance AS DECIMAL(3,0));
+				--SET DIST = SUBSTRING( DIST FROM 1 FOR 3);
+				--SET DIST = SUBSTRING( '0.4454544343434' FROM 1 FOR 3);
+
+				SET OutputRoot.JSON.Data.providers.Item[I].distance.value = CAST(rIn.ns1:ProviderDTO[I].ns1:Distance AS DECIMAL(4,1));
+				SET OutputRoot.JSON.Data.providers.Item[I].distance.unitCode = 'KM';
+
+				SET OutputRoot.JSON.Data.providers.Item[I].languages TYPE = JSON.Array;
+
+
+				--SET OutputRoot.JSON.Data.providers.Item[I].contact = rIn.ns1:ProviderDTO[I].ns1:Contact;
+				SET OutputRoot.JSON.Data.providers.Item[I].contact = 'Contacto';
+				SET OutputRoot.JSON.Data.providers.Item[I].webSite = rIn.ns1:ProviderDTO[I].ns1:WebSite;
+				--SET OutputRoot.JSON.Data.providers.Item[I].email = rIn.ns1:ProviderDTO[I].ns1:Email;
+				SET OutputRoot.JSON.Data.providers.Item[I].phoneNumbers.Item[1].number = CAST(rIn.ns1:ProviderDTO[I].ns1:Telephone AS CHARACTER);
+				--SET OutputRoot.JSON.Data.providers.Item[I].phoneNumbers.Item[1].type = rIn.ns1:ProviderDTO[I].ns1:Type;
+				SET OutputRoot.JSON.Data.providers.Item[I].phoneNumbers.Item[1].type = 'Comercial';
+
+				SET OutputRoot.JSON.Data.providers.Item[I].phoneNumbers TYPE = JSON.Array;
+
+				SET OutputRoot.JSON.Data.providers.Item[I].addresses.Item[1].addressLine1 = rIn.ns1:ProviderDTO[I].ns1:Address;
+				SET OutputRoot.JSON.Data.providers.Item[I].addresses.Item[1].addressLine2 = '';
+				SET OutputRoot.JSON.Data.providers.Item[I].addresses.Item[1].addressLine3 = '';
+				SET OutputRoot.JSON.Data.providers.Item[I].addresses.Item[1].region = CAST(rIn.ns1:ProviderDTO[I].ns1:DescriptionRegion AS CHARACTER);
+				SET OutputRoot.JSON.Data.providers.Item[I].addresses.Item[1].municipality = CAST(rIn.ns1:ProviderDTO[I].ns1:DescriptionComune AS CHARACTER);
+				SET OutputRoot.JSON.Data.providers.Item[I].addresses.Item[1].country = 'Chile';
+				SET OutputRoot.JSON.Data.providers.Item[I].addresses.Item[1].locationCoordinate.latitude = rIn.ns1:ProviderDTO[I].ns1:Latitude;
+				SET OutputRoot.JSON.Data.providers.Item[I].addresses.Item[1].locationCoordinate.longitude = rIn.ns1:ProviderDTO[I].ns1:Longitude;
+
+				SET OutputRoot.JSON.Data.providers.Item[I].addresses TYPE = JSON.Array;
+
+				SET I = I + 1;
+			END WHILE;
+			--Realiza el ordenamiento de los providers por distancia
+			DECLARE refProviders REFERENCE TO OutputRoot.JSON.Data.providers;
+			DECLARE sortMode CHARACTER Environment.parameters.order; --Modo de ordenamiento (asc, desc)
+
+
+			DECLARE countOrderBy INTEGER CARDINALITY(Environment.parameters.orderBy.Item[]);
+			
+			--If there's list items into order list then sort, else don't sort
+			IF countOrderBy > 0 THEN
+				DECLARE refOrderByList REFERENCE TO Environment.parameters.orderBy;
+				CALL sortBy(refProviders, sortMode, refOrderByList);
+			END IF;
+			
+					
+			--Delimita el resultado basado al offset y limite solicitados
+			DECLARE offsetInf INTEGER OutputRoot.JSON.Data.metadata.offset;
+
+			IF Environment.*:val = 0 THEN
+				SET offsetInf = 1;
+			END IF;
+
+			SET OutputRoot.JSON.Data.providers = NULL;
+			CREATE FIELD OutputRoot.JSON.Data.providers IDENTITY(JSON.Array)providers;
+
+			DECLARE idx INTEGER 1;
+			DECLARE limit INTEGER OutputRoot.JSON.Data.metadata.limit + offsetInf;
+
+			WHILE (offsetInf < limit AND offsetInf <= Count) DO
+				SET OutputRoot.JSON.Data.providers.Item[idx] = refProviders.Item[offsetInf];
+				
+				SET OutputRoot.JSON.Data.providers.Item[idx].languages TYPE = JSON.Array;
+				SET OutputRoot.JSON.Data.providers.Item[idx].phoneNumbers TYPE = JSON.Array;
+				SET OutputRoot.JSON.Data.providers.Item[idx].addresses TYPE = JSON.Array;
+				
+				SET offsetInf = offsetInf + 1;
+				SET idx = idx + 1;
+			END WHILE;
+
+		END IF;
+
+		RETURN TRUE;
+	END;
+
+CREATE PROCEDURE CopyMessageHeaders() BEGIN
+	DECLARE I INTEGER 1;
+	DECLARE J INTEGER;
+	SET J = CARDINALITY(InputRoot.*[]);
+	WHILE I < J DO
+		SET OutputRoot.*[I] = InputRoot.*[I];
+		SET I = I + 1;
+	END WHILE;
+END;
+
+CREATE PROCEDURE CopyEntireMessage() BEGIN
+	SET OutputRoot = InputRoot;
+END;
+END MODULE;

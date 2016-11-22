@@ -1,0 +1,98 @@
+BROKER SCHEMA esqls.authentication
+
+/*********************************
+ * CheckValidaIndividualResponse *
+ *********************************/
+CREATE COMPUTE MODULE CheckValidaIndividualResponse
+
+	DECLARE sec NAMESPACE 'http://tuxpan.com/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the result from the previous call
+		DECLARE ValidaIndividualResponse CHARACTER InputRoot.SOAP.Body.sec:ValidaIndividualResponse.sec:ValidaIndividualResult.NewDataSet.Table.CLIENTE;
+		
+		--Save the authentication type in the local environment
+		SET OutputLocalEnvironment.AuthenticationType = InputRoot.SOAP.Body.sec:ValidaIndividualResponse.sec:ValidaIndividualResult.NewDataSet.Table.TIPO_AUTENTIFICACION;
+
+		IF (ValidaIndividualResponse = 'S') THEN
+		--If the call result is equal to 'S' then continue the flow
+			PROPAGATE TO TERMINAL 'out2' FINALIZE NONE DELETE NONE;
+		ELSE
+		--Else send the error to the user
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+		END IF;
+
+		RETURN FALSE;
+	END;
+END MODULE;
+
+/*****************************
+ * CheckChequeoClaveResponse *
+ *****************************/
+CREATE COMPUTE MODULE CheckChequeoClaveResponse
+
+	DECLARE sec NAMESPACE 'http://tuxpan.com/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the result from the previous call		
+		DECLARE ChequeoClaveResponse CHARACTER InputRoot.SOAP.Body.sec:CheckeoClaveResponse.sec:CheckeoClaveResult.NewDataSet.Table.RESULTADO;
+		
+		--Save the Tipo Clave value in the local environment for later use 
+		DECLARE ChequeoClaveTipoClave CHARACTER InputRoot.SOAP.Body.sec:CheckeoClaveResponse.sec:CheckeoClaveResult.NewDataSet.Table.TIPO_CLAVE;
+		SET OutputLocalEnvironment.KeyType = ChequeoClaveTipoClave;
+
+		IF (ChequeoClaveResponse = 'Ok') THEN
+		--If the call result is equal to 'OK' then continue the flow
+			PROPAGATE TO TERMINAL 'out3' FINALIZE NONE DELETE NONE;
+		ELSEIF (ChequeoClaveResponse = 'Cambiar') THEN
+		--Else send the error to the user
+			PROPAGATE TO TERMINAL 'out2' FINALIZE NONE DELETE NONE;
+		ELSE
+		--Else send the error to the user
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+		END IF;
+
+		RETURN FALSE;
+	END;
+END MODULE;
+
+/************************
+ * GetGetPersonResponse *
+ ************************/
+CREATE COMPUTE MODULE GetGetPersonResponse
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the result from the previous call
+		DECLARE firstName CHARACTER InputRoot.SOAP.Body.buc2:GetPersonResponse.buc2:GetPersonResult.acord:Name.acord:FirstName;
+		DECLARE lastName CHARACTER InputRoot.SOAP.Body.buc2:GetPersonResponse.buc2:GetPersonResult.acord:Name.acord:LastName;
+
+		IF ((firstName IS NULL) OR (firstName = '')) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		--Save the response in the local environment
+		SET OutputLocalEnvironment.FirstName = firstName;
+		SET OutputLocalEnvironment.LastName = lastName;
+
+		RETURN TRUE;
+	END;
+END MODULE;

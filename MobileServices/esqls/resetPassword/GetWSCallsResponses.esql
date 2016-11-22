@@ -1,0 +1,118 @@
+BROKER SCHEMA esqls.resetPassword
+
+/*********************************
+ * CheckValidaIndividualResponse *
+ *********************************/
+CREATE COMPUTE MODULE CheckValidaIndividualResponse
+
+	DECLARE sec NAMESPACE 'http://tuxpan.com/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the result from the previous call
+		DECLARE ValidaIndividualResponse CHARACTER InputRoot.SOAP.Body.sec:ValidaIndividualResponse.sec:ValidaIndividualResult.NewDataSet.Table.CLIENTE;
+
+		--If the call result is not equals to 'S' then continue to the error response
+		IF ((ValidaIndividualResponse IS NULL) OR (ValidaIndividualResponse <> 'S')) THEN
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/****************************
+ * CheckGetPartyContactInfo *
+ ****************************/
+CREATE COMPUTE MODULE CheckGetPartyContactInfo
+	
+	--Declare namespaces
+	DECLARE acord NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD';
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get response into local variable
+		DECLARE email_0 CHARACTER InputRoot.SOAP.Body.buc2:GetPartyContactInfoResponse.buc2:GetPartyContactInfoResult.acord:PrimaryEmail;
+		
+		--If there is not contact info, throws "No data found" error
+		IF ((email_0 IS NULL) OR (email_0 = '')) THEN
+			PROPAGATE TO TERMINAL 1 FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+		
+		--Save the response in the local environment
+		SET OutputLocalEnvironment.UserEmail = email_0;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*****************************
+ * CheckReseteoClaveResponse *
+ *****************************/
+CREATE COMPUTE MODULE CheckReseteoClaveResponse
+
+	--DECLARE sec NAMESPACE 'http://tuxpan.com/';
+	DECLARE ns NAMESPACE 'http://tempuri.org/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the result from the previous call
+		--DECLARE ReseteoClaveResponse CHARACTER InputRoot.SOAP.Body.sec:ReseteoClaveResponse.sec:ReseteoClaveResult.NewDataSet.Table.ESTADO;
+		DECLARE ReseteoClaveResponse CHARACTER InputRoot.SOAP.Body.ns:Serv4Response.ns:Serv4Result.ns:reseteo;
+		DECLARE code CHARACTER InputRoot.SOAP.Body.ns:Serv4Response.ns:Serv4Result.ns:codigo_error;
+		DECLARE message CHARACTER InputRoot.SOAP.Body.ns:Serv4Response.ns:Serv4Result.ns:descripcion_error;
+
+		--If the call result is not equals to 'OK' then continue to the error response
+		--IF ((ReseteoClaveResponse IS NULL) OR (ReseteoClaveResponse <> 'OK')) THEN
+		IF ((ReseteoClaveResponse IS NULL) OR (ReseteoClaveResponse <> 'S')) THEN
+			SET OutputLocalEnvironment.OtherError = 'WS_IVR_CLAVE Error Code:' || CAST(code AS CHARACTER) || '. WS_IVR_CLAVE Error Message:' || message;
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************
+ * GetCreateToken *
+ ******************/
+CREATE COMPUTE MODULE GetCreateToken
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.security';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the token from the previous call
+		DECLARE token CHARACTER InputRoot.SOAP.Body.buc2:CreateTokenResponse.buc2:CreateTokenResult;
+		
+		IF ((token IS NULL) OR (token = '')) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		--Set the token in the local environment
+		SET OutputLocalEnvironment.Token = token;
+
+		RETURN TRUE;
+	END;
+END MODULE;

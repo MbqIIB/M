@@ -1,0 +1,123 @@
+BROKER SCHEMA esqls.resetPassword
+PATH esqls.generics;
+
+/*******************************
+ * CreateOutputErrorUnexpected *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputErrorUnexpected
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 402;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Unexpected Issue';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'Parsing Error';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+/********************************
+ * CreateOutputErrorCredentials *
+ ********************************/
+CREATE COMPUTE MODULE CreateOutputErrorCredentials
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 101;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Invalid functional credentials';
+		SET OutputLocalEnvironment.Error.ErrorReason = '';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/********************************
+ * CreateOutputErrorNoDataFound *
+ ********************************/
+CREATE COMPUTE MODULE CreateOutputErrorNoDataFound
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 202;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'No Data Found';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'No Data Found';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*********************************
+ * CreateOutputErrorReseteoClave *
+ *********************************/
+CREATE COMPUTE MODULE CreateOutputErrorReseteoClave
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 402;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Unexpected Issue';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'Service Issue:';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+		
+		--Get the custom errors message
+		DECLARE OtherErrorMessage CHARACTER InputLocalEnvironment.OtherError;
+
+		CALL LogFullException(InputExceptionList, InputRoot, OtherErrorMessage);
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************
+ * CreateOutputOk *
+ ******************/
+CREATE COMPUTE MODULE CreateOutputOk
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the responses basic parameters
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line" = 'HTTP/1.1 200 OK'; 
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200; 
+		SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json; charset=utf-8'; 
+
+		--Create the JSON response body
+		SET OutputRoot.JSON.Data.code = 200;
+		SET OutputRoot.JSON.Data.message = 'Success';
+		SET OutputRoot.JSON.Data.emailID = MaskEmail(InputLocalEnvironment.UserEmail);
+
+		RETURN TRUE;
+	END;
+END MODULE;

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="urn:metlife.services.acord.agreement" xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" xmlns:tns="urn:metlife.services.acord.agreement" xmlns:acord="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD">
+  <xsd:import namespace="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD" schemaLocation="xsd_xsd2.xsd"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchEndorsements">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchEndorsementsResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="SearchEndorsementsResult" nillable="true" type="q1:ArrayOfEndorsement" xmlns:q1="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchCoverages">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="coverageName" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="coverageCode" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="insuredRut" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchCoveragesResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="SearchCoveragesResult" nillable="true" type="q2:ArrayOfCoverage" xmlns:q2="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetAgreementContactInfo">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="agreementId" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementContactInfoKind" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="lastUpdateSince" nillable="true" type="xsd:dateTime"/>
+        <xsd:element minOccurs="0" name="lastUpdateUntil" nillable="true" type="xsd:dateTime"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetAgreementContactInfoResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetAgreementContactInfoResult" nillable="true" type="q3:ArrayOfAgreementContactInfo" xmlns:q3="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetCoverage">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="coverageId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="coverageCode" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="insuredRut" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetCoverageResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetCoverageResult" nillable="true" type="q4:Coverage" xmlns:q4="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchInvestmentFunds">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="investmentFundId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="accountCode" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="taxRegime" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="investmentFundIsActive" nillable="true" type="xsd:boolean"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchInvestmentFundsResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="SearchInvestmentFundsResult" nillable="true" type="q5:ArrayOfInvestmentAlternative" xmlns:q5="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetAgreementParties">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="partyRUT" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="partyRoleId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="relationWithInsuredParty" nillable="true" type="xsd:decimal"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetAgreementPartiesResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetAgreementPartiesResult" nillable="true" type="q6:ArrayOfAgreementParty" xmlns:q6="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchInvestmentFundQuotaValue">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="investmentFundId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="startDate" nillable="true" type="xsd:dateTime"/>
+        <xsd:element minOccurs="0" name="endDate" nillable="true" type="xsd:dateTime"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchInvestmentFundQuotaValueResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="SearchInvestmentFundQuotaValueResult" nillable="true" type="q7:ArrayOfQuotaValue" xmlns:q7="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetInvestmentFund">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="investmentFundId" nillable="true" type="xsd:decimal"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetInvestmentFundResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetInvestmentFundResult" nillable="true" type="q8:InvestmentFund" xmlns:q8="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchAgreements">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="partyRut" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="partyRoleIdentifier" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="partyIdentifier" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="insuranceInstitutionIdentifier" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="broadLineOfBusinessIdentifier" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="lineOfBusinessIdentifier" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="partyLastName" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="partyMotherMaidenName" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="partyFirstName" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="insuredNumber" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="statusIdentifier" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="originalAgentCode" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="currentAgentCode" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="salesChannelIdentifier" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="startDate" nillable="true" type="xsd:dateTime"/>
+        <xsd:element minOccurs="0" name="endDate" nillable="true" type="xsd:dateTime"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchAgreementsResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="SearchAgreementsResult" nillable="true" type="q9:ArrayOfAgreement" xmlns:q9="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetAgreement">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+		<xsd:element minOccurs="0" name="partyIdentifier" nillable="true" type="xsd:decimal"/>
+		<xsd:element minOccurs="0" name="partyRut" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetAgreementResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetAgreementResult" nillable="true" type="q10:Agreement" xmlns:q10="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchLoans">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="partyRut" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchLoansResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="SearchLoansResult" nillable="true" type="q11:ArrayOfLoan" xmlns:q11="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetSavingsInfo">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="partyRut" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetSavingsInfoResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetSavingsInfoResult" nillable="true" type="q12:ArrayOfAgreement" xmlns:q12="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchClaims">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="partyRUT" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="partyIdentifier" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="partyRoleId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="claimId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="claimStatusId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="settlementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="startDate" nillable="true" type="xsd:dateTime"/>
+        <xsd:element minOccurs="0" name="endDate" nillable="true" type="xsd:dateTime"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SearchClaimsResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="SearchClaimsResult" nillable="true" type="q13:ArrayOfClaim" xmlns:q13="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+    <xsd:element name="GetAgreementBenefits">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="RUT" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="partyIdentifier" nillable="true" type="xsd:decimal"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="GetAgreementBenefitsResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetAgreementBenefitsResult" nillable="true" type="q24:ArrayOfBenefitInsurance" xmlns:q24="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetLoan">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="loanId" type="xsd:decimal"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetLoanResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetLoanResult" nillable="true" type="q14:Loan" xmlns:q14="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="UpdateProductContactInfo">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="data" nillable="true" type="q15:UpdateProductContactInfo" xmlns:q15="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="UpdateProductContactInfoResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="UpdateProductContactInfoResult" nillable="true" type="q16:TransactionResult" xmlns:q16="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetAgreementEmployees">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="agreementId" nillable="true" type="xsd:decimal"/>
+        <xsd:element minOccurs="0" name="agreementNumber" nillable="true" type="xsd:string"/>
+        <xsd:element minOccurs="0" name="backendId" nillable="true" type="xsd:decimal"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetAgreementEmployeesResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" name="GetAgreementEmployeesResult" nillable="true" type="q17:ArrayOfEmployee" xmlns:q17="http://schemas.datacontract.org/2004/07/MetLife.BUC.Application.DTO.ACORD"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

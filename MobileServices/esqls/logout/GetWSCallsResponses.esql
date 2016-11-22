@@ -1,0 +1,58 @@
+BROKER SCHEMA esqls.logout
+
+/************************
+ * GetKillTokenResponse *
+ ************************/
+CREATE COMPUTE MODULE GetKillTokenResponse
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.security';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the result from the previous call
+		DECLARE result BOOLEAN InputRoot.SOAP.Body.buc2:KillTokenResponse.buc2:KillTokenResult;
+
+		IF ((result IS NULL) OR (result = false)) THEN
+			PROPAGATE TO TERMINAL 'out2' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*****************************
+ * ProcessKillTokenException *
+ *****************************/
+CREATE COMPUTE MODULE ProcessKillTokenException
+
+	DECLARE soap NAMESPACE 'http://schemas.xmlsoap.org/soap/envelope/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the error message from the exception
+		DECLARE errorMessage CHARACTER InputRoot.SOAP.Body.soap:Fault.faultstring;
+
+		IF ((errorMessage IS NULL) OR (errorMessage = '')) THEN
+			PROPAGATE TO TERMINAL 'out3' FINALIZE NONE DELETE NONE;
+		ELSEIF (errorMessage = 'Invalid Token') THEN
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+		ELSEIF (errorMessage = 'Token expired') THEN
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+		ELSEIF (errorMessage = 'Token not found') THEN
+			PROPAGATE TO TERMINAL 'out2' FINALIZE NONE DELETE NONE;
+		ELSE
+			PROPAGATE TO TERMINAL 'out3' FINALIZE NONE DELETE NONE;
+		END IF;
+
+		RETURN FALSE;
+	END;
+END MODULE;

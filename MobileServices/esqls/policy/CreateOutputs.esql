@@ -1,0 +1,361 @@
+BROKER SCHEMA esqls.policy
+PATH esqls.generics;
+
+
+/***************************
+ * CreateOutputErrorNoData *
+ ***************************/
+CREATE COMPUTE MODULE CreateOutputErrorNoData
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 202;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'No Data Found';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'NoPolicyFound';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************************
+ * CreateOutputErrorUnexpected *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputErrorUnexpected
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 402;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'UnexpectedIssue';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'ParsingError';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************************
+ * CreateOutputPoliciesInfo *
+ ******************************/
+--This module creates the structure for the JSON policies array. The structure is as follows:
+--{
+--    metadata":
+--    {
+--        "totalCount":2
+--    },
+--    "policies":
+--    [
+--        {
+--            "planName":"Odontologico",
+--            "policyNumber":"w6456465",
+--            "policyStartDate":"23/8/2016",
+--            "policyType":"group",
+--            "status":"Active",
+--            "maxClaimAmt":"$2000",
+--            "policyEndDate":"23/8/2017",
+--            "policyExpireDate":"23/8/2017",
+--            "insuredCompanyName":"IBM",
+--            "company":"Metlife LLC",
+--            "idCard":
+--            [
+--                { 
+--                "cardType":"",
+--                "pharmacyName":"FASA"
+--                }
+--            ],  
+--            "bankDetails":
+--            {
+--                "accountType": "Credit",
+--                "accountNumber":"34646456",
+--                "bankName":"Julio De J Bank"
+--            },   
+--            "beneficiaries":
+--            [
+--                {
+--                    "rutNumber":"6666667",
+--                    "firstName":"joan",
+--                    "lastName":"Negri",
+--                    "provider":"Cruz",
+--                    "relationShip":"",
+--                    "birthdate":"4/4/2004",
+--                    "coverageStartDate":"4/4/2014",
+--                    "coverageEndDate":"4/4/2017"
+--                },
+--                {
+--                    "rutNumber":"44646464",
+--                    "firstName":"Luiz",
+--                    "lastName":"Negri",
+--                    "provider":"Cruz",
+--                    "relationShip":"hijo",
+--                    "birthdate":"4/4/2004",
+--                    "coverageStartDate":"4/4/2014",
+--                    "coverageEndDate":"4/4/2017"
+--                }
+--            ],
+--            "contactInformation":
+--            {
+--                "emails": 
+--                [
+--                    {
+--                        "address": "marcio@topdown.com",
+--                        "type":"Trabajo"
+--                    },
+--                    {
+--                        "address": "marcio@gmail.com",
+--                        "type":"Casa"
+--                    }
+--                ],
+--                "phoneNumbers": 
+--                [
+--                    {
+--                        "number": "3446456456",
+--                        "type": "Casa"
+--                    }
+--                ],
+--                "Addresses": 
+--                [
+--                    {
+--                        "type":"Casa",
+--                        "addressLine1": "217",
+--                        "region":55,
+--                        "municipality": 5,
+--                        "country": "Chile"
+--                    }
+--                ]
+--            }  
+--        }
+--    ]
+--}
+
+DECLARE MaxClaimAmount EXTERNAL CHARACTER '';
+
+CREATE COMPUTE MODULE CreateOutputPoliciesInfo
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the responses basic parameters
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line" = 'HTTP/1.1 200 OK'; 
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200; 
+		SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json; charset=utf-8'; 
+		
+		--Get array of agreements 
+		DECLARE totalCount DECIMAL InputLocalEnvironment.TotalCount;
+		DECLARE agreemenCount INTEGER 1;
+		
+		--Declare vars for Date format
+		DECLARE dateAux DATE;
+		DECLARE charAux CHARACTER;
+		
+		
+		--Create the JSON response body
+		
+		-- Total Count
+		SET OutputRoot.JSON.Data.metadata.totalCount = totalCount;
+		
+		-- Policies array
+		SET OutputRoot.JSON.Data.policies TYPE = JSON.Array;		
+		WHILE (agreemenCount <= totalCount) DO
+			
+			-- Plan Name	
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].planName = InputLocalEnvironment.FinalAgreements[agreemenCount].PlanName;
+			
+			-- Policy Number
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].policyNumber = InputLocalEnvironment.FinalAgreements[agreemenCount].PolicyNumber;
+			
+			-- Policy Start Date
+			SET charAux = ClearSpecialChars(SUBSTRING(InputLocalEnvironment.FinalAgreements[agreemenCount].PolicyStartDate AFTER 'TIMESTAMP'));
+			CALL CharacterToDate(charAux, 'yyyyMMddHHmmss') INTO dateAux;
+			CALL DateToCharacter(dateAux,'dd/MM/yyyy') INTO charAux;
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].policyStartDate = charAux;
+			
+			-- Policy Type
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].policyType = InputLocalEnvironment.FinalAgreements[agreemenCount].PolicyType;
+			
+			-- Status
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].status = InputLocalEnvironment.FinalAgreements[agreemenCount].Status;
+			
+			-- Max Claim Amount
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].maxClaimAmt = '$' || MaxClaimAmount;
+
+			-- Policy End Date
+			SET charAux = ClearSpecialChars(SUBSTRING(InputLocalEnvironment.FinalAgreements[agreemenCount].PolicyExpireDate AFTER 'TIMESTAMP'));
+			CALL CharacterToDate(charAux, 'yyyyMMddHHmmss') INTO dateAux;
+			CALL DateToCharacter(dateAux,'dd/MM/yyyy') INTO charAux;
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].policyEndDate = charAux;
+			
+			-- Policy Expire Date (same as Policy End Date)
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].policyExpireDate = charAux;
+			
+			-- Insured Company Name
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].insuredCompanyName = InputLocalEnvironment.FinalAgreements[agreemenCount].ContractingParty;
+			
+			-- Company
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].company = InputLocalEnvironment.FinalAgreements[agreemenCount].Company;
+			
+			-- IdCard array
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].idCard TYPE = JSON.Array;
+			DECLARE i INTEGER 1;
+			DECLARE cardsCount INTEGER CARDINALITY(InputLocalEnvironment.FinalAgreements[agreemenCount].Benefits[]);
+			WHILE (i<cardsCount) DO
+				-- Card Type
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].idCard[i].cardType = InputLocalEnvironment.FinalAgreements[agreemenCount].Benefits[i].CardType;
+				-- Pharmacy Name
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].idCard[i].pharmacyName = InputLocalEnvironment.FinalAgreements[agreemenCount].Benefits[i].PharmacyName;
+
+				SET i = i + 1;
+			END WHILE;
+			
+			-- Bank Details
+			-- Account Type
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].bankDetails.accountType = InputLocalEnvironment.FinalAgreements[agreemenCount].BankAccountType;
+			-- Account Number
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].bankDetails.accountNumber = InputLocalEnvironment.FinalAgreements[agreemenCount].BankAccountNumber;
+			-- Bank Name
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].bankDetails.bankName = InputLocalEnvironment.FinalAgreements[agreemenCount].BankAccountBankName;
+			
+			-- Beneficiaries array
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].beneficiaries TYPE = JSON.Array;
+			DECLARE j INTEGER 1;
+			DECLARE beneficiariesCount INTEGER CARDINALITY(OutputLocalEnvironment.FinalAgreements[agreemenCount].Beneficiaries[]);
+			DECLARE relationSHIP CHARACTER '';
+			DECLARE provider CHARACTER ''; 
+			WHILE (j <= beneficiariesCount) DO
+				-- rutNumber
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].beneficiaries.Item[j].rutNumber = OutputLocalEnvironment.FinalAgreements[agreemenCount].Beneficiaries[j].Rut;
+				-- firstName
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].beneficiaries.Item[j].firstName = OutputLocalEnvironment.FinalAgreements[agreemenCount].Beneficiaries[j].FirsName;
+				-- lastName
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].beneficiaries.Item[j].lastName = OutputLocalEnvironment.FinalAgreements[agreemenCount].Beneficiaries[j].LastName;
+				
+				-- provider
+				SET provider = OutputLocalEnvironment.FinalAgreements[agreemenCount].Beneficiaries[j].Provider;
+				IF( (provider IS NULL) OR provider = '') THEN
+					SET OutputRoot.JSON.Data.policies.Item[agreemenCount].beneficiaries.Item[j].provider = '';
+				ELSE
+					SET OutputRoot.JSON.Data.policies.Item[agreemenCount].beneficiaries.Item[j].provider = provider;
+				END IF;
+				
+				-- relationShip
+				SET relationSHIP = OutputLocalEnvironment.FinalAgreements[agreemenCount].Beneficiaries[j].RelationShip;
+				IF( (relationSHIP IS NULL) OR relationSHIP = '') THEN
+					SET OutputRoot.JSON.Data.policies.Item[agreemenCount].beneficiaries.Item[j].relationShip = '';
+				ELSE
+					SET OutputRoot.JSON.Data.policies.Item[agreemenCount].beneficiaries.Item[j].relationShip = OutputLocalEnvironment.FinalAgreements[agreemenCount].Beneficiaries[j].RelationShip;
+				END IF;
+				
+				
+				-- birthdate
+				DECLARE birthDateAux DATE;
+				DECLARE birthDate CHARACTER '';
+				SET birthDate = ClearSpecialChars(SUBSTRING(OutputLocalEnvironment.FinalAgreements[agreemenCount].Beneficiaries[j].BirthDate AFTER 'TIMESTAMP'));
+				CALL CharacterToDate(birthDate, 'yyyyMMddHHmmss') INTO birthDateAux;
+				CALL DateToCharacter(birthDateAux,'dd/MM/yyyy') INTO birthDate;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].beneficiaries.Item[j].birthdate = birthDate;
+				-- coverageStartDate
+				DECLARE covStart CHARACTER '';
+				IF (NOT (OutputLocalEnvironment.FinalAgreements[agreemenCount].Beneficiaries[j].CoverageStarDate IS NULL)) THEN
+					CALL TimestampToDate(OutputLocalEnvironment.FinalAgreements[agreemenCount].Beneficiaries[j].CoverageStarDate, 'dd/MM/yyyy') INTO covStart;
+				END IF;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].beneficiaries.Item[j].coverageStartDate = covStart;
+				-- coverageEndDate
+				DECLARE covEnd CHARACTER '';
+				IF (NOT (OutputLocalEnvironment.FinalAgreements[agreemenCount].Beneficiaries[j].CoverageEndDate IS NULL)) THEN
+					CALL TimestampToDate(OutputLocalEnvironment.FinalAgreements[agreemenCount].Beneficiaries[j].CoverageEndDate, 'dd/MM/yyyy') INTO covEnd;
+				END IF;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].beneficiaries.Item[j].coverageEndDate = covEnd;
+
+				SET j = j + 1;
+			END WHILE;																			
+			
+			-- Contact Information
+			
+			-- Emails array
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.emails TYPE = JSON.Array;
+			DECLARE k INTEGER 1;	
+			--If email_0(Personal email) has data, then save
+			IF (NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Email_0 IS NULL) AND 
+				NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Email_0 = '')) THEN
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.emails.Item[k].address = InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Email_0;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.emails.Item[k].type = 'Casa';
+				SET k = k + 1;
+			END IF;
+			--If email_1(Work email) has data, then save
+			IF (NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Email_1 IS NULL) AND 
+				NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Email_1 = '')) THEN
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.emails.Item[k].address = InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Email_1;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.emails.Item[k].type = 'Trabajo';
+			END IF;											
+			
+			-- Phones Array
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.phoneNumbers TYPE = JSON.Array;
+			DECLARE l INTEGER 1;
+			--If phone_0(Personal phone) has data, then save
+			IF (NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Phone_0 IS NULL) AND 
+				NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Phone_0 = '')) THEN
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.phoneNumbers.Item[l].number = InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Phone_0;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.phoneNumbers.Item[l].type = 'Casa';
+				SET l = l + 1;
+			END IF;
+			--If phone_1(Personal Mobile) has data, then save
+			IF (NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Phone_1 IS NULL) AND 
+				NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Phone_1 = '')) THEN
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.phoneNumbers.Item[l].number = InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Phone_1;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.phoneNumbers.Item[l].type = 'Celular';
+				SET l = l + 1;
+			END IF;
+			--If phone_2(Commercial phone) has data, then save
+			IF (NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Phone_2 IS NULL) AND 
+				NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Phone_2 = '')) THEN
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.phoneNumbers.Item[l].number = InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Phone_2;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.phoneNumbers.Item[l].type = 'Trabajo';
+			END IF;
+	
+			-- Addresses array
+			SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.addresses TYPE = JSON.Array;
+			DECLARE m INTEGER 1;	
+			--If address_0(First address) has data, then save
+			IF (NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Address_0 IS NULL) AND 
+				NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Address_0 = '')) THEN
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.addresses.Item[m].type = 'Casa';
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.addresses.Item[m].addressLine1 = InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Address_0;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.addresses.Item[m].region = InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Region_0;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.addresses.Item[m].municipality = InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Comune_0;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.addresses.Item[m].country = 'Chile';
+				SET m = m + 1;
+			END IF;
+			--If address_1(Second address) has data, then save
+			IF (NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Address_1 IS NULL) AND 
+				NOT(InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Address_1 = '')) THEN
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.addresses.Item[m].type = 'Trabajo';
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.addresses.Item[m].addressLine1 = InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Address_1;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.addresses.Item[m].region = InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Region_1;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.addresses.Item[m].municipality = InputLocalEnvironment.FinalAgreements[agreemenCount].ContactInformation.Comune_1;
+				SET OutputRoot.JSON.Data.policies.Item[agreemenCount].contactInformation.addresses.Item[m].country = 'Chile';
+			END IF;
+			--End Contact Information
+			
+			--Set next agreement counter
+			SET agreemenCount = agreemenCount + 1;
+		END WHILE;
+
+		RETURN TRUE;
+	END;
+END MODULE;

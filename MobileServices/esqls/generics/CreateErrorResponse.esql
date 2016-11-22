@@ -1,0 +1,75 @@
+BROKER SCHEMA esqls.generics
+
+/***********************
+ * CreateErrorResponse *
+ ***********************/
+
+--This module creates the structure for the JSON error return required for every operation. The structure is as follows:
+--{
+--    "error":
+--    {
+--        "code": ERRORCODE_AS_NUMBER,
+--        "message": ERROR_MESSAGE_AS_CHARACTER, 
+--        "errors":[
+--        {
+--            "reason": REASON_AS_CHARACTER,
+--            "fieldList":[ FIELD_ONE_AS_CHARACTER, FIELD_TWO_AS_CHARACTER, ..., FIELD_N_AS_CHARACTER]
+--        }]
+--    }
+--}
+--The values are fetched from the LocalEnvironment. The variables that must be setted are:
+--Error.ErrorCode      - INTEGER
+--Error.ErrorMessage   - CHARACTER
+--Error.ErrorReason    - CHARACTER
+--Error.ErrorFieldList - CHARACTER (comma separated values)
+
+CREATE COMPUTE MODULE CreateErrorResponse
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		SET OutputRoot = InputRoot;
+
+		--Set the responses basic parameters
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line" = 'HTTP/1.1 200 OK'; 
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200; 
+		SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json; charset=utf-8'; 
+		IF (InputLocalEnvironment.HTTPResponseHeader.Token IS NOT NULL AND InputLocalEnvironment.HTTPResponseHeader.Token <> '') THEN
+			SET OutputRoot.HTTPResponseHeader."token" = InputLocalEnvironment.HTTPResponseHeader.Token;
+		END IF;
+
+		--Get the business error response parameters in variables so their handling get easy
+		DECLARE ErrorCode INTEGER InputLocalEnvironment.Error.ErrorCode;
+		DECLARE ErrorMessage CHARACTER InputLocalEnvironment.Error.ErrorMessage;
+		DECLARE ErrorReason CHARACTER InputLocalEnvironment.Error.ErrorReason;
+		DECLARE ErrorFieldList CHARACTER InputLocalEnvironment.Error.ErrorFieldList;
+
+		--Set the business error response parameters "code" and "message" 
+		SET OutputRoot.JSON.Data.error[1].code = ErrorCode;
+		SET OutputRoot.JSON.Data.error[1].message = ErrorMessage;
+
+		--Creates an internal array of object called "errors"
+		SET OutputRoot.JSON.Data.error[1].errors TYPE = JSON.Array;
+		CREATE FIELD OutputRoot.JSON.Data.error[1].errors[1].Item IDENTITY (JSON.Object); 
+
+		--Set the reason inside the array and create a new inner array called "fieldList"
+		SET OutputRoot.JSON.Data.error[1].errors[1].Item.reason = ErrorReason;
+		SET OutputRoot.JSON.Data.error[1].errors[1].Item.fieldList TYPE = JSON.Array;
+
+		--Iterate through the comma separated value holded in the ErrorFieldList variable and set the fieldList elements until there are no more values  
+        DECLARE len INTEGER LENGTH (ErrorFieldList);
+        DECLARE i INTEGER 1;
+        WHILE len > 0 DO
+			SET OutputRoot.JSON.Data.error[1].errors[1].Item.fieldList.Item[i] = SUBSTRING(ErrorFieldList BEFORE ',');
+			SET ErrorFieldList = SUBSTRING(ErrorFieldList AFTER ',');
+            SET len = LENGTH (ErrorFieldList);
+            SET i = i + 1;
+        END WHILE;
+        
+        
+
+		RETURN TRUE;
+	END;
+END MODULE;

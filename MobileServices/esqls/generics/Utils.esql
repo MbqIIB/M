@@ -1,0 +1,175 @@
+BROKER SCHEMA esqls.generics
+
+/*******************
+ * TimestampToDate *
+ *******************/
+ -- This function converts a date into a string with a specific format
+CREATE FUNCTION TimestampToDate(IN dateTimeIn TIMESTAMP, IN formatIn CHARACTER) RETURNS CHARACTER
+BEGIN
+	DECLARE datetimetochar CHARACTER;
+	
+	SET datetimetochar = CAST(dateTimeIn AS CHARACTER FORMAT formatIn);
+	
+	RETURN datetimetochar;
+END;
+
+/*******************
+ * CharacterToDate *
+ *******************/
+ -- This function converts a date into a string with a specific format
+CREATE FUNCTION DateToCharacter(IN dateIn DATE, IN formatIn CHARACTER) RETURNS CHARACTER
+BEGIN
+	DECLARE datetochar CHARACTER;
+	
+	SET datetochar = CAST(dateIn AS CHARACTER FORMAT formatIn);
+	
+	RETURN datetochar;
+END;
+
+/*******************
+ * CharacterToDate *
+ *******************/
+ -- This function converts a string into a Date with a specific format
+CREATE FUNCTION CharacterToDate(IN dateCharIn CHARACTER, IN dateFormatIn CHARACTER) RETURNS DATE
+BEGIN
+	DECLARE chartodate DATE;
+	
+	SET chartodate = CAST(dateCharIn AS DATE FORMAT dateFormatIn);
+	
+	RETURN chartodate;	
+END;
+
+/*********************
+ * ClearSpecialChars *
+ *********************/
+-- This function delete some special characters from a string
+CREATE FUNCTION ClearSpecialChars(IN chars CHARACTER) RETURNS CHARACTER
+BEGIN
+	DECLARE charAux CHARACTER;
+	
+	-- Add more if you need it
+	SET charAux = REPLACE(chars, '''', '');
+	SET charAux = REPLACE(charAux, ' ', '');
+	SET charAux = REPLACE(charAux, '-', '');
+	SET charAux = REPLACE(charAux, ':', '');
+	SET charAux = REPLACE(charAux, '$', '');
+	
+	RETURN charAux;
+END;
+
+/********************
+ * LogFullException *
+ ********************/
+ --This procedure logs the entire exception stack to the event log
+ --ExceptionTree:  The incoming exception list
+ --InputRoot: The complete root of the message
+ --CustomError: Error messages that aren't in the ExceptionTree and neither in the InputRoot. Used for custom messages
+CREATE PROCEDURE LogFullException(IN ExceptionTree reference, IN InputRoot reference, IN CustomError CHARACTER)
+BEGIN
+																  
+	--Declare namespaces
+	DECLARE ns NAMESPACE 'http://schemas.xmlsoap.org/soap/envelope/';
+	DECLARE nsm NAMESPACE 'http://schemas.datacontract.org/2004/07/System.ServiceModel';
+
+	-- Create a reference to the first child of the exception list 
+	DECLARE ptrException REFERENCE TO ExceptionTree.*[1];
+	DECLARE ptrInputRoot REFERENCE TO InputRoot;
+	DECLARE detailException CHARACTER '';
+	DECLARE I INTEGER 0;
+	
+	IF (ptrException IS NOT NULL) THEN
+
+		--Keep looping while the moves to the child of exception list work
+		WHILE LASTMOVE(ptrException) DO
+			--Log the current values
+			IF ptrException.Number IS NOT NULL THEN
+	
+				--Get the error detail if exists
+				SET detailException = '';
+				DECLARE detailsCount INTEGER CARDINALITY (ptrException.Insert[]);
+	
+				IF (detailsCount > 0) THEN
+					SET I = 1;
+					WHILE (I <= detailsCount) DO
+						SET detailException = detailException || CAST(ptrException.Insert[I].Type AS CHARACTER) || ' = ' || ptrException.Insert[I].Text;
+						SET detailException = detailException || '|';
+	
+						SET I = I + 1;
+					END WHILE;
+				END IF;
+	
+				LOG EVENT SEVERITY 3 CATALOG 'Mobile Services' VALUES('Severity - ' || CAST(ptrException.Severity AS CHARACTER),
+																	  'Number - ' || CAST(ptrException.Number AS CHARACTER),
+																	  'Name - ' || ptrException.Name,
+																	  'Text - ' || ptrException.Text,
+																	  'Function - ' || ptrException.Function,
+																	  'Line - ' || CAST(ptrException.Line AS CHARACTER),
+																	  'Type - ' || ptrException.Type,
+																	  'Detail - ' || detailException);
+			END IF;
+	
+			--Now move to the last child which should be the next exceptionlist
+			MOVE ptrException LASTCHILD;
+		END WHILE; 
+		
+	ELSE 
+		IF (ptrInputRoot IS NOT NULL) THEN
+
+			--Check if there is a fault defined in the message
+			DECLARE faultCode CHARACTER ptrInputRoot.SOAP.Body.ns:Fault.faultcode;
+			DECLARE faultString CHARACTER ptrInputRoot.SOAP.Body.ns:Fault.faultstring;
+			DECLARE message CHARACTER ptrInputRoot.SOAP.Body.ns:Fault.detail.nsm:ExceptionDetail.nsm:InnerException.nsm:Message;
+			DECLARE stackTrace CHARACTER ptrInputRoot.SOAP.Body.ns:Fault.detail.nsm:ExceptionDetail.nsm:InnerException.nsm:StackTrace;
+			
+			--If there is a fault message defined, then log it
+			IF (faultCode IS NOT NULL) THEN
+				LOG EVENT SEVERITY 3 CATALOG 'Mobile Services' VALUES('Fault Code - ' || faultCode,
+																	  'Fault String - ' || faultString,
+																	  'Message - ' || message,
+																	  'Stack Trace - ' || stackTrace);
+			END IF;	
+		ELSE
+			--Log the custom error
+			LOG EVENT SEVERITY 3 CATALOG 'Mobile Services' VALUES(CustomError);
+		END IF;
+	END IF;	
+	
+END;  
+
+/*************
+ * MaskEmail *
+ *************/
+-- This function mask an email to format xxxxxxxabc@abc.com
+CREATE FUNCTION MaskEmail(IN email CHARACTER) RETURNS CHARACTER
+BEGIN
+	DECLARE charAux  CHARACTER;
+	DECLARE charAux2 CHARACTER;
+	DECLARE intAux  INTEGER;
+	DECLARE intAux2 INTEGER;
+	
+	--Get user email part
+	SET charAux = SUBSTRING(email BEFORE '@');
+	SET intAux = LENGTH(charAux);
+	
+	--Get last 3 chars
+	SET charAux2 = SUBSTRING(charAux FROM 0 FOR (intAux-2));
+	SET intAux2  = LENGTH(charAux2);
+	SET charAux2 = REPLICATE('x', intAux2) || SUBSTRING(charAux FROM (intAux-2) FOR 3) || '@' || SUBSTRING(email AFTER '@');
+	
+	RETURN charAux2;
+END;
+
+/****************
+ * DecodeString *
+ ****************/
+-- This function decode special characters from a encoded string
+CREATE FUNCTION DecodeString(IN chars CHARACTER) RETURNS CHARACTER
+BEGIN
+	DECLARE charAux CHARACTER;
+	
+	-- Add more if you need it
+	SET charAux = REPLACE(chars, '%3D', '=');
+	SET charAux = REPLACE(charAux, '%22', '"');
+	
+	RETURN charAux;
+END;

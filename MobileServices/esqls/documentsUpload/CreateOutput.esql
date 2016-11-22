@@ -1,0 +1,176 @@
+BROKER SCHEMA esqls.documentsUpload
+PATH esqls.generics;
+
+/*******************************
+ * CreateOutputErrorUnexpected *
+ *******************************/
+CREATE COMPUTE MODULE CreateOutputErrorUnexpected
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the Token to responses basic parameters
+		SET OutputLocalEnvironment.HTTPResponseHeader.Token = InputLocalEnvironment.Token;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 402;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Unexpected Issue';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'Parsing Error';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************************
+ * CreateOutputErrorNoData *
+ ***************************/
+CREATE COMPUTE MODULE CreateOutputErrorNoData
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the Token to responses basic parameters
+		SET OutputLocalEnvironment.HTTPResponseHeader.Token = InputLocalEnvironment.Token;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 202;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'No Data Found';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'NoPolicyFound';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/********************************
+ * CreateOutputErrorNoDocuments *
+ ********************************/
+CREATE COMPUTE MODULE CreateOutputErrorNoDocuments
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the Token to responses basic parameters
+		SET OutputLocalEnvironment.HTTPResponseHeader.Token = InputLocalEnvironment.Token;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 409;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Mandatory Check Failed';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'MissingRequiredDocuments';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/***************************
+ * CreateOutputErrorSaving *
+ ***************************/
+CREATE COMPUTE MODULE CreateOutputErrorSaving
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the Token to responses basic parameters
+		SET OutputLocalEnvironment.HTTPResponseHeader.Token = InputLocalEnvironment.Token;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 408;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'InsertFailed';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'DocumentsUploadFailed';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**************************
+ * CreateOutputErrorEmpty *
+ **************************/
+CREATE COMPUTE MODULE CreateOutputErrorEmpty
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the Token to responses basic parameters
+		SET OutputLocalEnvironment.HTTPResponseHeader.Token = InputLocalEnvironment.Token;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 406;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Validation Failed';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'EmptyFied';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = InputLocalEnvironment.MissingFields;
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/********************************
+ * CreateOutputErrorAssociation *
+ ********************************/
+CREATE COMPUTE MODULE CreateOutputErrorAssociation
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the Token to responses basic parameters
+		SET OutputLocalEnvironment.HTTPResponseHeader.Token = InputLocalEnvironment.Token;
+		
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 408;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'InsertFailed';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'ClaimAssociationFailed';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+ 
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**************************
+ * CreateOutputSetSuccess *
+ **************************/
+CREATE COMPUTE MODULE CreateOutputSetSuccess
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Set the responses basic parameters
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line" = 'HTTP/1.1 200 OK'; 
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200; 
+		SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json; charset=utf-8'; 
+		SET OutputRoot.HTTPResponseHeader.token = InputLocalEnvironment.Token;
+
+		--Create the JSON response body
+		SET OutputRoot.JSON.Data.code = 200;
+		SET OutputRoot.JSON.Data.message = 'Success';
+
+		RETURN TRUE;
+	END;
+END MODULE;

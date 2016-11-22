@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://filenet.ws.metlife.cl/" version="1.0" xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" xmlns:tns="http://filenet.ws.metlife.cl/">
+  <xsd:element ibmSchExtn:docRoot="true" name="deleteDocument" type="tns:deleteDocument"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="deleteDocumentResponse" type="tns:deleteDocumentResponse"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="getDocument" type="tns:getDocument"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="getDocumentResponse" type="tns:getDocumentResponse"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="getMetadata" type="tns:getMetadata"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="getMetadataResponse" type="tns:getMetadataResponse"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="isConnected" type="tns:isConnected"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="isConnectedResponse" type="tns:isConnectedResponse"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="putDocument" type="tns:putDocument"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="putDocumentResponse" type="tns:putDocumentResponse"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="searchDocumentVersions" type="tns:searchDocumentVersions"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="searchDocumentVersionsResponse" type="tns:searchDocumentVersionsResponse"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="searchDocuments" type="tns:searchDocuments"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="searchDocumentsResponse" type="tns:searchDocumentsResponse"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="updateDocument" type="tns:updateDocument"/>
+  <xsd:element ibmSchExtn:docRoot="true" name="updateDocumentResponse" type="tns:updateDocumentResponse"/>
+  <xsd:complexType name="getMetadata">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="DocumentId" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="getMetadataResponse">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="MetadataList" type="tns:metadata"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="metadata">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="name" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="value" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="getDocument">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="DocumentId" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="getDocumentResponse">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Document" type="tns:document"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="document">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="filename" type="xsd:string"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="metadataList" nillable="true" type="tns:metadata"/>
+      <xsd:element minOccurs="0" name="serializedFile" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="deleteDocument">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="DocumentId" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="deleteDocumentResponse">
+    <xsd:sequence>
+      <xsd:element name="Success" type="xsd:boolean"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="updateDocument">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="DocumentId" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="NewDocument" type="tns:document"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="updateDocumentResponse">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="DocumentId" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="putDocument">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="ApplicationId" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="CreatorTaskId" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="BusinessDocumentId" type="xsd:string"/>
+      <xsd:element minOccurs="0" name="Document" type="tns:document"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="putDocumentResponse">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="DocumentId" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="searchDocumentVersions">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="DocumentId" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="searchDocumentVersionsResponse">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="DocumentIds" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="searchDocuments">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="ApplicationId" type="xsd:string"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="MetadataList" type="tns:metadata"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="searchDocumentsResponse">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="DocumentIds" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="isConnected">
+    <xsd:sequence/>
+  </xsd:complexType>
+  <xsd:complexType name="isConnectedResponse">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="result" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

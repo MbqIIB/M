@@ -1,0 +1,256 @@
+BROKER SCHEMA esqls.providersearch
+PATH esqls.generics;
+
+DECLARE ns1 NAMESPACE 'http://schemas.datacontract.org/2004/07/MetLife.Net.Maintainers.Application.MainModule.DTO';
+DECLARE ns NAMESPACE 'http://tempuri.org/';
+
+DECLARE providerName EXTERNAL CHARACTER 'providerName';--parameter name at the JSON structure
+DECLARE Distance EXTERNAL CHARACTER 'Distance';--parameter value at URL input
+DECLARE ProviderName EXTERNAL CHARACTER 'ProviderName';--parameter value at URL input
+DECLARE distanceValue EXTERNAL CHARACTER 'distance.value';--parameter name at the JSON structure
+
+CREATE COMPUTE MODULE ServicioProvider_esql_transformacion
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		DECLARE linea, Delimitador CHARACTER;
+		DECLARE searchType, providerName, longitude, latitude , searchRadius, searchRadiusUnit, languages, limit, offset, orderBy, order CHARACTER;
+		DECLARE searchType1, providerName1, longitude1, latitude1 , searchRadius1, searchRadiusUnit1, languages1, limit1, offset1, orderBy1, order1 CHARACTER;
+		DECLARE validanombre, Refe CHARACTER;
+		SET searchType = 'searchType';
+		SET providerName = 'providerName';
+		SET longitude = 'longitude';
+		SET latitude = 'latitude';
+		SET searchRadius = 'searchRadius';
+		SET searchRadiusUnit = 'searchRadiusUnit';
+		SET languages = 'Spanish';
+		SET limit = 'limit';
+		SET offset = 'offset';
+		SET orderBy = 'orderBy';
+		SET order = 'order';
+		SET Refe = '"';
+
+
+
+		DECLARE Contador, I , J, VALIDACIONNOMBRE INTEGER;
+		SET linea = CAST(InputLocalEnvironment.HTTP.Input.QueryString.q AS CHARACTER);
+		SET Delimitador = ';';
+		CALL Split(linea, Environment.Trailer, Delimitador);
+		SET Environment.Trailer.Split[] = Environment.Split[];
+		SET Contador = CARDINALITY(Environment.Trailer.Split.Array[]);
+
+
+		SET I = 1;
+		SET J = Contador;
+
+		WHILE I <= J DO
+
+			SET validanombre = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) BEFORE '==');
+
+			IF (validanombre = searchType) THEN
+
+				SET searchType1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '=="');
+				SET searchType1 = SUBSTRING(searchType1 BEFORE Refe);
+			END IF;
+
+
+			IF (validanombre = providerName) THEN
+
+				SET providerName1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '=="');
+				SET providerName1 = SUBSTRING(providerName1 BEFORE Refe);
+			END IF;
+
+
+			IF (validanombre = longitude) THEN
+
+				SET longitude1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '=="');
+				SET longitude1 = SUBSTRING(longitude1 BEFORE Refe);
+			END IF;
+
+			IF (validanombre = latitude) THEN
+
+				SET latitude1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '=="');
+				SET latitude1 = SUBSTRING(latitude1 BEFORE Refe);
+			END IF;
+
+			IF (validanombre = searchRadius) THEN
+
+				SET searchRadius1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '==');
+
+			END IF;
+
+
+			IF (validanombre = searchRadiusUnit) THEN
+
+				SET searchRadiusUnit1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '=="');
+				SET searchRadiusUnit1 = SUBSTRING(searchRadiusUnit1 BEFORE Refe);
+			END IF;
+
+
+			IF (validanombre = limit) THEN
+
+				SET limit1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '==');
+
+
+			END IF;
+
+			IF (validanombre = offset) THEN
+
+				SET offset1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '==');
+
+			END IF;
+
+			IF (validanombre = orderBy) THEN
+
+				SET orderBy1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '=="');
+				SET orderBy1 = SUBSTRING(orderBy1 BEFORE Refe);
+			END IF;
+
+			IF (validanombre = order) THEN
+
+				SET order1 = SUBSTRING(CAST(Environment.Split.Array[I] AS CHARACTER) AFTER '=="');
+				SET order1 = SUBSTRING(order1 BEFORE Refe);
+			END IF;
+
+
+			SET I = I + 1;
+
+		END WHILE;
+
+		SET languages1 = 'Spanish';
+
+
+
+
+		IF InputLocalEnvironment.HTTP.Input.RequestLine.RequestURI = '/users/providers' AND searchType1 <> '' AND longitude1 <> '' AND latitude1 <> '' AND searchRadius1 <> '' AND searchRadiusUnit1 <> '' AND languages1 <> '' THEN
+
+
+			CREATE FIELD OutputRoot.XMLNSC.ns:SearchProvidersPerFilter TYPE Name;
+			DECLARE rOut REFERENCE TO OutputRoot.XMLNSC.ns:SearchProvidersPerFilter;
+			DECLARE Campo, Campo1type, Refe, latitud, longitud,radio CHARACTER;
+			DECLARE Nombrecampo CHARACTER;
+			DECLARE Largo, deter INTEGER;
+
+			IF searchType1 = 'pharmacies' THEN
+				SET deter = 1;
+
+			END IF;
+
+			IF searchType1 = 'clinics' THEN
+				SET deter = 2;
+			END IF;
+
+			IF searchType1 = 'legal' THEN
+				SET deter = 3;
+			END IF;
+
+			IF limit1 <> '' THEN
+
+				SET Environment.limit =limit1;
+			ELSE
+				SET Environment.limit = 25;
+			END IF;
+
+			SET Environment.Type = searchType1;
+
+			SET rOut.ns:Provider.ns1:Latitude = latitude1;
+			SET rOut.ns:Provider.ns1:Longitude = longitude1;
+
+			IF providerName1 <> '' THEN
+
+				SET VALIDACIONNOMBRE = LENGTH(providerName1);
+
+			END IF;
+
+			IF providerName1 <> '' AND VALIDACIONNOMBRE > 3 THEN
+				SET rOut.ns:Provider.ns1:ProviderNameFather = providerName1;
+			END IF;
+
+			SET rOut.ns:Provider.ns1:Type = deter;
+			SET rOut.ns:Provider.ns1:radioSearch = searchRadius1;
+
+			IF order1 = '' or order1 IS NULL THEN
+				SET Environment.parameters.order = 'desc';
+			ELSE
+				SET Environment.parameters.order = order1;
+			END IF;
+			
+			--Add into order list items which the JSON response must be sorted
+			
+			--By default, sort by distance valu and provider name
+			IF orderBy1 = '' OR orderBy1 IS NULL THEN
+				SET Environment.parameters.orderBy.Item[1] = distanceValue;
+				SET Environment.parameters.orderBy.Item[2] = providerName;
+			ELSE
+				--Wheter orderBy parameter is Distance then select the distance.value into order list 
+				IF orderBy1 = Distance THEN
+					SET Environment.parameters.orderBy.Item[1] = distanceValue;
+				ELSE
+					IF orderBy1 = ProviderName THEN
+						SET Environment.parameters.orderBy.Item[1] = providerName;
+					ELSE
+						SET Environment.parameters.orderBy.Item[1] = orderBy1;
+					END IF;
+				END IF;
+			END IF;			
+
+			IF offset1 <> '' AND offset1 <> 0 THEN
+				SET Environment.offset = offset1;
+			ELSE
+				SET Environment.offset = 1;
+				SET Environment.val = 0;
+			END IF;
+
+
+		ELSE
+			-- SET OutputRoot.JSON.Data.error.code = 406;
+			-- SET OutputRoot.JSON.Data.error.message = 'ValidationFailed';
+			-- SET OutputRoot.JSON.Data.error.errors[1].reason = 'missingRequestParameter';
+			-- SET OutputRoot.JSON.Data.error.errors[1].fieldList = 'radius,searchType';
+
+			SET OutputRoot.JSON.Data.error.code = 406;
+
+			SET OutputRoot.JSON.Data.error.message = 'ValidationFailed';
+
+			CREATE FIELD OutputRoot.JSON.Data.error.errors IDENTITY(JSON.Array)errors;
+
+			SET OutputRoot.JSON.Data.error.errors.Item[1].reason = 'missingRequestParameter';
+
+			SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList = 'radius,searchType';
+
+			SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList TYPE = JSON.Array;
+
+
+			PROPAGATE TO TERMINAL 'out1';
+			RETURN FALSE;
+		END IF ;
+
+		IF EXISTS(Environment.limit[]) THEN
+			DECLARE iValue INTEGER CAST(Environment.limit AS INTEGER DEFAULT 0);
+
+			IF(iValue = 0)THEN
+
+			PROPAGATE TO TERMINAL 'out2';
+			RETURN FALSE;
+
+		END IF;
+	END IF;
+
+	RETURN TRUE;
+END;
+
+CREATE PROCEDURE CopyMessageHeaders() BEGIN
+	DECLARE I INTEGER 1;
+	DECLARE J INTEGER;
+	SET J = CARDINALITY(InputRoot.*[]);
+	WHILE I < J DO
+		SET OutputRoot.*[I] = InputRoot.*[I];
+		SET I = I + 1;
+	END WHILE;
+END;
+
+CREATE PROCEDURE CopyEntireMessage() BEGIN
+	SET OutputRoot = InputRoot;
+END;
+END MODULE;

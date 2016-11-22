@@ -1,0 +1,183 @@
+BROKER SCHEMA esqls.authentication
+PATH esqls.generics;
+
+/**********************
+ * CreateOutputError1 *
+ **********************/
+CREATE COMPUTE MODULE CreateOutputError1
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 101;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Invalid Credentials - Username and Password don''t match';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'InvalidCredential';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**********************
+ * CreateOutputError2 *
+ **********************/
+CREATE COMPUTE MODULE CreateOutputError2
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 102;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Invalid Credentials - Account Locked';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'Account Locked';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**********************
+ * CreateOutputError3 *
+ **********************/
+CREATE COMPUTE MODULE CreateOutputError3
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 104;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'AccountDisable';
+		SET OutputLocalEnvironment.Error.ErrorReason = '';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/**********************
+ * CreateOutputError4 *
+ **********************/
+CREATE COMPUTE MODULE CreateOutputError4
+	
+	--Declare namespaces
+	DECLARE ns NAMESPACE 'http://schemas.xmlsoap.org/soap/envelope/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the error values in local environment acording to the business rules
+		SET OutputLocalEnvironment.Error.ErrorCode = 402;
+		SET OutputLocalEnvironment.Error.ErrorMessage = 'Unexpected Issue';
+		SET OutputLocalEnvironment.Error.ErrorReason = 'Unexpected Issue';
+		SET OutputLocalEnvironment.Error.ErrorFieldList = '';
+
+		--Get error response
+		DECLARE operationName CHARACTER InputRoot.SOAP.Body.Context.operation;
+		DECLARE errorCode CHARACTER InputRoot.SOAP.Body.ns:Fault.faultcode;
+		DECLARE errorMessage CHARACTER InputRoot.SOAP.Body.ns:Fault.faultstring;
+		DECLARE totalErroressage CHARACTER 'ErrorCode:' || errorCode || '. ErrorMessage:' || errorMessage ;
+
+		CALL LogFullException(InputExceptionList, InputRoot, '');
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************
+ * CreateOutputOk *
+ ******************/
+CREATE COMPUTE MODULE CreateOutputOk
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.security';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the token from the previous call
+		DECLARE token CHARACTER InputRoot.SOAP.Body.buc2:CreateTokenResponse.buc2:CreateTokenResult;
+
+		IF ((token IS NULL) OR (token = '')) THEN
+			PROPAGATE TO TERMINAL 'failure' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		--Save the token into local envirnment
+		SET OutputLocalEnvironment.Token = token;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************
+ * CreateOutputOk *
+ ******************/
+CREATE COMPUTE MODULE CreateOutput
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.security';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the responses basic parameters
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Line" = 'HTTP/1.1 200 OK'; 
+		SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200; 
+		SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json; charset=utf-8'; 
+
+		--Get the token from the previous call
+		DECLARE token CHARACTER InputLocalEnvironment.Token;
+		
+		--Get the rut, first and last name and key type from the environment (saved after the GetPerson call)
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		DECLARE firstName CHARACTER InputLocalEnvironment.FirstName;
+		DECLARE lastName CHARACTER InputLocalEnvironment.LastName;
+		DECLARE keyType CHARACTER InputLocalEnvironment.KeyType;
+
+		--Set the token in the header
+		SET OutputRoot.HTTPResponseHeader."token" = token;
+
+		--Create the JSON response body
+		SET OutputRoot.JSON.Data.rutNumber = rutNumber;
+		SET OutputRoot.JSON.Data.firstName = firstName;
+		SET OutputRoot.JSON.Data.lastName = lastName;
+		SET OutputRoot.JSON.Data.userType = 'Individual';
+		IF (keyType = 'T') THEN
+			SET OutputRoot.JSON.Data.tmpPassword = true;
+		ELSE
+			SET OutputRoot.JSON.Data.tmpPassword = false;
+		END IF;
+		SET OutputRoot.JSON.Data.userRoleType TYPE = JSON.Array;
+		SET OutputRoot.JSON.Data.userRoleType.Item[1] = 'Asegurado';
+		IF (keyType = 'T') THEN
+			SET OutputRoot.JSON.Data.passwordExpiryDays = 0;
+		ELSE
+			SET OutputRoot.JSON.Data.passwordExpiryDays  = 90;
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;

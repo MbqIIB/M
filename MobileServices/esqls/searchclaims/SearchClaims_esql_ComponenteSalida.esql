@@ -1,0 +1,152 @@
+BROKER SCHEMA esqls.searchclaims
+PATH esqls.generics;
+
+
+CREATE COMPUTE MODULE SearchClaims_esql_ComponenteSalida
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		DECLARE I, J, K, L INTEGER;
+		DECLARE Comp1TMP,Comp,Comp1, FECHA, FECHA2 ,FECHA3, DIA, ANIO, MES, refe,limite CHARACTER;
+
+		DECLARE refClaims REFERENCE TO Environment.Claims;
+
+		DECLARE Count INTEGER CARDINALITY(refClaims.Claim[]);
+
+		SET OutputRoot.JSON.Data.metadata.totalCount = Count;
+
+		IF Environment.*:limit <> '' THEN
+			IF Environment.*:limit = 10000 THEN
+				SET OutputRoot.JSON.Data.metadata.limit = Count;
+			ELSE
+				SET OutputRoot.JSON.Data.metadata.limit = CAST(Environment.*:limit AS INTEGER);
+			END IF;
+
+		ELSE
+			SET OutputRoot.JSON.Data.metadata.limit = Count;
+		END IF;
+
+		IF Environment.*:Val = 0 THEN
+			SET OutputRoot.JSON.Data.metadata.offset = 0;
+		ELSE
+			SET OutputRoot.JSON.Data.metadata.offset = CAST(Environment.*:offset AS INTEGER);
+		END IF;
+
+		SET I = 1;
+		SET J = Count;
+
+		CREATE FIELD OutputRoot.JSON.Data.claims IDENTITY(JSON.Array)claims;
+
+		WHILE(I <= J ) DO
+		--- SearchClaims
+		SET OutputRoot.JSON.Data.claims.Item[I].claimId = CAST(refClaims.Claim[I].*:ClaimInfo.*:Number AS CHARACTER);
+		--SET OutputRoot.JSON.Data.claims.Item[I].principalBeneficiaryName = CAST(Environment.*:Resultado.*:SearchClaims[I].*:Claims.*:Parties.*:ClaimParty.*:Party.*:FullName AS CHARACTER);
+		--SET Comp1 = CAST(Environment.*:Resultado.*:SearchClaims[I].*:Claims.*:Parties.*:ClaimParty.*:Roles.*:PartyRole[1].*:Role.*:Id AS CHARACTER);
+		SET Comp1TMP = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty.*:Roles.*:PartyRole[1].*:Role.*:Id AS CHARACTER);
+
+
+		IF Comp1 = '1' THEN
+			SET OutputRoot.JSON.Data.claims.Item[I].principalBeneficiaryName = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty.*:Roles.*:PartyRole[1].*:Role.*:RoleKind.*:Name AS CHARACTER);
+		END IF;
+
+		SET Comp = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty.*:Roles.*:PartyRole[2].*:Role.*:Id AS CHARACTER);
+
+		IF Comp = '18' THEN
+			SET OutputRoot.JSON.Data.claims.Item[I].beneficiaryName = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty.*:Roles.*:PartyRole[2].*:Role.*:RoleKind.*:Name AS CHARACTER);
+		END IF;
+
+
+		SET FECHA = SUBSTRING(CAST(refClaims.Claim[I].ClaimInfo.*:ReportDate AS CHARACTER) FROM 1 FOR 10);
+		--SET FECHA = SUBSTRING(CAST(Environment.*:Resultado.*:SearchClaims[I].*:Claims.*:ReportDate AS CHARACTER) FROM 12 FOR 10);
+		SET ANIO = SUBSTRING(FECHA FROM 1 FOR 4);
+		SET MES = SUBSTRING(FECHA FROM 6 FOR 2);
+		SET DIA = SUBSTRING(FECHA FROM 9 FOR 2);
+
+		SET OutputRoot.JSON.Data.claims.Item[I].submittedDate = DIA||'/'||MES||'/'||ANIO;
+		SET OutputRoot.JSON.Data.claims.Item[I].receivedDate = DIA||'/'||MES||'/'||ANIO;
+		--SET FECHA2 = SUBSTRING(CAST(Environment.*:Resultado.*:SearchClaims[I].*:Claims.*:StatusModificationDate AS CHARACTER) FROM 12 FOR 10);
+		SET FECHA2 = SUBSTRING(CAST(refClaims.Claim[I].ClaimInfo.*:StatusModificationDate AS CHARACTER) FROM 1 FOR 10);
+		SET ANIO = SUBSTRING(FECHA2 FROM 1 FOR 4);
+		SET MES = SUBSTRING(FECHA2 FROM 6 FOR 2);
+		SET DIA = SUBSTRING(FECHA2 FROM 9 FOR 2);
+
+		SET OutputRoot.JSON.Data.claims.Item[I].deniedDate = DIA||'/'||MES||'/'||ANIO;
+
+		SET OutputRoot.JSON.Data.claims.Item[I].status = CAST(refClaims.Claim[I].ClaimInfo.*:Status.*:Name AS CHARACTER);
+		--- Claims Settlement
+		SET OutputRoot.JSON.Data.claims.Item[I].totalAmount = '$'||CAST(refClaims.Claim[I].GetClaimSettlementResult.*:TotalClaimedAmount.*:Value AS CHARACTER);
+		---
+
+		SET OutputRoot.JSON.Data.claims.Item[I].submissionChannel = CAST(refClaims.Claim[I].ClaimInfo.*:ReportChannel AS CHARACTER);
+		SET OutputRoot.JSON.Data.claims.Item[I].reason = CAST(refClaims.Claim[I].ClaimInfo.*:Description AS CHARACTER);
+		SET OutputRoot.JSON.Data.claims.Item[I].reasonDate = DIA||'/'||MES||'/'||ANIO;
+		--- Claims Settlement
+		SET OutputRoot.JSON.Data.claims.Item[I].deductible = CAST(refClaims.Claim[I].GetClaimSettlementResult.*:TotalDeductibleAmount.*:Value AS CHARACTER);
+		SET OutputRoot.JSON.Data.claims.Item[I].paymentType = CAST(refClaims.Claim[I].GetClaimSettlementResult.*:Settlement.*:ReimbursableDetail.*:ReimbursableClaimSettlementDetail.*:IMed AS CHARACTER);
+
+		SET FECHA3 = SUBSTRING(CAST(refClaims.Claim[I].GetClaimSettlementResult.*:Settlement.*:PaidDate AS CHARACTER) FROM 1 FOR 10);
+
+		SET ANIO = SUBSTRING(FECHA3 FROM 1 FOR 4);
+		SET MES = SUBSTRING(FECHA3 FROM 6 FOR 2);
+		SET DIA = SUBSTRING(FECHA3 FROM 9 FOR 2);
+
+		SET OutputRoot.JSON.Data.claims.Item[I].paidDate = DIA||'/'||MES||'/'||ANIO;
+
+		SET OutputRoot.JSON.Data.claims.Item[I].payableAmount = '$'||CAST(refClaims.Claim[I].GetClaimSettlementResult.*:TotalPaidAmount.*:Value AS CHARACTER);
+		-- GEtdocument Ansus
+		--SET OutputRoot.JSON.Data.claims.Item[I].pdf = CAST(refClaims.Claim[I].PDF AS CHARACTER);
+		---getclaims document
+		SET L = CARDINALITY(refClaims.Claim[I].GetClaimDocumentsResponse.*:ClaimDocument[]);
+		SET K = 1;
+
+		WHILE (K <= L) DO
+
+			SET OutputRoot.JSON.Data.claims.Item[I].documents.Item[K].type= CAST(refClaims.Claim[I].GetClaimDocumentsResponse.*:ClaimDocument[K].*:Type AS CHARACTER);
+			SET OutputRoot.JSON.Data.claims.Item[I].documents.Item[K].size= CAST(refClaims.Claim[I].GetClaimDocumentsResponse.*:ClaimDocument[K].*:Size AS INTEGER);
+			SET OutputRoot.JSON.Data.claims.Item[I].documents.Item[K].unit= 'KB';
+			SET OutputRoot.JSON.Data.claims.Item[I].documents.Item[K].name= CAST(refClaims.Claim[I].GetClaimDocumentsResponse.*:ClaimDocument[K].*:Name AS CHARACTER);
+			SET OutputRoot.JSON.Data.claims.Item[I].documents.Item[K].documentId= CAST(refClaims.Claim[I].GetClaimDocumentsResponse.*:ClaimDocument[K].*:Id AS CHARACTER);
+			SET K = K + 1;
+
+		END WHILE;
+
+		SET OutputRoot.JSON.Data.claims.Item[I].documents TYPE = JSON.Array;
+
+
+		SET I = I + 1;
+
+	END WHILE;
+
+	DECLARE orderBy CHARACTER Environment.parameters.orderBy;
+	DECLARE order CHARACTER Environment.parameters.order;
+	DECLARE refClaimsResponse REFERENCE TO OutputRoot.JSON.Data.claims;
+	
+	--Ordena la salida de acuerdo a los parametros de ordenamiento dentro del arreglo Environment.parameters.orderBy
+	DECLARE refOrderByList REFERENCE TO Environment.parameters.orderBy;
+	CALL sortBy(refClaimsResponse, order, refOrderByList);
+	
+	SET I = 1;
+	DECLARE countClaims INTEGER CARDINALITY(refClaimsResponse.Item[]);
+	WHILE(I <= countClaims) DO
+		SET OutputRoot.JSON.Data.claims.Item[I].documents TYPE = JSON.Array;
+		SET I = I + 1;
+	END WHILE;
+	
+	RETURN TRUE;
+END;
+
+CREATE PROCEDURE CopyMessageHeaders() BEGIN
+	DECLARE I INTEGER 1;
+	DECLARE J INTEGER;
+	SET J = CARDINALITY(InputRoot.*[]);
+	WHILE I < J DO
+		SET OutputRoot.*[I] = InputRoot.*[I];
+		SET I = I + 1;
+	END WHILE;
+END;
+
+CREATE PROCEDURE CopyEntireMessage() BEGIN
+	SET OutputRoot = InputRoot;
+END;
+END MODULE;

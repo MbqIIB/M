@@ -1,0 +1,49 @@
+BROKER SCHEMA esqls.changePassword
+
+/*******************
+ * SetObtieneClave *
+ *******************/
+CREATE COMPUTE MODULE SetObtieneClave
+
+	DECLARE sec NAMESPACE 'http://tuxpan.com/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the RUT from the local environment
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+
+		--Set the parameter in the request to be done (the RUT number without the verification digit)
+		SET OutputRoot.SOAP.Body.sec:ObtieneClave.sec:rut = SUBSTRING(rutNumber FROM 0 FOR LENGTH (rutNumber));
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*****************
+ * SetGrabaLocal *
+ *****************/
+CREATE COMPUTE MODULE SetGrabaLocal
+
+	DECLARE sec NAMESPACE 'http://tuxpan.com/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Get the RUT and new password from the local environment
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		DECLARE newPassword CHARACTER InputLocalEnvironment.NewPassword;
+
+		--Set the parameters in the request to be done (the RUT number without the verification digit and the new password)
+		SET OutputRoot.SOAP.Body.sec:GrabaLocal.sec:rut = SUBSTRING(rutNumber FROM 0 FOR LENGTH (rutNumber));
+		SET OutputRoot.SOAP.Body.sec:GrabaLocal.sec:clave = newPassword;
+
+		RETURN TRUE;
+	END;
+END MODULE;

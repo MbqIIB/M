@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmSOAPRequest.msgnode="ComIbmSOAPRequest.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="gen/flows/SearchClaims_ClaimService.subflow"
+    nsPrefix="gen_flows_SearchClaims_ClaimService.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" useDefaults="true" udpSupport="true">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.WebServiceURL_ClaimService" name="WebServiceURL_ClaimService">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <translation xmi:type="utility:TranslatableString" key="SearchClaims_ClaimService" bundleName="gen/flows/SearchClaims_ClaimService" pluginId="MobileServices"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj16/SearchClaims_ClaimService.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj30/SearchClaims_ClaimService.gif"/>
+    <composition>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.in" location="20,20">
+        <translation xmi:type="utility:TranslatableString" key="InTerminal.in" bundleName="gen/flows/SearchClaims_ClaimService" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="ComIbmSOAPRequest.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="407,21" wsdlFileName="claim/ClaimService.wsdl" selectedPortType="IClaimService" selectedBinding="basicHttpBinding_ClaimService" selectedOperation="SearchClaims" selectedPort="basicHttpBinding_ClaimService" targetNamespace="urn:metlife.services.acord.claim" useHTTPTransport="true" webServiceURL="http://mlclwsdevqa01:107/ClaimService.svc/http" sslProtocol="TLS" parserXmlnscBuildTreeUsingXMLSchema="false"
+          validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="Request"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.failure" location="602,23">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.failure" bundleName="gen/flows/SearchClaims_ClaimService" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.fault" location="617,192">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.fault" bundleName="gen/flows/SearchClaims_ClaimService" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.SearchClaimsResponse" location="565,99">
+        <translation xmi:type="utility:TranslatableString" key="OutTerminal.SearchClaimsResponse" bundleName="gen/flows/SearchClaims_ClaimService" pluginId="MobileServices"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="197,20" computeExpression="esql://routine/esqls.generics#ChangeWebServiceURL_ClaimService.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Change WS URL"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="OutTerminal.failure" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="OutTerminal.fault" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_11" targetNode="FCMComposite_1_2" sourceNode="InTerminal.in" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_12" targetNode="OutTerminal.SearchClaimsResponse" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.Basic" configurable="true" userDefined="true" describedAttribute="Property.WebServiceURL_ClaimService">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.WebServiceURL_ClaimService" bundleName="gen/flows/SearchClaims_ClaimService" pluginId="MobileServices"/>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

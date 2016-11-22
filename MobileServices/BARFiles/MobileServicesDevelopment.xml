@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="MobileServicesDevelopment" default="run">
+  <target name="run" description="">
+    <property name="toolkit.home" value="C:\Program Files (x86)\IBM\WMBT800" />
+    <property name="ant.bars.basedir" value="C:\Users\LuisR\IBM\wmbt80\MobileServices\MessageBroker\MobileServices\BARFiles" />
+    <property name="file.bar.name" value="${ant.bars.basedir}\MobileServices.bar" />
+  	<property name="file.bar.name.output" value="${ant.bars.basedir}\MobileServicesDevelopment.bar" />
+    <property name="file.properties.name" value="${ant.bars.basedir}\MobileServicesDevelopment.properties" />
+    <antcall target="build" />
+  </target>
+  <target name="build">
+     <echo message="Applying properties overrides in file - ${bar.name} " />
+     <exec executable="${toolkit.home}\mqsiapplybaroverride.exe" spawn="false">
+
+        <arg value="-b" />
+		<arg value="${file.bar.name}" />
+
+     	<arg value="-o" />
+		<arg value="${file.bar.name.output}" />
+
+		<arg value="-p" />
+		<arg value="${file.properties.name}" />
+
+        <arg value="-r" />
+	</exec>
+    <echo message="Finished properties overwrite in file  - ${bar.name} " />
+  </target>
+</project>

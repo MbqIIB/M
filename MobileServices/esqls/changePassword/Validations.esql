@@ -1,0 +1,148 @@
+BROKER SCHEMA esqls.changePassword
+
+/******************
+ * CheckInputs *
+ ******************/
+CREATE COMPUTE MODULE CheckInputs
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		SET OutputRoot.HTTPInputHeader = InputRoot.HTTPInputHeader;
+		
+		--Get the base64 encoded part and decode it
+		DECLARE basicAuth BLOB BASE64DECODE(SUBSTRING(InputRoot.JSON.Data."user-Authorization" AFTER 'Basic '));
+		DECLARE basicAuthChar CHARACTER CAST(basicAuth AS CHARACTER CCSID InputRoot.Properties.CodedCharSetId);		
+		
+		--Get Metadata vars
+		DECLARE metadataChannel CHARACTER InputRoot.JSON.Data.metadata.channel; 
+		DECLARE metadataOrigin CHARACTER InputRoot.JSON.Data.metadata.origin;
+				
+		--Get ChangePassword vars
+		DECLARE oldPassword CHARACTER InputRoot.JSON.Data.oldPassword;
+		DECLARE newPassword CHARACTER InputRoot.JSON.Data.newPassword;
+		DECLARE confirmedPassword CHARACTER InputRoot.JSON.Data.confirmedPassword;
+		
+		--Save values into local environment
+		SET OutputLocalEnvironment.OldPassword = oldPassword;
+		SET OutputLocalEnvironment.NewPassword = newPassword;
+		SET OutputLocalEnvironment.ConfirmedPassword = confirmedPassword;
+		SET OutputLocalEnvironment.MetadataChannel = metadataChannel;
+		SET OutputLocalEnvironment.MetadataOrigin = metadataOrigin;
+		
+		--If there is Authentication input, then propagate to Authenticate subflow, else propagate to ChangePassword subflow.
+		IF (basicAuthChar IS NOT NULL AND basicAuthChar <> '') THEN	
+			--Get the RUT an Password values
+			DECLARE rutNumber CHARACTER SUBSTRING(basicAuthChar BEFORE ':');
+			DECLARE password CHARACTER SUBSTRING(basicAuthChar AFTER ':');
+			
+			--Save Rut and Password values in the local environment
+			SET OutputLocalEnvironment.RUT = rutNumber;
+			SET OutputLocalEnvironment.Password = password; 
+			
+			--To Authenticate subflow
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		ELSE
+			--Get RUT from URL
+			DECLARE aux CHARACTER SUBSTRING(InputRoot.HTTPInputHeader."X-Original-HTTP-Command" AFTER 'users/');
+			DECLARE rutNumber CHARACTER SUBSTRING(aux BEFORE '/changePassword');
+			
+			--Get Token value
+			DECLARE tokenNumber CHARACTER InputRoot.HTTPInputHeader."Token";
+			
+			--Save vaues into Local evironment
+			SET OutputLocalEnvironment.RUT = rutNumber;
+			SET OutputLocalEnvironment.Token = tokenNumber;
+			
+			--To ChangePswd subflow
+			PROPAGATE TO TERMINAL 'out2' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************
+ * ValidateInputs *
+ ******************/
+CREATE COMPUTE MODULE ValidateInputs
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Declare and set local variables
+		DECLARE oldPassword CHARACTER InputLocalEnvironment.OldPassword;
+		DECLARE newPassword CHARACTER InputLocalEnvironment.NewPassword;
+		DECLARE confirmedPassword CHARACTER InputLocalEnvironment.ConfirmedPassword;
+		DECLARE metadataChannel CHARACTER InputLocalEnvironment.MetadataChannel;
+		DECLARE metadataOrigin CHARACTER InputLocalEnvironment.MetadataOrigin;
+
+		--Check mandatory parameters
+		IF ((oldPassword IS NULL) OR (oldPassword = '')) OR
+		   ((newPassword IS NULL) OR (newPassword = '')) OR
+		   ((confirmedPassword IS NULL) OR (confirmedPassword = '')) THEN
+
+		    --Set the mandatory field missing
+		    DECLARE mandatoryFieldMissing CHARACTER '';
+		    IF ((oldPassword IS NULL) OR (oldPassword = '')) THEN
+		    	SET mandatoryFieldMissing = mandatoryFieldMissing || 'oldPassword,';
+		    END IF;
+		    IF ((newPassword IS NULL) OR (newPassword = '')) THEN
+		    	SET mandatoryFieldMissing = mandatoryFieldMissing || 'newPassword,';
+		    END IF;
+		    IF ((confirmedPassword IS NULL) OR (confirmedPassword = '')) THEN
+		    	SET mandatoryFieldMissing = mandatoryFieldMissing || 'confirmedPassword,';
+		    END IF;
+
+		    SET OutputLocalEnvironment.MandatoryFieldsMissing = mandatoryFieldMissing;
+
+			PROPAGATE TO TERMINAL 'out2' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+
+		--Check parameters
+		IF ((oldPassword = newPassword) OR (newPassword <> confirmedPassword)) THEN
+			
+			--Set the missmatch fields
+		    DECLARE missmatchFields CHARACTER '';
+			IF (oldPassword = newPassword) THEN
+				SET missmatchFields = 'oldPassword,newPassword,';
+			END IF;
+			IF (newPassword <> confirmedPassword) THEN
+				SET missmatchFields = 'newPassword,confirmedPassword,';
+			END IF;
+
+		    SET OutputLocalEnvironment.MissmatchFields = missmatchFields;
+			
+			PROPAGATE TO TERMINAL 'out1' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		END IF;
+	
+		--Check Metadata values
+		IF ((metadataChannel IS NULL) OR (metadataChannel = '')) OR
+		   ((metadataOrigin IS NULL) OR (metadataOrigin = '')) THEN
+		   
+		   --Set the empty fields
+		    DECLARE emptyFields CHARACTER '';
+		    IF ((metadataChannel IS NULL) OR (metadataChannel = '')) THEN
+		    	SET emptyFields = emptyFields || 'metadata.channel,';
+		    END IF;
+		    IF ((metadataOrigin IS NULL) OR (metadataOrigin = '')) THEN
+		    	SET emptyFields = emptyFields || 'metadata.origin,';
+		    END IF;
+		    
+		    SET OutputLocalEnvironment.EmptyFields = emptyFields;
+			
+			PROPAGATE TO TERMINAL 'out3' FINALIZE NONE DELETE NONE;
+			RETURN FALSE;
+		   	
+		END IF;
+
+		RETURN TRUE;
+	END;
+END MODULE;

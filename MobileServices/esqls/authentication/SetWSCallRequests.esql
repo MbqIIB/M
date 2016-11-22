@@ -1,0 +1,116 @@
+BROKER SCHEMA esqls.authentication
+
+/************
+ * SetInput *
+ ************/
+CREATE COMPUTE MODULE SetInput
+
+	DECLARE sec NAMESPACE 'http://tuxpan.com/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get the base64 encoded part and decode it
+		DECLARE basicAuth BLOB BASE64DECODE(SUBSTRING(InputRoot.JSON.Data."user-Authorization" AFTER 'Basic '));
+		DECLARE basicAuthChar CHARACTER CAST(basicAuth AS CHARACTER CCSID InputRoot.Properties.CodedCharSetId);	
+		
+		--Get the RUT an Password values
+		DECLARE rutNumber CHARACTER SUBSTRING(basicAuthChar BEFORE ':');
+		DECLARE password CHARACTER SUBSTRING(basicAuthChar AFTER ':');
+		
+		--Save Rut and Password values in the local environment
+		SET OutputLocalEnvironment.RUT = rutNumber;
+		SET OutputLocalEnvironment.Password = password;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*************************************************
+ * GetRUTAndPswdFromHeaderAndSetValidaIndividual *
+ *************************************************/
+CREATE COMPUTE MODULE GetRUTAndPswdFromHeaderAndSetValidaIndividual
+
+	DECLARE sec NAMESPACE 'http://tuxpan.com/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		
+		--Get Rut and Password from local environment
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		DECLARE password CHARACTER InputLocalEnvironment.RUT;
+
+		--Set the parameter in the request to be done (the RUT number without the verification digit)
+		SET OutputRoot.SOAP.Body.sec:ValidaIndividual.sec:rut = SUBSTRING(rutNumber FROM 0 FOR LENGTH (rutNumber));
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/*******************
+ * SetCheckeoClave *
+ *******************/
+CREATE COMPUTE MODULE SetCheckeoClave
+
+	DECLARE sec NAMESPACE 'http://tuxpan.com/';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the parameter in the request to be done (the RUT number without the verification digit and the password)
+		DECLARE rutNumber CHARACTER InputLocalEnvironment.RUT;
+		SET OutputRoot.SOAP.Body.sec:CheckeoClave.sec:rut = SUBSTRING(rutNumber FROM 0 FOR LENGTH (rutNumber));
+		SET OutputRoot.SOAP.Body.sec:CheckeoClave.sec:clave = InputLocalEnvironment.Password;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/****************
+ * SetGetPerson *
+ ****************/
+CREATE COMPUTE MODULE SetGetPerson
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.party';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the parameter in the request to be done (the RUT number)
+		SET OutputRoot.SOAP.Body.buc2:GetPerson.buc2:RUT = InputLocalEnvironment.RUT;
+
+		RETURN TRUE;
+	END;
+END MODULE;
+
+/******************
+ * SetCreateToken *
+ ******************/
+CREATE COMPUTE MODULE SetCreateToken
+
+	DECLARE buc2 NAMESPACE 'urn:metlife.services.acord.security';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Copy properties and environment so it doesn't get lost
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+
+		--Set the parameter in the request to be done (the RUT number)
+		SET OutputRoot.SOAP.Body.buc2:CreateToken.buc2:RUT = InputLocalEnvironment.RUT;
+
+		RETURN TRUE;
+	END;
+END MODULE;
