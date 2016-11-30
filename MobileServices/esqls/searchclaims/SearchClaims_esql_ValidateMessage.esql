@@ -117,36 +117,54 @@ CREATE COMPUTE MODULE SearchClaims_esql_ValidateMessage
 			IF status1 = 'Rechazado' THEN
 				SET rOut.ns13:claimStatusId = 14;
 			END IF;
-
+			
+			--Variable to save from and to date with format
+			DECLARE fromDateFormat, toDateFormat DATE;
+			--Format of date
+			DECLARE pattern CHARACTER 'yyyy-MM-dd';
+			
 			IF fromDate1 <> '' THEN
 				SET DIA = SUBSTRING(fromDate1 FROM 1 FOR 2);
 				SET MES = SUBSTRING(fromDate1 FROM 4 FOR 2);
 				SET ANIO = SUBSTRING(fromDate1 FROM 7 FOR 4);
-				SET fromDate1 = ANIO||'-'||MES||'-'||DIA||'T'||'00:00:00';
-				SET rOut.ns13:startDate = fromDate1;
 			ELSE
 				SET fromDate1 = REPLACE(SUBSTRING(CAST(CURRENT_DATE AS CHARACTER) AFTER 'DATE '), '''', '');
 				SET DIA = SUBSTRING(fromDate1 FROM 9 FOR 2);
 				SET MES = SUBSTRING(fromDate1 FROM 6 FOR 2);
 				SET ANIO = SUBSTRING(fromDate1 FROM 1 FOR 4);
-				SET fromDate1 = ANIO||'-'||MES||'-'||DIA||'T'||'00:00:00';
-				SET rOut.ns13:startDate = fromDate1;
 			END IF;
-
+			SET fromDateFormat = CAST((ANIO || '-' || MES || '-' || DIA) AS DATE FORMAT pattern);
+			
 			IF toDate1 <> '' THEN
 				SET DIA = SUBSTRING(toDate1 FROM 1 FOR 2);
 				SET MES = SUBSTRING(toDate1 FROM 4 FOR 2);
 				SET ANIO = SUBSTRING(toDate1 FROM 7 FOR 4);
-				SET toDate1 = ANIO||'-'||MES||'-'||DIA||'T'||'00:00:00';
-				SET rOut.ns13:endDate = toDate1;
-			ELSE
-				SET toDate1 = REPLACE(SUBSTRING(CAST((CURRENT_DATE + INTERVAL '3' MONTH)AS CHARACTER) AFTER 'DATE '), '''', '');
+			ELSE				
+				SET toDate1 = REPLACE(SUBSTRING(CAST((fromDateFormat - INTERVAL '3' MONTH) AS CHARACTER) AFTER 'DATE '), '''', '');
 				SET DIA = SUBSTRING(toDate1 FROM 9 FOR 2);
 				SET MES = SUBSTRING(toDate1 FROM 6 FOR 2);
 				SET ANIO = SUBSTRING(toDate1 FROM 1 FOR 4);
-				SET toDate1 = ANIO||'-'||MES||'-'||DIA||'T'||'00:00:00';
-				SET rOut.ns13:endDate = toDate1;
 			END IF;
+			
+			SET toDateFormat = CAST((ANIO || '-' || MES || '-' || DIA) AS DATE FORMAT pattern);
+			
+			
+			SET toDate1 = REPLACE(SUBSTRING(CAST(toDateFormat AS CHARACTER) AFTER 'DATE '), '''', '');
+			SET fromDate1 = REPLACE(SUBSTRING(CAST(fromDateFormat AS CHARACTER) AFTER 'DATE '), '''', '');
+			
+			--If the fromDate is greater than toDate then change order date to invoke the service
+			IF fromDateFormat > toDateFormat THEN
+				DECLARE dateAux CHARACTER;
+				SET dateAux = fromDate1;
+				SET fromDate1 = toDate1||'T'||'00:00:00';
+				SET toDate1 = dateAux||'T'||'00:00:00';
+			ELSE
+				SET fromDate1 = fromDate1||'T'||'00:00:00';
+				SET toDate1 = toDate1||'T'||'00:00:00';
+			END IF;
+			
+			SET rOut.ns13:startDate = fromDate1;
+			SET rOut.ns13:endDate = toDate1;
 
 			IF orderBy1 <> '' THEN
 				SET Environment.parameters.orderBy.Item[1] = orderBy1;
