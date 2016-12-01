@@ -1,12 +1,9 @@
 BROKER SCHEMA esqls.searchclaims
 PATH esqls.generics;
 
-
 CREATE COMPUTE MODULE SearchClaims_esql_ComponenteSalida
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
-		-- CALL CopyMessageHeaders();
-		-- CALL CopyEntireMessage();
 		DECLARE I, J, K, L INTEGER;
 		DECLARE Comp1TMP,Comp,Comp1, FECHA, FECHA2 ,FECHA3, DIA, ANIO, MES, refe,limite CHARACTER;
 
@@ -73,7 +70,7 @@ CREATE COMPUTE MODULE SearchClaims_esql_ComponenteSalida
 
 		SET OutputRoot.JSON.Data.claims.Item[I].deniedDate = DIA||'/'||MES||'/'||ANIO;
 
-		SET OutputRoot.JSON.Data.claims.Item[I].status = CAST(refClaims.Claim[I].ClaimInfo.*:Status.*:Name AS CHARACTER);
+		SET OutputRoot.JSON.Data.claims.Item[I].status = resolveMapStatus(CAST(refClaims.Claim[I].ClaimInfo.*:Status.*:Id AS CHARACTER), CAST(refClaims.Claim[I].ClaimInfo.*:Status.*:Name AS CHARACTER));
 		--- Claims Settlement
 		SET OutputRoot.JSON.Data.claims.Item[I].totalAmount = '$'||CAST(refClaims.Claim[I].GetClaimSettlementResult.*:TotalClaimedAmount.*:Value AS CHARACTER);
 		---
@@ -136,17 +133,27 @@ CREATE COMPUTE MODULE SearchClaims_esql_ComponenteSalida
 	RETURN TRUE;
 END;
 
-CREATE PROCEDURE CopyMessageHeaders() BEGIN
-	DECLARE I INTEGER 1;
-	DECLARE J INTEGER;
-	SET J = CARDINALITY(InputRoot.*[]);
-	WHILE I < J DO
-		SET OutputRoot.*[I] = InputRoot.*[I];
-		SET I = I + 1;
-	END WHILE;
-END;
 
-CREATE PROCEDURE CopyEntireMessage() BEGIN
-	SET OutputRoot = InputRoot;
-END;
+/*
+ * Find the status value from idStatus received from the SearchClaims.
+ *
+ * Parameters:
+ *
+ * IN: CHARACTER idStatus - Current id status to compare.
+ * IN: CHARACTER defaultStatus - If the current id statu does'nt exist, then this value is returned.
+ */
+CREATE FUNCTION resolveMapStatus(IN idStatus CHARACTER, IN defaultStatus CHARACTER) RETURNS CHARACTER
+	BEGIN
+		CASE
+		WHEN (idStatus = STATUS_ID_NOTIFICADO OR idStatus = STATUS_ID_PENDIENTECONTRALORIAMEDICA OR idStatus = STATUS_ID_DIGITADO OR idStatus = STATUS_ID_LIQUIDARDESPUES OR idStatus = STATUS_ID_RECEPCIONADO OR idStatus = STATUS_ID_VALIDADO OR idStatus = STATUS_ID_VALIDADESPUES) THEN
+			RETURN STATUS_ENPROCESO;
+		WHEN idStatus = STATUS_ID_LIQUIDADA THEN
+			RETURN STATUS_PAGADO;
+		WHEN (idStatus = STATUS_ID_ANULADO OR idStatus = STATUS_ID_NEGADO OR idStatus = STATUS_ID_RECHAZADO) THEN
+			RETURN STATUS_RECHAZADO;
+		ELSE
+			RETURN defaultStatus;
+		END CASE;
+	END;
+
 END MODULE;
