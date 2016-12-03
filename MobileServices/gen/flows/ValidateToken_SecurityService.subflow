@@ -14,7 +14,7 @@
       <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.in" location="20,20">
         <translation xmi:type="utility:TranslatableString" key="InTerminal.in" bundleName="gen/flows/ValidateToken_SecurityService" pluginId="MobileServices"/>
       </nodes>
-      <nodes xmi:type="ComIbmSOAPRequest.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="360,20" wsdlFileName="security/SecurityService.wsdl" selectedPortType="ISecurityService" selectedBinding="basicHttpBinding_SecurityService" selectedOperation="ValidateToken" selectedPort="basicHttpBinding_SecurityService" targetNamespace="urn:metlife.services.acord.security" useHTTPTransport="true" webServiceURL="http://mustbeoverwritten" sslProtocol="TLS">
+      <nodes xmi:type="ComIbmSOAPRequest.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="360,20" wsdlFileName="security/SecurityService.wsdl" selectedPortType="ISecurityService" selectedBinding="basicHttpBinding_SecurityService" selectedOperation="ValidateToken" selectedPort="basicHttpBinding_SecurityService" targetNamespace="urn:metlife.services.acord.security" useHTTPTransport="true" webServiceURL="http://10.77.208.109:107/SecurityService.svc/http" sslProtocol="TLS">
         <translation xmi:type="utility:ConstantString" string="Request"/>
       </nodes>
       <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.failure" location="520,80">
@@ -26,7 +26,7 @@
       <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.ValidateTokenResponse" location="479,140">
         <translation xmi:type="utility:TranslatableString" key="OutTerminal.ValidateTokenResponse" bundleName="gen/flows/ValidateToken_SecurityService" pluginId="MobileServices"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="169,20" computeExpression="esql://routine/esqls.generics#ChangeWebServiceURL_Security.Main" computeMode="destinationAndMessage">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="143,21" computeExpression="esql://routine/esqls.generics#ChangeWebServiceURL_Security.Main" computeMode="destinationAndMessage">
         <translation xmi:type="utility:ConstantString" string="Change WS URL"/>
       </nodes>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="OutTerminal.failure" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>

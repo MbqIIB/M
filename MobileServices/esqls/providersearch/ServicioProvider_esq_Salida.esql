@@ -85,10 +85,10 @@ CREATE COMPUTE MODULE ServicioProvider_esq_Salida
 				SET OutputRoot.JSON.Data.providers.Item[I].languages TYPE = JSON.Array;
 
 
-				--SET OutputRoot.JSON.Data.providers.Item[I].contact = rIn.ns1:ProviderDTO[I].ns1:Contact;
-				SET OutputRoot.JSON.Data.providers.Item[I].contact = 'Contacto';
+				SET OutputRoot.JSON.Data.providers.Item[I].contact = rIn.ns1:ProviderDTO[I].ns1:Contact;
+				--SET OutputRoot.JSON.Data.providers.Item[I].contact = 'Contacto';
 				SET OutputRoot.JSON.Data.providers.Item[I].webSite = rIn.ns1:ProviderDTO[I].ns1:WebSite;
-				--SET OutputRoot.JSON.Data.providers.Item[I].email = rIn.ns1:ProviderDTO[I].ns1:Email;
+				SET OutputRoot.JSON.Data.providers.Item[I].email = rIn.ns1:ProviderDTO[I].ns1:Email;
 				SET OutputRoot.JSON.Data.providers.Item[I].phoneNumbers.Item[1].number = CAST(rIn.ns1:ProviderDTO[I].ns1:Telephone AS CHARACTER);
 				--SET OutputRoot.JSON.Data.providers.Item[I].phoneNumbers.Item[1].type = rIn.ns1:ProviderDTO[I].ns1:Type;
 				SET OutputRoot.JSON.Data.providers.Item[I].phoneNumbers.Item[1].type = 'Comercial';

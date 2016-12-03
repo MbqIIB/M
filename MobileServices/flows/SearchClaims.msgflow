@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0"
-    xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmFlowOrder.msgnode="ComIbmFlowOrder.msgnode" xmlns:ComIbmLabel.msgnode="ComIbmLabel.msgnode" xmlns:ComIbmRouteToLabel.msgnode="ComIbmRouteToLabel.msgnode" xmlns:ComIbmWSInput.msgnode="ComIbmWSInput.msgnode" xmlns:ComIbmWSReply.msgnode="ComIbmWSReply.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:gen_flows_GetClaimDocuments_ClaimService_SearchClaims.subflow="gen/flows/GetClaimDocuments_ClaimService_SearchClaims.subflow"
-    xmlns:gen_flows_GetClaimSettlement_ClaimService_SearchClaims.subflow="gen/flows/GetClaimSettlement_ClaimService_SearchClaims.subflow" xmlns:gen_flows_SearchClaims_HandleFault.subflow="gen/flows/SearchClaims_HandleFault.subflow" xmlns:gen_flows_SearchClaims_InitialValidations.subflow="gen/flows/SearchClaims_InitialValidations.subflow" xmlns:gen_flows_SearchClaims_InvokeSearchClaims.subflow="gen/flows/SearchClaims_InvokeSearchClaims.subflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="flows/SearchClaims.msgflow"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmFlowOrder.msgnode="ComIbmFlowOrder.msgnode" xmlns:ComIbmLabel.msgnode="ComIbmLabel.msgnode" xmlns:ComIbmRouteToLabel.msgnode="ComIbmRouteToLabel.msgnode" xmlns:ComIbmWSInput.msgnode="ComIbmWSInput.msgnode" xmlns:ComIbmWSReply.msgnode="ComIbmWSReply.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:gen_flows_CreateClaimSummaryDocument_PreIngreso_SearchClaims.subflow="gen/flows/CreateClaimSummaryDocument_PreIngreso_SearchClaims.subflow"
+    xmlns:gen_flows_GetClaimDocuments_ClaimService_SearchClaims.subflow="gen/flows/GetClaimDocuments_ClaimService_SearchClaims.subflow" xmlns:gen_flows_GetClaimSettlement_ClaimService_SearchClaims.subflow="gen/flows/GetClaimSettlement_ClaimService_SearchClaims.subflow" xmlns:gen_flows_SearchClaims_HandleFault.subflow="gen/flows/SearchClaims_HandleFault.subflow" xmlns:gen_flows_SearchClaims_InitialValidations.subflow="gen/flows/SearchClaims_InitialValidations.subflow" xmlns:gen_flows_SearchClaims_InvokeSearchClaims.subflow="gen/flows/SearchClaims_InvokeSearchClaims.subflow"
+    xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="flows/SearchClaims.msgflow"
     nsPrefix="flows_SearchClaims.msgflow">
   <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1">
     <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
@@ -9,7 +10,7 @@
     <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj16/SearchClaims.gif"/>
     <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj30/SearchClaims.gif"/>
     <composition>
-      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="23,16" URLSpecifier="/users/*/*/claims" useHTTPS="true" setDestinationList="true" parseQueryString="true" messageDomainProperty="BLOB">
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="23,16" URLSpecifier="/users/*/*/claims" setDestinationList="true" parseQueryString="true" messageDomainProperty="BLOB">
         <translation xmi:type="utility:ConstantString" string="HTTP Input"/>
       </nodes>
       <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="140,12" computeExpression="esql://routine/esqls.searchclaims#ComputeState.Main">
@@ -39,10 +40,10 @@
       <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_19" location="655,322" computeExpression="esql://routine/esqls.searchclaims#SearchClaims_esql_ComponenteSalida.Main">
         <translation xmi:type="utility:ConstantString" string="esql_ComponenteSalida"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_20" location="1906,199" computeExpression="esql://routine/esqls.searchclaims#SearchClaims_esql_Construccion.Main">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_20" location="2255,200" computeExpression="esql://routine/esqls.searchclaims#SearchClaims_esql_Construccion.Main">
         <translation xmi:type="utility:ConstantString" string="esql_Construccion"/>
       </nodes>
-      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="1700,12">
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="1854,-47">
         <translation xmi:type="utility:ConstantString" string="HTTP ReplyError"/>
       </nodes>
       <nodes xmi:type="gen_flows_SearchClaims_InitialValidations.subflow:FCMComposite_1" xmi:id="FCMComposite_1_3" location="106,174">
@@ -51,7 +52,7 @@
       <nodes xmi:type="gen_flows_SearchClaims_InvokeSearchClaims.subflow:FCMComposite_1" xmi:id="FCMComposite_1_4" location="310,174">
         <translation xmi:type="utility:ConstantString" string="SearchClaims_InvokeSearchClaims"/>
       </nodes>
-      <nodes xmi:type="gen_flows_SearchClaims_HandleFault.subflow:FCMComposite_1" xmi:id="FCMComposite_1_14" location="1452,12">
+      <nodes xmi:type="gen_flows_SearchClaims_HandleFault.subflow:FCMComposite_1" xmi:id="FCMComposite_1_14" location="1687,39">
         <translation xmi:type="utility:ConstantString" string="SearchClaims_HandleFault"/>
       </nodes>
       <nodes xmi:type="gen_flows_GetClaimSettlement_ClaimService_SearchClaims.subflow:FCMComposite_1" xmi:id="FCMComposite_1_21" location="828,175">
@@ -59,6 +60,9 @@
       </nodes>
       <nodes xmi:type="gen_flows_GetClaimDocuments_ClaimService_SearchClaims.subflow:FCMComposite_1" xmi:id="FCMComposite_1_22" location="1353,183">
         <translation xmi:type="utility:ConstantString" string="GetClaimDocuments_ClaimService_SearchClaims"/>
+      </nodes>
+      <nodes xmi:type="gen_flows_CreateClaimSummaryDocument_PreIngreso_SearchClaims.subflow:FCMComposite_1" xmi:id="FCMComposite_1_5" location="1889,192">
+        <translation xmi:type="utility:ConstantString" string="CreateClaimSummaryDocument_PreIngreso_SearchClaims"/>
       </nodes>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_21" targetNode="FCMComposite_1_9" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.first" targetTerminalName="InTerminal.in"/>
@@ -73,11 +77,15 @@
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_29" targetNode="FCMComposite_1_21" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_30" targetNode="FCMComposite_1_17" sourceNode="FCMComposite_1_21" sourceTerminalName="OutTerminal.GetClaimSettlementResponse" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_31" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_21" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.Input"/>
-      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_32" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_21" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.Input1"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_33" targetNode="FCMComposite_1_22" sourceNode="FCMComposite_1_17" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_34" targetNode="FCMComposite_1_18" sourceNode="FCMComposite_1_22" sourceTerminalName="OutTerminal.GetClaimDocumentsResponse" targetTerminalName="InTerminal.in"/>
-      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_35" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_22" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.Input"/>
-      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_36" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_22" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.Input1"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_18" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8" targetNode="FCMComposite_1_20" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.CreateClaimSummaryDocumentResponse" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_17" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_21" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_18" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_22" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_19" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_22" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_20" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_22" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.Input"/>
     </composition>
     <propertyOrganizer/>
     <stickyBoard/>

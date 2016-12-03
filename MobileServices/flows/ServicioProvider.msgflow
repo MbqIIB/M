@@ -9,7 +9,7 @@
     <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj16/ServicioProvider.gif"/>
     <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/MobileServices/icons/full/obj30/ServicioProvider.gif"/>
     <composition>
-      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="93,20" URLSpecifier="/users/providers*" useHTTPS="true" setDestinationList="true" parseQueryString="true" messageDomainProperty="BLOB" identityType="usernameAndPassword">
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="93,20" URLSpecifier="/users/providers*" setDestinationList="true" parseQueryString="true" messageDomainProperty="BLOB" identityType="usernameAndPassword">
         <translation xmi:type="utility:ConstantString" string="HTTP Input"/>
         <nsMappingTable nsPrefix="tns" namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
       </nodes>

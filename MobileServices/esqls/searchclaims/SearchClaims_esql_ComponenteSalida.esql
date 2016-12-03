@@ -4,9 +4,8 @@ PATH esqls.generics;
 CREATE COMPUTE MODULE SearchClaims_esql_ComponenteSalida
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
-		DECLARE I, J, K, L INTEGER;
-		DECLARE Comp1TMP,Comp,Comp1, FECHA, FECHA2 ,FECHA3, DIA, ANIO, MES, refe,limite CHARACTER;
-
+		DECLARE I, J, K, L, countPartyClaim INTEGER;
+		DECLARE idRoleType, FECHA, FECHA2 ,FECHA3, DIA, ANIO, MES, refe,limite CHARACTER;
 		DECLARE refClaims REFERENCE TO Environment.Claims;
 
 		DECLARE Count INTEGER CARDINALITY(refClaims.Claim[]);
@@ -38,21 +37,45 @@ CREATE COMPUTE MODULE SearchClaims_esql_ComponenteSalida
 		WHILE(I <= J ) DO
 		--- SearchClaims
 		SET OutputRoot.JSON.Data.claims.Item[I].claimId = CAST(refClaims.Claim[I].*:ClaimInfo.*:Number AS CHARACTER);
-		--SET OutputRoot.JSON.Data.claims.Item[I].principalBeneficiaryName = CAST(Environment.*:Resultado.*:SearchClaims[I].*:Claims.*:Parties.*:ClaimParty.*:Party.*:FullName AS CHARACTER);
-		--SET Comp1 = CAST(Environment.*:Resultado.*:SearchClaims[I].*:Claims.*:Parties.*:ClaimParty.*:Roles.*:PartyRole[1].*:Role.*:Id AS CHARACTER);
-		SET Comp1TMP = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty.*:Roles.*:PartyRole[1].*:Role.*:Id AS CHARACTER);
-
-
-		IF Comp1 = '1' THEN
-			SET OutputRoot.JSON.Data.claims.Item[I].principalBeneficiaryName = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty.*:Roles.*:PartyRole[1].*:Role.*:RoleKind.*:Name AS CHARACTER);
+		
+		SET countPartyClaim = CARDINALITY(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty[]);
+		
+		IF countPartyClaim > 0 THEN
+			
+			SET idRoleType = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty[1].*:Roles.*:PartyRole[1].*:Role.*:Id AS CHARACTER);
+			
+			IF idRoleType = '1' THEN
+				SET OutputRoot.JSON.Data.claims.Item[I].principalBeneficiaryName = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty[1].*:Party.*:FullName AS CHARACTER);
+			END IF;
+			
+			IF refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty[1].*:Roles.*:PartyRole[2].*:Role.*:Id <> '' THEN
+				SET idRoleType = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty[1].*:Roles.*:PartyRole[2].*:Role.*:Id AS CHARACTER);
+		
+				IF idRoleType = '18' THEN
+					SET OutputRoot.JSON.Data.claims.Item[I].beneficiaryName = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty[1].*:Party.*:FullName AS CHARACTER);
+				END IF;
+			END IF;
 		END IF;
-
-		SET Comp = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty.*:Roles.*:PartyRole[2].*:Role.*:Id AS CHARACTER);
-
-		IF Comp = '18' THEN
-			SET OutputRoot.JSON.Data.claims.Item[I].beneficiaryName = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty.*:Roles.*:PartyRole[2].*:Role.*:RoleKind.*:Name AS CHARACTER);
+		
+		IF countPartyClaim > 1 THEN
+			
+			SET idRoleType = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty[2].*:Roles.*:PartyRole[1].*:Role.*:Id AS CHARACTER);
+			
+			IF idRoleType = '1' THEN
+				SET OutputRoot.JSON.Data.claims.Item[I].principalBeneficiaryName = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty[2].*:Party.*:FullName AS CHARACTER);
+			END IF;
+			
+			IF refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty[2].*:Roles.*:PartyRole[2].*:Role.*:Id <> '' THEN
+				SET idRoleType = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty[2].*:Roles.*:PartyRole[2].*:Role.*:Id AS CHARACTER);
+		
+				IF idRoleType = '18' THEN
+					SET OutputRoot.JSON.Data.claims.Item[I].beneficiaryName = CAST(refClaims.Claim[I].ClaimInfo.*:Parties.*:ClaimParty[2].*:Party.*:FullName AS CHARACTER);
+				END IF;
+			END IF;
 		END IF;
-
+		
+		
+		
 
 		SET FECHA = SUBSTRING(CAST(refClaims.Claim[I].ClaimInfo.*:ReportDate AS CHARACTER) FROM 1 FOR 10);
 		--SET FECHA = SUBSTRING(CAST(Environment.*:Resultado.*:SearchClaims[I].*:Claims.*:ReportDate AS CHARACTER) FROM 12 FOR 10);
@@ -92,7 +115,7 @@ CREATE COMPUTE MODULE SearchClaims_esql_ComponenteSalida
 
 		SET OutputRoot.JSON.Data.claims.Item[I].payableAmount = '$'||CAST(refClaims.Claim[I].GetClaimSettlementResult.*:TotalPaidAmount.*:Value AS CHARACTER);
 		-- GEtdocument Ansus
-		--SET OutputRoot.JSON.Data.claims.Item[I].pdf = CAST(refClaims.Claim[I].PDF AS CHARACTER);
+		SET OutputRoot.JSON.Data.claims.Item[I].pdf = CAST(refClaims.Claim[I].PDF AS CHARACTER);
 		---getclaims document
 		SET L = CARDINALITY(refClaims.Claim[I].GetClaimDocumentsResponse.*:ClaimDocument[]);
 		SET K = 1;

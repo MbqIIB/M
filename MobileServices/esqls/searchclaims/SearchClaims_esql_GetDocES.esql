@@ -10,10 +10,10 @@ CREATE COMPUTE MODULE SearchClaims_esql_GetDocES
 		DECLARE currentItem REFERENCE TO Environment.CurrentClaim.GetClaimDocumentsResponse;
 	   	SET currentItem = InputRoot.XMLNSC.ns13:GetClaimDocumentsResponse.ns13:GetClaimDocumentsResult; 
 		
---		CREATE FIELD OutputRoot.XMLNSC.ns45:CreateClaimSummaryDocument TYPE Name;
---	    DECLARE rOut REFERENCE TO OutputRoot.XMLNSC.ns45:CreateClaimSummaryDocument;
---	    
---	    SET rOut.ns45:claimNumber = Environment.Resultado.CLAIMID;
+		CREATE FIELD OutputRoot.XMLNSC.ns45:CreateClaimSummaryDocument TYPE Name;
+	    DECLARE rOut REFERENCE TO OutputRoot.XMLNSC.ns45:CreateClaimSummaryDocument;
+	    
+	    SET rOut.ns45:claimNumber = Environment.Resultado.CLAIMID;
 		
 		
 		RETURN TRUE;

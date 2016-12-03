@@ -9,8 +9,12 @@ CREATE COMPUTE MODULE SearchClaims_esql_FailParameter
 
 		CREATE FIELD OutputRoot.JSON.Data.error.errors IDENTITY(JSON.Array)errors;
 		SET OutputRoot.JSON.Data.error.errors.Item[1].reason = 'IncorrectRequestParameter';
-
-		SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList.Item[1] = 'beneficiaryRutNumber';
+		
+		IF Environment.error.desc <> ''THEN
+			SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList.Item[1] = Environment.error.desc;
+		ELSE
+			SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList.Item[1] = 'Invalid Date';
+		END IF;
 
 
 		SET OutputRoot.JSON.Data.error.errors.Item[1].fieldList TYPE = JSON.Array;
